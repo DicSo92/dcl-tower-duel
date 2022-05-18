@@ -1,5 +1,6 @@
 import BlueButton from "@/blueButton";
 import TowerDuel from "@/towerDuel";
+import Lift from "@/lift";
 import { loadColliders } from "@/colliderSetup";
 
 onSceneReadyObservable.add(() => {
@@ -7,7 +8,6 @@ onSceneReadyObservable.add(() => {
     const game = new Game()
     engine.addSystem(game);
 });
-import { Lift } from "./lift";
 
 
 export default class Game implements ISystem {
