@@ -1,4 +1,4 @@
-export default class BlueButton implements ISystem {
+export default class GreenButton implements ISystem {
     entity: Entity;
     transform: Transform
     messageBus: MessageBus
@@ -20,7 +20,7 @@ export default class BlueButton implements ISystem {
     buildButton = () => {
         this.entity.addComponent(this.transform)
         engine.addEntity(this.entity)
-        this.entity.addComponent(new GLTFShape('models/Blue_Button.glb'))
+        this.entity.addComponent(new GLTFShape('models/Green_Button.glb'))
     }
     buildPole = () => {
         const btnPole = new Entity()
@@ -36,15 +36,15 @@ export default class BlueButton implements ISystem {
     buildEvents = () => {
         this.entity.addComponent(
             new OnPointerDown(() => {
-                log('blueButton click')
+                log('greenButton click')
                 this.play()
-                this.messageBus.emit("blueButtonClick", {
+                this.messageBus.emit("greenButtonClick", {
                     test: "text test"
                 })
             }, {
                 button: ActionButton.POINTER,
                 showFeedback: true,
-                hoverText: "Start Game",
+                hoverText: "Spawn Block",
             })
         )
     }
