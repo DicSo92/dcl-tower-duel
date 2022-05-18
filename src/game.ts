@@ -1,9 +1,11 @@
 import BlueButton from "@/blueButton";
 import TowerDuel from "@/towerDuel";
+import { Lift } from "./lift";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
     const messageBus = new MessageBus()
+    const playerInputsListener = Input.instance
 
     const blueButton = new BlueButton(new Transform({
         position: new Vector3(3, 1.1, 3),
@@ -16,5 +18,8 @@ onSceneReadyObservable.add(() => {
         const game = new TowerDuel(messageBus)
     })
     engine.addSystem(blueButton);
+
+    // Lift
+    const lift = new Lift(playerInputsListener, messageBus)
 
 });
