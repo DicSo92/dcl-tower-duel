@@ -1,6 +1,6 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 
-export class Lift implements ISystem {
+export default class Lift implements ISystem {
     entity: Entity
     playerInputs: Input
     step: number = 0
@@ -18,7 +18,7 @@ export class Lift implements ISystem {
         this.entity.addComponent(new PlaneShape())
         engine.addEntity(this.entity)
         this.entity.getComponent(Transform).rotation.eulerAngles = new Vector3(90, 0, 0)
-        
+
         // Instance the input object
         this.playerInputs = inputs
         // button down event
@@ -51,8 +51,8 @@ export class Lift implements ISystem {
         let EndPos = new Vector3(6, this.startPosY, 8)
         this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
     }
-    
+
     update(dt: number) {
-        
+
     }
 }
