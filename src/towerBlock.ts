@@ -1,6 +1,7 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 import { ITowerBlock, ITowerDuel } from "@/interfaces/class.interface";
 import * as utils from "@dcl/ecs-scene-utils";
+import FallingBlocks from "@/fallingBlocks";
 
 export default class TowerBlock implements ISystem, ITowerBlock {
     TowerDuel: ITowerDuel
@@ -59,17 +60,17 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
         const currentBlockPosition = this.entity.getComponent(Transform).position
         const prevBlockPosition = prevBlock.entity.getComponent(Transform).position
-        const offserX = prevBlockPosition.x - currentBlockPosition.x
-        const offserZ = prevBlockPosition.z - currentBlockPosition.z
+        const offsetX = prevBlockPosition.x - currentBlockPosition.x
+        const offsetZ = prevBlockPosition.z - currentBlockPosition.z
 
         const newScale: Vector3 = this.scale.clone()
-        newScale.x = newScale.x - Math.abs(offserX)
-        newScale.z = newScale.z - Math.abs(offserZ)
+        newScale.x = newScale.x - Math.abs(offsetX)
+        newScale.z = newScale.z - Math.abs(offsetZ)
         this.TowerDuel.lastScale = newScale
 
         const newPosition: Vector3 = currentBlockPosition.clone()
-        newPosition.x = newPosition.x + offserX / 2
-        newPosition.z = newPosition.z + offserZ / 2
+        newPosition.x = newPosition.x + offsetX / 2
+        newPosition.z = newPosition.z + offsetZ / 2
         this.TowerDuel.lastPosition = newPosition
 
         this.entity.getComponent(BoxShape).visible = false
@@ -81,6 +82,9 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             position: newPosition,
             scale: newScale
         }))
+
+        const fallingBlocks = new FallingBlocks(this.entity.getComponent(Transform), offsetX, offsetZ)
+        engine.addSystem(fallingBlocks);
     }
 
     update(dt: number) {
