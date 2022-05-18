@@ -19,6 +19,7 @@
     "@dcl/ecs-scene-utils": "^1.7.5",
     "@types/axios": "^0.14.0",
     "axios": "^0.24.0",
+    "cannon": "github:schteppe/cannon.js",
     "socket.io": "^4.4.0"
   },
   "bundledDependencies": [

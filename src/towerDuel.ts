@@ -5,8 +5,11 @@ import { ITowerDuel } from "@/interfaces/class.interface";
 import * as utils from '@dcl/ecs-scene-utils'
 import {MoveTransformComponent} from "@dcl/ecs-scene-utils";
 import RedButton from "@/redButton";
+import {FallingBlock} from "@/fallingBlock";
 
 export default class TowerDuel implements ISystem, ITowerDuel {
+    physicsMaterial: CANNON.Material
+    world: CANNON.World
     messageBus: MessageBus
     blockCount: number
     maxCount: number
@@ -15,8 +18,12 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     offsetY: number
     lastScale: Vector3
     lastPosition: Vector3
+    fallingBlocks: FallingBlock[]
 
-    constructor(messageBus: MessageBus) {
+    constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, messageBus: MessageBus) {
+        this.physicsMaterial = cannonMaterial
+        this.world = cannonWorld
+
         this.messageBus = messageBus
         this.blockCount = 0
         this.maxCount = 10
@@ -25,21 +32,23 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.offsetY = 0.2
         this.lastScale = new Vector3(4, 0.4, 4)
         this.lastPosition = new Vector3(8, this.offsetY, 8)
+        this.fallingBlocks = []
         this.Init();
     }
 
     private Init = () => {
         this.BuildButtons()
         this.BuildEvents()
-        const towerBlock = new TowerBlock(this,true);
+        const towerBlock = new TowerBlock(this.physicsMaterial, this.world, this,true);
         engine.addSystem(towerBlock);
+        engine.addSystem(new PhysicsSystem(this.fallingBlocks, this.world))
 
         // this.startSpawn()
     };
 
     private startSpawn() {
         this.spawnInterval.addComponent(new utils.Interval(2500, () => {
-            const spawningBlock = new TowerBlock(this, false);
+            const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this, false);
             engine.addSystem(spawningBlock);
             if (this.blockCount >= this.maxCount) this.spawnInterval.removeComponent(utils.Interval)
         }))
@@ -65,7 +74,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     private BuildEvents() {
         this.messageBus.on("greenButtonClick", (test) => {
             log('spawn block')
-            const spawningBlock = new TowerBlock(this,false);
+            const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this,false);
             engine.addSystem(spawningBlock);
         })
         this.messageBus.on("redButtonClick", (test) => {
@@ -81,3 +90,27 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     }
 }
 
+// Set high to prevent tunnelling
+const FIXED_TIME_STEPS = 1.0 / 60
+const MAX_TIME_STEPS = 10
+
+class PhysicsSystem implements ISystem {
+    fallingBlocks: FallingBlock[]
+    world: CANNON.World
+
+    constructor(fallingBlocks: FallingBlock[], cannonWorld: CANNON.World) {
+        this.fallingBlocks = fallingBlocks
+        this.world = cannonWorld
+    }
+
+    update(dt: number): void {
+        this.world.step(FIXED_TIME_STEPS, dt, MAX_TIME_STEPS)
+
+        for (let i = 0; i < this.fallingBlocks.length; i++) {
+            if (!this.fallingBlocks[i].isActive) {
+                this.fallingBlocks[i].getComponent(Transform).position.copyFrom(this.fallingBlocks[i].body.position)
+                this.fallingBlocks[i].getComponent(Transform).rotation.copyFrom(this.fallingBlocks[i].body.quaternion)
+            }
+        }
+    }
+}

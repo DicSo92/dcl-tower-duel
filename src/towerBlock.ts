@@ -4,14 +4,19 @@ import * as utils from "@dcl/ecs-scene-utils";
 import FallingBlocks from "@/fallingBlocks";
 
 export default class TowerBlock implements ISystem, ITowerBlock {
+    physicsMaterial: CANNON.Material
+    world: CANNON.World
     TowerDuel: ITowerDuel
     entity: Entity
     isBase: Boolean
     scale: Vector3
     position: Vector3
 
-    constructor(towerDuel: ITowerDuel, isBase: boolean) {
+    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, towerDuel: ITowerDuel, isBase: boolean) {
+        this.physicsMaterial = cannonMaterial
+        this.world = world
         this.TowerDuel = towerDuel
+
         this.entity = new Entity();
         this.isBase = isBase
         this.scale = towerDuel.lastScale
@@ -83,7 +88,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             scale: newScale
         }))
 
-        const fallingBlocks = new FallingBlocks(this.entity.getComponent(Transform), offsetX, offsetZ)
+        const fallingBlocks = new FallingBlocks(this.physicsMaterial, this.world, this.TowerDuel, this.entity.getComponent(Transform), offsetX, offsetZ)
         engine.addSystem(fallingBlocks);
     }
 

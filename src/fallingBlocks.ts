@@ -1,11 +1,21 @@
+import { FallingBlock } from "@/fallingBlock";
+import {ITowerDuel} from "@/interfaces/class.interface";
+
 export default class FallingBlocks implements ISystem {
+    physicsMaterial: CANNON.Material
+    world: CANNON.World
+    TowerDuel: ITowerDuel
     towerBlockTransform: Transform
     offsetX: number
     offsetZ: number
     posX: number
     posZ: number
 
-    constructor(towerBlockTransform: Transform, offsetX: number, offsetZ: number) {
+    constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, towerDuel: ITowerDuel, towerBlockTransform: Transform, offsetX: number, offsetZ: number) {
+        this.physicsMaterial = cannonMaterial
+        this.world = cannonWorld
+        this.TowerDuel = towerDuel
+
         this.towerBlockTransform = towerBlockTransform
         this.offsetX = Math.abs(offsetX)
         this.offsetZ = Math.abs(offsetZ)
@@ -20,34 +30,28 @@ export default class FallingBlocks implements ISystem {
     }
 
     private BuildBlockX() {
-        const fallBlock = new Entity()
-        fallBlock.addComponent(new BoxShape())
-        fallBlock.addComponent(new Transform({
+        const transform: Transform = new Transform({
             position: new Vector3(this.posX, this.towerBlockTransform.position.y, this.towerBlockTransform.position.z),
             scale: new Vector3(this.offsetX, 0.4, this.towerBlockTransform.scale.z)
-        }))
-        engine.addEntity(fallBlock);
+        })
+        const fallBlock = new FallingBlock(transform, this.physicsMaterial, this.world)
+        this.TowerDuel.fallingBlocks.push(fallBlock)
     }
     private BuildBlockZ() {
-        const fallBlock = new Entity()
-        fallBlock.addComponent(new BoxShape())
-        fallBlock.addComponent(new Transform({
+        const transform: Transform = new Transform({
             position: new Vector3(this.towerBlockTransform.position.x, this.towerBlockTransform.position.y, this.posZ),
             scale: new Vector3(this.towerBlockTransform.scale.z, 0.4, this.offsetZ)
-        }))
-        engine.addEntity(fallBlock);
+        })
+        const fallBlock = new FallingBlock(transform, this.physicsMaterial, this.world)
+        this.TowerDuel.fallingBlocks.push(fallBlock)
     }
     private BuildBlockAngle() {
-        const fallBlock = new Entity()
-        fallBlock.addComponent(new BoxShape())
-        fallBlock.addComponent(new Transform({
+        const transform: Transform = new Transform({
             position: new Vector3(this.posX, this.towerBlockTransform.position.y, this.posZ),
             scale: new Vector3(this.offsetX, 0.4, this.offsetZ)
-        }))
-        const color = new Material()
-        color.albedoColor = Color3.FromInts(16, 120, 200)
-        fallBlock.addComponent(color)
-        engine.addEntity(fallBlock);
+        })
+        const fallBlock = new FallingBlock(transform, this.physicsMaterial, this.world)
+        this.TowerDuel.fallingBlocks.push(fallBlock)
     }
 
     update(dt: number) {
