@@ -16,4 +16,5 @@ onSceneReadyObservable.add(() => {
         const game = new TowerDuel(messageBus)
     })
     engine.addSystem(blueButton);
+
 });
