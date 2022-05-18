@@ -6,6 +6,9 @@ export interface ITowerDuel {
     maxCount: number
     spawnInterval: Entity
     blocks: TowerBlock[]
+    offsetY: number
+    lastScale: Vector3
+    lastPosition: Vector3
 
     update?(dt: number): void
 }
@@ -14,7 +17,7 @@ export interface ITowerBlock {
     entity: Entity
     isBase: Boolean
     scale: Vector3
-    offsetY: number
+    position: Vector3
 
     update?(dt: number): void
 }

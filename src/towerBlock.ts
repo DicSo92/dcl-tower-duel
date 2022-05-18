@@ -1,19 +1,20 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 import { ITowerBlock, ITowerDuel } from "@/interfaces/class.interface";
+import * as utils from "@dcl/ecs-scene-utils";
 
 export default class TowerBlock implements ISystem, ITowerBlock {
     TowerDuel: ITowerDuel
     entity: Entity
     isBase: Boolean
     scale: Vector3
-    offsetY: number
+    position: Vector3
 
-    constructor(game: ITowerDuel, isBase: boolean) {
-        this.TowerDuel = game
+    constructor(towerDuel: ITowerDuel, isBase: boolean) {
+        this.TowerDuel = towerDuel
         this.entity = new Entity();
         this.isBase = isBase
-        this.scale = new Vector3(4, 0.4, 4)
-        this.offsetY = 0.2
+        this.scale = towerDuel.lastScale
+        this.position = towerDuel.lastPosition
         this.Init();
     }
 
@@ -28,7 +29,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     private BuildBase = () => {
         this.entity.addComponent(
             new Transform({
-                position: new Vector3(8, this.offsetY, 8),
+                position: this.position,
                 scale: this.scale
             })
         )
@@ -41,7 +42,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         this.setSpawnAnimation()
     }
     private setSpawnAnimation() {
-        const posY = this.offsetY + 0.4 * this.TowerDuel.blockCount
+        const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
         let StartPos = new Vector3(0, posY, 16)
         let EndPos = new Vector3(16, posY, 0)
         this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3))
@@ -52,6 +53,33 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         const randomMaterialColor = new Material()
         randomMaterialColor.albedoColor = Color3.FromInts(randomBetween(0, 255), randomBetween(0, 255), randomBetween(0, 255))
         this.entity.addComponent(randomMaterialColor)
+    }
+    public stopBlock(prevBlock: ITowerBlock) {
+        this.entity.removeComponent(utils.MoveTransformComponent)
+        const currentBlockPosition = this.entity.getComponent(Transform).position
+        const prevBlockPosition = prevBlock.entity.getComponent(Transform).position
+        const offserX = prevBlockPosition.x - currentBlockPosition.x
+        const offserZ = prevBlockPosition.z - currentBlockPosition.z
+
+        const newScale: Vector3 = this.scale.clone()
+        newScale.x = newScale.x - Math.abs(offserX)
+        newScale.z = newScale.z - Math.abs(offserZ)
+        this.TowerDuel.lastScale = newScale
+
+        const newPosition: Vector3 = currentBlockPosition.clone()
+        newPosition.x = newPosition.x + offserX / 2
+        newPosition.z = newPosition.z + offserZ / 2
+        this.TowerDuel.lastPosition = newPosition
+
+        this.entity.getComponent(BoxShape).visible = false
+        this.entity.removeComponent(Transform)
+        this.entity.removeComponent(BoxShape)
+        this.entity.addComponent(new Transform({
+            position: newPosition,
+            scale: newScale
+        }))
+        this.entity.addComponent(new BoxShape())
+        // engine.addEntity(this.entity)
     }
 
     update(dt: number) {

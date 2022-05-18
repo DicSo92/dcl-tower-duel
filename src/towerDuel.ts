@@ -12,6 +12,9 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     maxCount: number
     spawnInterval: Entity
     blocks: TowerBlock[]
+    offsetY: number
+    lastScale: Vector3
+    lastPosition: Vector3
 
     constructor(messageBus: MessageBus) {
         this.messageBus = messageBus
@@ -19,6 +22,9 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.maxCount = 10
         this.spawnInterval = new Entity()
         this.blocks = []
+        this.offsetY = 0.2
+        this.lastScale = new Vector3(4, 0.4, 4)
+        this.lastPosition = new Vector3(8, this.offsetY, 8)
         this.Init();
     }
 
@@ -59,18 +65,15 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     private BuildEvents() {
         this.messageBus.on("greenButtonClick", (test) => {
             log('spawn block')
-            const spawningBlock = new TowerBlock(this, false);
+            const spawningBlock = new TowerBlock(this,false);
             engine.addSystem(spawningBlock);
         })
         this.messageBus.on("redButtonClick", (test) => {
             log('stop block')
-            this.stopBlock()
+            const currentBlock: TowerBlock = this.blocks[this.blocks.length - 1]
+            const prevBlock: TowerBlock = this.blocks[this.blocks.length - 2]
+            currentBlock.stopBlock(prevBlock)
         })
-    }
-
-    private stopBlock() {
-        const currentBlock: TowerBlock = this.blocks[this.blocks.length - 1]
-        currentBlock.entity.removeComponent(utils.MoveTransformComponent)
     }
 
     public update(dt: number) {
