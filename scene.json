@@ -24,13 +24,20 @@
   "tags": [],
   "spawnPoints": [
     {
-      "name": "spawn1",
-      "default": true,
-      "position": {
-        "x": 0,
-        "y": 0,
-        "z": 0
-      },
+        "name": "spawn1",
+        "default": true,
+        "position": {
+            "x": 30,
+            "y": 0,
+            "z": 30
+        },
+        "name": "spawn2",
+        "default": true,
+        "position": {
+            "x": 30,
+            "y": 0,
+            "z": 1
+        },
       "cameraTarget": {
         "x": 8,
         "y": 1,
