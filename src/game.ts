@@ -1,46 +1,22 @@
 import * as utils from "@dcl/ecs-scene-utils";
 import BlueButton from "@/blueButton";
-
-
-class TowerBlock implements ISystem {
-    entity: Entity;
-
-    constructor() {
-        this.entity = new Entity();
-        this.Init();
-    }
-
-    Init = () => {
-        this.BuildBox()
-    };
-
-    BuildBox = () => {
-        log("testage")
-        this.entity.addComponent(
-            new Transform({
-                position: new Vector3(8, 0.2, 8),
-                scale: new Vector3(4, 0.4, 4)
-            })
-        )
-        this.entity.addComponent(new BoxShape())
-        engine.addEntity(this.entity)
-    };
-
-    update(dt: number) {
-        // log("Update", dt)
-    }
-}
+import TowerBlock from "@/towerBlock";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
-    // blueButton.addComponent(new GLTFShape('models/Blue_Button.glb'))
+    const messageBus = new MessageBus()
+
+    const towerBlock = new TowerBlock();
 
     const blueButton = new BlueButton(new Transform({
         position: new Vector3(3, 1.1, 3),
         rotation: new Quaternion(0, 0, 0, 1),
         scale: new Vector3(2, 2, 2)
     }));
-    const towerBlock = new TowerBlock();
+
+    messageBus.on("blueButtonClick", (test) => {
+        log('test var :', test)
+    })
     engine.addSystem(towerBlock);
     engine.addSystem(blueButton);
 });

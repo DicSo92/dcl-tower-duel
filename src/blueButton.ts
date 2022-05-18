@@ -1,11 +1,13 @@
 export default class BlueButton implements ISystem {
     entity: Entity;
     transform: Transform
+    messageBus: MessageBus
     clip = new AudioClip('sounds/click.mp3');
 
     constructor(transform: Transform) {
         this.entity = new Entity()
         this.transform = transform
+        this.messageBus = new MessageBus()
         this.Init()
     }
     Init = () => {
@@ -35,6 +37,7 @@ export default class BlueButton implements ISystem {
         this.entity.addComponent(
             new OnPointerDown(() => {
                 log('blueButton click')
+
                 this.play()
             }, {
                 button: ActionButton.POINTER,
@@ -42,6 +45,9 @@ export default class BlueButton implements ISystem {
                 hoverText: "Start Game",
             })
         )
+        this.messageBus.emit("blueButtonClick", {
+            test: "text test"
+        })
     }
     setAnimator = () => {
         const animator = new Animator()
