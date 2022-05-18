@@ -1,0 +1,11 @@
+package-lock.json
+node_modules/
+bin/
+build/
+.env
+**/.DS_Store
+yarn-error.log
+coverage/
+models/*.blend
+.idea
+export/

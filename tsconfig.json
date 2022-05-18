@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "moduleResolution": "node",
+    "outFile": "./bin/game.js",
+    "allowJs": true,
+    "strict": true,
+    "noLib": false,
+    "paths": {
+      "@dcl/ecs-scene-utils": [
+        "node_modules\\@dcl\\ecs-scene-utils\\dist\\index.d.ts"
+      ],
+      "@dcl/decentraland-ecs-utils": [
+        "node_modules\\decentraland-ecs-utils\\index.d.ts"
+      ],
+      "dclconnect": ["node_modules\\dclconnect\\dist\\index.d.ts"],
+      "@/*": [
+        "src/*"
+      ],
+      "@@/*": [
+        "/*"
+      ]
+    },
+    "baseUrl": "."
+  },
+  "lib": [
+    "ES2020",
+    "amd",
+    "es5",
+    "es6",
+    "dom",
+    "dom.iterable"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "./node_modules/@dcl/ecs-scene-utils/dist/index.js",
+    "./node_modules/dclconnect/dist/index.js"
+  ],
+  "extends": "./node_modules/decentraland-ecs/types/tsconfig.json",
+  "compileOnSave": false
+}
