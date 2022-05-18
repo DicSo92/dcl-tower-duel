@@ -1,7 +1,7 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
-import { ITowerDuel } from "@/interfaces/class.interface";
+import { ITowerBlock, ITowerDuel } from "@/interfaces/class.interface";
 
-export default class TowerBlock implements ISystem {
+export default class TowerBlock implements ISystem, ITowerBlock {
     TowerDuel: ITowerDuel
     entity: Entity
     isBase: Boolean
@@ -22,6 +22,7 @@ export default class TowerBlock implements ISystem {
         this.setRandomMaterial()
         engine.addEntity(this.entity)
         this.TowerDuel.blockCount += 1
+        this.TowerDuel.blocks.push(this)
     };
 
     private BuildBase = () => {
