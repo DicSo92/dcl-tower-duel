@@ -55,7 +55,8 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         this.entity.addComponent(randomMaterialColor)
     }
     public stopBlock(prevBlock: ITowerBlock) {
-        this.entity.removeComponent(utils.MoveTransformComponent)
+        this.entity.removeComponent(utils.MoveTransformComponent) // stopTransform animation
+
         const currentBlockPosition = this.entity.getComponent(Transform).position
         const prevBlockPosition = prevBlock.entity.getComponent(Transform).position
         const offserX = prevBlockPosition.x - currentBlockPosition.x
@@ -74,12 +75,12 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         this.entity.getComponent(BoxShape).visible = false
         this.entity.removeComponent(Transform)
         this.entity.removeComponent(BoxShape)
+
+        this.entity.addComponent(new BoxShape())
         this.entity.addComponent(new Transform({
             position: newPosition,
             scale: newScale
         }))
-        this.entity.addComponent(new BoxShape())
-        // engine.addEntity(this.entity)
     }
 
     update(dt: number) {
