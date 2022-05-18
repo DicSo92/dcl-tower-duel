@@ -1,6 +1,4 @@
-import * as utils from "@dcl/ecs-scene-utils";
 import BlueButton from "@/blueButton";
-import TowerBlock from "@/towerBlock";
 import TowerDuel from "@/towerDuel";
 
 onSceneReadyObservable.add(() => {
