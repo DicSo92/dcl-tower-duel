@@ -1,3 +1,4 @@
+import Lift from "@/lift";
 import TowerBlock from "@/towerBlock";
 import GreenButton from "@/greenButton";
 import { ITowerDuel } from "@/interfaces/class.interface";
@@ -20,6 +21,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     lastScale: Vector3
     lastPosition: Vector3
     fallingBlocks: FallingBlock[]
+    playerInputsListener: Input
 
     constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, messageBus: MessageBus) {
         this.physicsMaterial = cannonMaterial
@@ -34,6 +36,8 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.lastScale = new Vector3(4, 0.4, 4)
         this.lastPosition = new Vector3(8, this.offsetY, 8)
         this.fallingBlocks = []
+        this.playerInputsListener = Input.instance
+
         this.Init();
     }
 
@@ -43,6 +47,9 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         const towerBlock = new TowerBlock(this.physicsMaterial, this.world, this,true);
         engine.addSystem(towerBlock);
         engine.addSystem(new PhysicsSystem(this.fallingBlocks, this.world))
+
+        const lift = new Lift(this.playerInputsListener, this.messageBus)
+        engine.addSystem(lift)
 
         // this.startSpawn()
     };

@@ -1,6 +1,5 @@
 import BlueButton from "@/blueButton";
 import TowerDuel from "@/towerDuel";
-import Lift from "@/lift";
 import { loadColliders } from "@/colliderSetup";
 
 onSceneReadyObservable.add(() => {
@@ -15,14 +14,11 @@ export default class Game implements ISystem {
     world: CANNON.World
     messageBus: MessageBus
     TowerDuel?: TowerDuel
-    playerInputsListener: Input
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
         this.world = new CANNON.World()
         this.messageBus = new MessageBus()
-
-        this.playerInputsListener = Input.instance
 
         this.SetupWorldConfig()
         this.buildScene()
@@ -46,8 +42,6 @@ export default class Game implements ISystem {
         }), this.messageBus);
 
         engine.addSystem(blueButton);
-
-        const lift = new Lift(this.playerInputsListener, this.messageBus)
     }
     private BuildEvents() {
         this.messageBus.on("blueButtonClick", (test) => {

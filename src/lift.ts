@@ -5,6 +5,8 @@ export default class Lift implements ISystem {
     playerInputs: Input
     step: number = 0
     state: boolean = false
+    posX: number = 8
+    posZ: number = 2
     startPosY: number = 0.2
     endPosY: number = 10
 
@@ -12,7 +14,7 @@ export default class Lift implements ISystem {
         // Lift
         this.entity = new Entity()
         this.entity.addComponent(new Transform({
-            position: new Vector3(6, 1, 8),
+            position: new Vector3(this.posX, this.startPosY, this.posZ),
             scale: new Vector3(3, 3, 1),
         }))
         this.entity.addComponent(new PlaneShape())
@@ -41,14 +43,14 @@ export default class Lift implements ISystem {
     }
 
     moveUp() {
-        let StartPos = new Vector3(6, this.startPosY, 8)
-        let EndPos = new Vector3(6, this.endPosY, 8)
+        let StartPos = new Vector3(this.posX, this.startPosY, this.posZ)
+        let EndPos = new Vector3(this.posX, this.endPosY, this.posZ)
         this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
      }
 
     moveDown() {
-        let StartPos = new Vector3(6, this.endPosY, 8)
-        let EndPos = new Vector3(6, this.startPosY, 8)
+        let StartPos = new Vector3(this.posX, this.endPosY, this.posZ)
+        let EndPos = new Vector3(this.posX, this.startPosY, this.posZ)
         this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
     }
 
