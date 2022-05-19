@@ -12,36 +12,29 @@
   "owner": "",
   "scene": {
     "parcels": [
-      "0,0",
-      "0,1",
-      "1,0",
-      "1,1"
+      "119,81",
+      "120,81",
+      "119,80",
+      "120,80"
     ],
-    "base": "0,0"
+    "base": "119,80"
   },
   "requiredPermissions": [],
   "main": "bin/game.js",
   "tags": [],
   "spawnPoints": [
     {
-        "name": "spawn1",
-        "default": true,
-        "position": {
-            "x": 30,
-            "y": 0,
-            "z": 30
-        },
-        "name": "spawn2",
-        "default": true,
-        "position": {
-            "x": 30,
-            "y": 0,
-            "z": 1
-        },
+      "name": "spawn1",
+      "default": true,
+      "position": {
+          "x": 28,
+          "y": 0,
+          "z": 30
+      },
       "cameraTarget": {
-        "x": 8,
+        "x": 25,
         "y": 1,
-        "z": 8
+        "z": 16
       }
     }
   ],

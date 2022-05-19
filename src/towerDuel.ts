@@ -34,7 +34,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.blocks = []
         this.offsetY = 0.2
         this.lastScale = new Vector3(4, 0.4, 4)
-        this.lastPosition = new Vector3(8, this.offsetY, 8)
+        this.lastPosition = new Vector3(24, this.offsetY, 8)
         this.fallingBlocks = []
         this.playerInputsListener = Input.instance
 
@@ -65,14 +65,14 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
     private BuildButtons() {
         const greenButton = new GreenButton(new Transform({
-            position: new Vector3(4, 1.1, 3),
+            position: new Vector3(24, 1.1, 18),
             rotation: new Quaternion(0, 0, 0, 1),
             scale: new Vector3(2, 2, 2)
         }), this.messageBus);
         engine.addSystem(greenButton);
 
         const redButton = new RedButton(new Transform({
-            position: new Vector3(5, 1.1, 3),
+            position: new Vector3(23, 1.1, 18),
             rotation: new Quaternion(0, 0, 0, 1),
             scale: new Vector3(2, 2, 2)
         }), this.messageBus);

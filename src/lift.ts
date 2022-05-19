@@ -5,8 +5,8 @@ export default class Lift implements ISystem {
     playerInputs: Input
     step: number = 0
     state: boolean = false
-    posX: number = 8
-    posZ: number = 2
+    posX: number = 24
+    posZ: number = 14
     startPosY: number = 0.2
     endPosY: number = 10
 

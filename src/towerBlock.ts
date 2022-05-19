@@ -49,8 +49,8 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     }
     private setSpawnAnimation() {
         const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
-        let StartPos = new Vector3(0, posY, 16)
-        let EndPos = new Vector3(16, posY, 0)
+        let StartPos = new Vector3(32, posY, 0)
+        let EndPos = new Vector3(16, posY, 16)
         this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3))
     }
 
