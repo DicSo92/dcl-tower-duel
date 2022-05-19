@@ -37,12 +37,34 @@ export class FallingBlock extends Entity {
         this.body.velocity.setZero()
         this.body.angularVelocity.setZero()
 
-        // this.body.position.set(
-        //     Camera.instance.feetPosition.x + throwDirection.x,
-        //     throwDirection.y + Camera.instance.position.y,
-        //     Camera.instance.feetPosition.z + throwDirection.z
-        // )
+        this.BuildEvents()
+    }
 
+    private BuildEvents() {
+        // Allow the user to interact with the ball
+        let forwardVector: Vector3 = Vector3.Forward().rotate(Camera.instance.rotation) // Camera's forward vector
+        const vectorScale: number = 25
+        this.addComponent(
+            new OnPointerDown(
+                (e: any) => {
+                    // Apply impulse based on the direction of the camera
+                    this.body.applyImpulse(
+                        new CANNON.Vec3(
+                            forwardVector.x * vectorScale,
+                            forwardVector.y * vectorScale,
+                            forwardVector.z * vectorScale
+                        ),
+                        // Applies impulse based on the player's position and where they click on the ball
+                        new CANNON.Vec3(e.hit.hitPoint.x, e.hit.hitPoint.y, e.hit.hitPoint.z)
+                    )
+                },
+                {
+                    button: ActionButton.ANY,
+                    showFeedback: true,
+                    hoverText: 'kick'
+                }
+            )
+        )
     }
 
     blockThrow(throwDirection: Vector3, throwPower: number): void {
