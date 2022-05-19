@@ -41,6 +41,14 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             })
         )
         this.entity.addComponent(new BoxShape())
+
+        const basePhysic: CANNON.Body = new CANNON.Body({
+            mass: 0, // kg
+            position: new CANNON.Vec3(this.position.x, this.position.y, this.position.z), // m
+            shape: new CANNON.Box(new CANNON.Vec3(this.scale.x / 2, this.scale.y / 2, this.scale.z / 2))
+        })
+        basePhysic.material = this.physicsMaterial
+        this.world.addBody(basePhysic)
     };
     private SpawnBlock() {
         this.entity.addComponent(new Transform({ scale: this.scale }))
@@ -96,6 +104,13 @@ export default class TowerBlock implements ISystem, ITowerBlock {
                 position: newPosition,
                 scale: newScale
             }))
+            const blockPhysic: CANNON.Body = new CANNON.Body({
+                mass: 0, // kg
+                position: new CANNON.Vec3(newPosition.x, newPosition.y, newPosition.z), // m
+                shape: new CANNON.Box(new CANNON.Vec3(newScale.x / 2, newScale.y / 2, newScale.z / 2))
+            })
+            blockPhysic.material = this.physicsMaterial
+            this.world.addBody(blockPhysic)
 
             const fallingBlocks = new FallingBlocks(this.physicsMaterial, this.world, this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
             engine.addSystem(fallingBlocks);
