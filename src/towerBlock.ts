@@ -57,10 +57,40 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     }
 
     private setSpawnAnimation() {
+        // const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
+        // let StartPos = new Vector3(32, posY, 0)
+        // let EndPos = new Vector3(16, posY, 16)
+        // this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3))
+
         const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
-        let StartPos = new Vector3(32, posY, 0)
-        let EndPos = new Vector3(16, posY, 16)
-        this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3))
+        const startX = 28
+        const startZ = 3 // cant be same as block position (8)
+
+        const endZ = startZ >= 8 ? 0 : 16
+
+        const adjacent = Math.abs(this.position.z - startZ)
+        const opposite = Math.abs(this.position.x - startX)
+        const hypotenuse = Math.sqrt(Math.pow(opposite, 2) + Math.pow(adjacent , 2))
+        const angle = Math.asin(opposite / hypotenuse)
+
+        const mainAdjacent = Math.abs(endZ - startZ)
+        const mainHypotenuse = mainAdjacent / Math.cos(angle)
+        const mainOpposite = Math.sqrt(Math.pow(mainHypotenuse, 2) - Math.pow(mainAdjacent , 2))
+
+        const endX = startX + (startX >= this.position.x ? -1 : 1) * mainOpposite
+
+        log("adjacent", adjacent)
+        log("opposite", opposite)
+        log("hypotenuse", hypotenuse)
+        log("angle", angle)
+        log("mainAdjacent", mainAdjacent)
+        log("mainHypotenuse", mainHypotenuse)
+        log("mainOpposite", mainOpposite)
+        log("endX", endX)
+
+        let StartPos = new Vector3(startX, posY, startZ)
+        let EndPos = new Vector3(endX, posY, endZ)
+        this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 4))
     }
 
     private setRandomMaterial() {
