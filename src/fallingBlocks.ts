@@ -17,10 +17,10 @@ export default class FallingBlocks implements ISystem {
         this.TowerDuel = towerDuel
 
         this.towerBlockTransform = towerBlockTransform
-        this.offsetX = Math.abs(offsetX)
-        this.offsetZ = Math.abs(offsetZ)
-        this.posX = towerBlockTransform.position.x + (offsetX >= 0 ? -1 : 1) * towerBlockTransform.scale.x / 2 + (offsetX >= 0 ? -1 : 1) * Math.abs(offsetX) / 2
-        this.posZ = towerBlockTransform.position.z + (offsetZ >= 0 ? -1 : 1) * towerBlockTransform.scale.z / 2 + (offsetZ >= 0 ? -1 : 1) * Math.abs(offsetZ) / 2
+        this.offsetX = offsetX
+        this.offsetZ = offsetZ
+        this.posX = towerBlockTransform.position.x + (offsetX >= 0 ? -1 : 1) * towerBlockTransform.scale.x / 2 - (offsetX >= 0 ? -1 : 1) * Math.abs(offsetX) / 2
+        this.posZ = towerBlockTransform.position.z + (offsetZ >= 0 ? -1 : 1) * towerBlockTransform.scale.z / 2 - (offsetZ >= 0 ? -1 : 1) * Math.abs(offsetZ) / 2
         this.Init()
     }
     Init = () => {
@@ -31,16 +31,17 @@ export default class FallingBlocks implements ISystem {
 
     private BuildBlockX() {
         const transform: Transform = new Transform({
-            position: new Vector3(this.posX, this.towerBlockTransform.position.y, this.towerBlockTransform.position.z),
-            scale: new Vector3(this.offsetX, 0.4, this.towerBlockTransform.scale.z)
+            position: new Vector3(this.posX, this.towerBlockTransform.position.y, this.towerBlockTransform.position.z - this.offsetX / 2),
+            scale: new Vector3(Math.abs(this.offsetX), 0.4, this.towerBlockTransform.scale.z - Math.abs(this.offsetX))
         })
         const fallBlock = new FallingBlock(transform, this.physicsMaterial, this.world)
         this.TowerDuel.fallingBlocks.push(fallBlock)
+
     }
     private BuildBlockZ() {
         const transform: Transform = new Transform({
-            position: new Vector3(this.towerBlockTransform.position.x, this.towerBlockTransform.position.y, this.posZ),
-            scale: new Vector3(this.towerBlockTransform.scale.z, 0.4, this.offsetZ)
+            position: new Vector3(this.towerBlockTransform.position.x - this.offsetZ / 2, this.towerBlockTransform.position.y, this.posZ),
+            scale: new Vector3(this.towerBlockTransform.scale.z - Math.abs(this.offsetZ), 0.4, Math.abs(this.offsetZ))
         })
         const fallBlock = new FallingBlock(transform, this.physicsMaterial, this.world)
         this.TowerDuel.fallingBlocks.push(fallBlock)
@@ -48,7 +49,7 @@ export default class FallingBlocks implements ISystem {
     private BuildBlockAngle() {
         const transform: Transform = new Transform({
             position: new Vector3(this.posX, this.towerBlockTransform.position.y, this.posZ),
-            scale: new Vector3(this.offsetX, 0.4, this.offsetZ)
+            scale: new Vector3(Math.abs(this.offsetX), 0.4, Math.abs(this.offsetZ))
         })
         const fallBlock = new FallingBlock(transform, this.physicsMaterial, this.world)
         this.TowerDuel.fallingBlocks.push(fallBlock)

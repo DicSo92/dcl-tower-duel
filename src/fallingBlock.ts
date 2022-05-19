@@ -18,7 +18,7 @@ export class FallingBlock extends Entity {
         this.body = new CANNON.Body({
             mass: 1, // kg
             position: new CANNON.Vec3(transform.position.x, transform.position.y, transform.position.z), // m
-            shape: new CANNON.Box(new CANNON.Vec3(transform.scale.x, transform.scale.y, transform.scale.z))
+            shape: new CANNON.Box(new CANNON.Vec3(transform.scale.x / 2, transform.scale.y / 2, transform.scale.z / 2))
         })
 
         // Add material and dampening to stop the ball rotating and moving continuously
@@ -26,7 +26,7 @@ export class FallingBlock extends Entity {
         this.body.material = cannonMaterial
         this.body.linearDamping = 0.4
         this.body.angularDamping = 0.4
-        this.world.addBody(this.body) // Add ball body to the world
+        this.world.addBody(this.body) // Add block body to the world
 
         this.isActive = false
         this.isThrown = true

@@ -42,12 +42,12 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         )
         this.entity.addComponent(new BoxShape())
     };
-
     private SpawnBlock() {
         this.entity.addComponent(new Transform({ scale: this.scale }))
         this.entity.addComponent(new BoxShape())
         this.setSpawnAnimation()
     }
+
     private setSpawnAnimation() {
         const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
         let StartPos = new Vector3(32, posY, 0)
