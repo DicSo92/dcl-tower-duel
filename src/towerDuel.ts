@@ -1,13 +1,12 @@
+import { ITowerDuel } from "@/interfaces/class.interface";
+import { Interval } from "@dcl/ecs-scene-utils";
+
 import Lift from "@/lift";
 import TowerBlock from "@/towerBlock";
 import GreenButton from "@/greenButton";
-import { ITowerDuel } from "@/interfaces/class.interface";
-
-import * as utils from '@dcl/ecs-scene-utils'
-import {MoveTransformComponent} from "@dcl/ecs-scene-utils";
 import RedButton from "@/redButton";
-import {FallingBlock} from "@/fallingBlock";
 import PhysicsSystem from "@/physicsSystem";
+import { FallingBlock } from "@/fallingBlock";
 
 export default class TowerDuel implements ISystem, ITowerDuel {
     physicsMaterial: CANNON.Material
@@ -55,10 +54,10 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     };
 
     private startSpawn() {
-        this.spawnInterval.addComponent(new utils.Interval(2500, () => {
+        this.spawnInterval.addComponent(new Interval(2500, () => {
             const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this, false);
             engine.addSystem(spawningBlock);
-            if (this.blockCount >= this.maxCount) this.spawnInterval.removeComponent(utils.Interval)
+            if (this.blockCount >= this.maxCount) this.spawnInterval.removeComponent(Interval)
         }))
         engine.addEntity(this.spawnInterval)
     }

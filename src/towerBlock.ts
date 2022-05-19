@@ -2,6 +2,7 @@ import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 import { ITowerBlock, ITowerDuel } from "@/interfaces/class.interface";
 import * as utils from "@dcl/ecs-scene-utils";
 import FallingBlocks from "@/fallingBlocks";
+import { FallingBlock } from "@/fallingBlock";
 
 export default class TowerBlock implements ISystem, ITowerBlock {
     physicsMaterial: CANNON.Material
@@ -63,33 +64,42 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     public stopBlock(prevBlock: ITowerBlock) {
         this.entity.removeComponent(utils.MoveTransformComponent) // stopTransform animation
 
-        const currentBlockPosition = this.entity.getComponent(Transform).position
-        const prevBlockPosition = prevBlock.entity.getComponent(Transform).position
-        const offsetX = prevBlockPosition.x - currentBlockPosition.x
-        const offsetZ = prevBlockPosition.z - currentBlockPosition.z
+        const currentBlockTransform = this.entity.getComponent(Transform)
+        const prevBlockTransform = prevBlock.entity.getComponent(Transform)
+        const offsetX = prevBlockTransform.position.x - currentBlockTransform.position.x
+        const offsetZ = prevBlockTransform.position.z - currentBlockTransform.position.z
 
-        const newScale: Vector3 = this.scale.clone()
-        newScale.x = newScale.x - Math.abs(offsetX)
-        newScale.z = newScale.z - Math.abs(offsetZ)
-        this.TowerDuel.lastScale = newScale
+        if (Math.abs(offsetX) > prevBlockTransform.scale.x || Math.abs(offsetZ) > prevBlockTransform.scale.z) { // If block not on top of the previous
+            log('game end!')
+            const fallBlock = new FallingBlock(currentBlockTransform, this.physicsMaterial, this.world)
+            this.TowerDuel.fallingBlocks.push(fallBlock)
 
-        const newPosition: Vector3 = currentBlockPosition.clone()
-        newPosition.x = newPosition.x + offsetX / 2
-        newPosition.z = newPosition.z + offsetZ / 2
-        this.TowerDuel.lastPosition = newPosition
+            this.TowerDuel.blockCount -= 1
+            this.TowerDuel.blocks.pop()
+        } else {
+            const newScale: Vector3 = this.scale.clone()
+            newScale.x = newScale.x - Math.abs(offsetX)
+            newScale.z = newScale.z - Math.abs(offsetZ)
+            this.TowerDuel.lastScale = newScale
 
-        this.entity.getComponent(BoxShape).visible = false
-        this.entity.removeComponent(Transform)
-        this.entity.removeComponent(BoxShape)
+            const newPosition: Vector3 = currentBlockTransform.position.clone()
+            newPosition.x = newPosition.x + offsetX / 2
+            newPosition.z = newPosition.z + offsetZ / 2
+            this.TowerDuel.lastPosition = newPosition
 
-        this.entity.addComponent(new BoxShape())
-        this.entity.addComponent(new Transform({
-            position: newPosition,
-            scale: newScale
-        }))
+            this.entity.getComponent(BoxShape).visible = false
+            this.entity.removeComponent(Transform)
+            this.entity.removeComponent(BoxShape)
 
-        const fallingBlocks = new FallingBlocks(this.physicsMaterial, this.world, this.TowerDuel, this.entity.getComponent(Transform), offsetX, offsetZ)
-        engine.addSystem(fallingBlocks);
+            this.entity.addComponent(new BoxShape())
+            this.entity.addComponent(new Transform({
+                position: newPosition,
+                scale: newScale
+            }))
+
+            const fallingBlocks = new FallingBlocks(this.physicsMaterial, this.world, this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
+            engine.addSystem(fallingBlocks);
+        }
     }
 
     update(dt: number) {
