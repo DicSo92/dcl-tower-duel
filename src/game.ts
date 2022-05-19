@@ -1,6 +1,7 @@
 import BlueButton from "@/blueButton";
 import TowerDuel from "@/towerDuel";
 import { loadColliders } from "@/colliderSetup";
+import PlayerSelector from "./playerSelector";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -20,6 +21,9 @@ export default class Game implements ISystem {
         this.world = new CANNON.World()
         this.messageBus = new MessageBus()
 
+        // Selector
+        const playerSelector1 = new PlayerSelector(this.messageBus)
+        
         this.SetupWorldConfig()
         this.buildScene()
         this.BuildEvents()
