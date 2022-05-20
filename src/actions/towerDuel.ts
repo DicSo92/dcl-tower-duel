@@ -2,7 +2,7 @@ import TowerDuel from "@/towerDuel"
 import * as utils from '@dcl/ecs-scene-utils'
 
 //Use IAction to define action for movement
-export class StartTowerDuelAction implements utils.ActionsSequenceSystem.IAction {
+export class LaunchGameAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     towerDuel?: TowerDuel
     physicsMaterial: CANNON.Material

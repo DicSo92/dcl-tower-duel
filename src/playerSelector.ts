@@ -54,7 +54,7 @@ export default class PlayerSelector implements ISystem {
         btn.addComponent(new BoxShape())
         btn.getComponent(Transform).position.y = 1
         btn.addComponent(new OnPointerDown(() => {
-            this.messageBus.emit("BeforeTowerDuelSequence", {
+            this.messageBus.emit("gameApproval", {
                 test: "text test"
             })
         }))
@@ -71,6 +71,6 @@ export default class PlayerSelector implements ISystem {
     }
 
     update() {
-        
+
     }
 }

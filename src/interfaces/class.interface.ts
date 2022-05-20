@@ -1,6 +1,7 @@
 import TowerBlock from "@/towerBlock";
 import {FallingBlock} from "@/fallingBlock";
 import {MoveTransformComponent} from "@dcl/ecs-scene-utils";
+import PlayerSelector from "@/playerSelector";
 
 export interface ITowerDuel {
     physicsMaterial: CANNON.Material
@@ -35,6 +36,17 @@ export interface IPlayerSelector {
     startPath: Vector3[]
     endPath: Vector3[]
     step: number
-    
+
+    update?(dt: number): void
+}
+
+export interface IMainGame {
+    physicsMaterial: CANNON.Material
+    world: CANNON.World
+    messageBus: MessageBus
+
+    TowerDuel?: ITowerDuel // ITowerDuel[]
+    liftToGame: PlayerSelector
+
     update?(dt: number): void
 }

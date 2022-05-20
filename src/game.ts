@@ -1,11 +1,7 @@
 import BlueButton from "@/blueButton";
-import TowerDuel from "@/towerDuel";
 import { loadColliders } from "@/colliderSetup";
-import PlayerSelector from "./playerSelector";
-import * as utils from '@dcl/ecs-scene-utils'
-import { StartTowerDuelAction } from '@/actions/towerDuel'
-import { GoToPlayAction, WaitTowerDuelAction } from "./actions/beforeTowerDuel";
-import { BackToLobbyAction } from "./actions/afterTowerDuel";
+import { IMainGame } from "@/interfaces/class.interface";
+import MainGame from "@/mainGame";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -18,20 +14,20 @@ export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
-    TowerDuel?: TowerDuel
-    playerSelector1: PlayerSelector
+
+    mainGame?: IMainGame
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
         this.world = new CANNON.World()
         this.messageBus = new MessageBus()
 
-        // Selector
-        this.playerSelector1 = new PlayerSelector(this.messageBus)
-        
         this.SetupWorldConfig()
         this.buildScene()
         this.BuildEvents()
+
+        this.mainGame = new MainGame(this.physicsMaterial, this.world, this.messageBus)
+        engine.addSystem(this.mainGame)
     }
 
     private SetupWorldConfig() {
@@ -62,35 +58,7 @@ export default class Game implements ISystem {
         engine.addSystem(blueButton);
     }
     private BuildEvents() {
-        this.messageBus.on("BeforeTowerDuelSequence", () => {
-            log('BeforeTowerDuelSequence')
 
-            const beforeTowerDuelSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                .then(new GoToPlayAction(this.playerSelector1))
-                .then(new WaitTowerDuelAction(this.messageBus))
-
-            const beforeTowerDuelSystem = new utils.ActionsSequenceSystem(beforeTowerDuelSequence)
-            // actionSystem.setOnFinishCallback(() => { })
-            engine.addSystem(beforeTowerDuelSystem)
-        })
-        this.messageBus.on("TowerDuelSequence", () => {
-            log('TowerDuelSequence')
-
-            const towerDuelSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                .then(new StartTowerDuelAction(this.physicsMaterial, this.world, this.messageBus))
-            const towerDuelSystem = new utils.ActionsSequenceSystem(towerDuelSequence)
-            // actionSystem.setOnFinishCallback(() => { })
-            engine.addSystem(towerDuelSystem)
-        })
-        this.messageBus.on("AfterTowerDuelSequence", () => {
-            log('AfterTowerDuelSequence')
-
-            const afterTowerDuelSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                .then(new BackToLobbyAction(this.playerSelector1))
-            const aftertowerDuelSystem = new utils.ActionsSequenceSystem(afterTowerDuelSequence)
-            // actionSystem.setOnFinishCallback(() => { })
-            engine.addSystem(aftertowerDuelSystem)
-        })
     }
 
     update(dt: number): void {

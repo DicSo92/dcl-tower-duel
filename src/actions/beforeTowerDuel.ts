@@ -15,7 +15,7 @@ export class WaitTowerDuelAction implements utils.ActionsSequenceSystem.IAction 
         this.hasFinished = false
         utils.setTimeout(5000, () => {
             this.hasFinished = true
-            this.messageBus.emit("TowerDuelSequence", {
+            this.messageBus.emit("launchGame", {
                 test: "text test"
             })
         })
