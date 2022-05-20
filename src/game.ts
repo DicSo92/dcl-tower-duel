@@ -35,12 +35,21 @@ export default class Game implements ISystem {
     }
 
     private SetupWorldConfig() {
+
         this.world.quatNormalizeSkip = 0
         this.world.quatNormalizeFast = false
         this.world.gravity.set(0, -9.82, 0) // m/s²
         loadColliders(this.world)
-        const ballContactMaterial = new CANNON.ContactMaterial(this.physicsMaterial, this.physicsMaterial, { friction: 1, restitution: 0.5 })
+        const ballContactMaterial = new CANNON.ContactMaterial(this.physicsMaterial, this.physicsMaterial, { friction: 1, restitution: 0.33 })
         this.world.addContactMaterial(ballContactMaterial)
+
+        // Create a ground plane and apply physics material
+        const groundBody: CANNON.Body = new CANNON.Body({ mass: 0 })
+        groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2) // Reorient ground plane to be in the y-axis
+
+        groundBody.addShape(new CANNON.Plane())
+        groundBody.material = this.physicsMaterial
+        this.world.addBody(groundBody)
     }
 
     private buildScene() {
