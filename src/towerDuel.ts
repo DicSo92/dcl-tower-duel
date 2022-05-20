@@ -7,6 +7,7 @@ import GreenButton from "@/greenButton";
 import RedButton from "@/redButton";
 import PhysicsSystem from "@/physicsSystem";
 import { FallingBlock } from "@/fallingBlock";
+import Spawner from "@/spawner";
 
 export default class TowerDuel implements ISystem, ITowerDuel {
     physicsMaterial: CANNON.Material
@@ -43,6 +44,8 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     private Init = () => {
         this.BuildButtons()
         this.BuildEvents()
+        const spawner = new Spawner(this.physicsMaterial, this.world, this);
+        engine.addSystem(spawner);
         const towerBlock = new TowerBlock(this.physicsMaterial, this.world, this,true);
         engine.addSystem(towerBlock);
         engine.addSystem(new PhysicsSystem(this.fallingBlocks, this.world))

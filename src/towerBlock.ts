@@ -57,11 +57,6 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     }
 
     private setSpawnAnimation() {
-        // const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
-        // let StartPos = new Vector3(32, posY, 0)
-        // let EndPos = new Vector3(16, posY, 16)
-        // this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3))
-
         const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
         const startX = 32
         const startZ = 9 // cant be same as block position (8)
@@ -94,7 +89,6 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         } else if (endX > 30) {
             setEndPosWithBreakpoint(30)
         }
-
 
         log("adjacent", adjacent)
         log("opposite", opposite)
