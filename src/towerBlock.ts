@@ -63,10 +63,10 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         // this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3))
 
         const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
-        const startX = 28
-        const startZ = 3 // cant be same as block position (8)
+        const startX = 32
+        const startZ = 9 // cant be same as block position (8)
 
-        const endZ = startZ >= 8 ? 0 : 16
+        let endZ = startZ >= this.position.z ? 0 : 16
 
         const adjacent = Math.abs(this.position.z - startZ)
         const opposite = Math.abs(this.position.x - startX)
@@ -77,7 +77,24 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         const mainHypotenuse = mainAdjacent / Math.cos(angle)
         const mainOpposite = Math.sqrt(Math.pow(mainHypotenuse, 2) - Math.pow(mainAdjacent , 2))
 
-        const endX = startX + (startX >= this.position.x ? -1 : 1) * mainOpposite
+        let endX = startX + (startX >= this.position.x ? -1 : 1) * mainOpposite
+
+        // Prevent move animation to go outside the game scene
+        const setEndPosWithBreakpoint = (breakpoint: number) => {
+            const oppositeAngle = Math.asin(mainAdjacent / mainHypotenuse)
+            const outsideAdjacent = Math.abs(breakpoint - endX)
+            const outsideHypotenuse = outsideAdjacent / Math.cos(oppositeAngle)
+            const outsideOpposite = Math.sqrt(Math.pow(outsideHypotenuse, 2) - Math.pow(outsideAdjacent , 2))
+
+            endZ = Math.abs(endZ - outsideOpposite)
+            endX = breakpoint
+        }
+        if (endX < 18 ) {
+            setEndPosWithBreakpoint(18)
+        } else if (endX > 30) {
+            setEndPosWithBreakpoint(30)
+        }
+
 
         log("adjacent", adjacent)
         log("opposite", opposite)
@@ -90,15 +107,9 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
         let StartPos = new Vector3(startX, posY, startZ)
         let EndPos = new Vector3(endX, posY, endZ)
-        this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 4))
+        this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 6))
     }
 
-    private setRandomMaterial() {
-        const randomBetween = (min: number, max: number) => min + Math.floor(Math.random() * (max - min + 1));
-        const randomMaterialColor = new Material()
-        randomMaterialColor.albedoColor = Color3.FromInts(randomBetween(0, 255), randomBetween(0, 255), randomBetween(0, 255))
-        this.entity.addComponent(randomMaterialColor)
-    }
     public stopBlock(prevBlock: ITowerBlock) {
         this.entity.removeComponent(utils.MoveTransformComponent) // stopTransform animation
 
@@ -145,6 +156,13 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             const fallingBlocks = new FallingBlocks(this.physicsMaterial, this.world, this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
             engine.addSystem(fallingBlocks);
         }
+    }
+
+    private setRandomMaterial() {
+        const randomBetween = (min: number, max: number) => min + Math.floor(Math.random() * (max - min + 1));
+        const randomMaterialColor = new Material()
+        randomMaterialColor.albedoColor = Color3.FromInts(randomBetween(0, 255), randomBetween(0, 255), randomBetween(0, 255))
+        this.entity.addComponent(randomMaterialColor)
     }
 
     update(dt: number) {

@@ -31,17 +31,17 @@ export default class FallingBlocks implements ISystem {
 
     private BuildBlockX() {
         const transform: Transform = new Transform({
-            position: new Vector3(this.posX, this.towerBlockTransform.position.y, this.towerBlockTransform.position.z - this.offsetX / 2),
-            scale: new Vector3(Math.abs(this.offsetX), 0.4, this.towerBlockTransform.scale.z - Math.abs(this.offsetX))
+            position: new Vector3(this.posX, this.towerBlockTransform.position.y, this.towerBlockTransform.position.z + this.offsetZ / 2),
+            scale: new Vector3(Math.abs(this.offsetX), 0.4, this.towerBlockTransform.scale.z - Math.abs(this.offsetZ))
         })
         const fallBlock = new FallingBlock(transform, this.physicsMaterial, this.world)
         this.TowerDuel.fallingBlocks.push(fallBlock)
-
+        log(Math.abs(this.offsetX))
     }
     private BuildBlockZ() {
         const transform: Transform = new Transform({
-            position: new Vector3(this.towerBlockTransform.position.x - this.offsetZ / 2, this.towerBlockTransform.position.y, this.posZ),
-            scale: new Vector3(this.towerBlockTransform.scale.z - Math.abs(this.offsetZ), 0.4, Math.abs(this.offsetZ))
+            position: new Vector3(this.towerBlockTransform.position.x + this.offsetX / 2, this.towerBlockTransform.position.y, this.posZ),
+            scale: new Vector3(this.towerBlockTransform.scale.x - Math.abs(this.offsetX), 0.4, Math.abs(this.offsetZ))
         })
         const fallBlock = new FallingBlock(transform, this.physicsMaterial, this.world)
         this.TowerDuel.fallingBlocks.push(fallBlock)
