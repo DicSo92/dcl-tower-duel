@@ -27,3 +27,13 @@ export interface ITowerBlock {
 
     update?(dt: number): void
 }
+export interface IPlayerSelector {
+    entity: Entity
+    selector: Entity
+    messageBus: MessageBus
+    startPath: Vector3[]
+    endPath: Vector3[]
+    step: number
+    
+    update?(dt: number): void
+}

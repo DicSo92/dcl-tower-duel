@@ -28,7 +28,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
         this.messageBus = messageBus
         this.blockCount = 0
-        this.maxCount = 10
+        this.maxCount = 30
         this.spawnInterval = new Entity()
         this.blocks = []
         this.offsetY = 0.2
@@ -41,7 +41,6 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     }
 
     private Init = () => {
-        this.BuildButtons()
         this.BuildEvents()
         const towerBlock = new TowerBlock(this.physicsMaterial, this.world, this,true);
         engine.addSystem(towerBlock);
@@ -49,6 +48,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
         const lift = new Lift(this.playerInputsListener, this.messageBus)
         engine.addSystem(lift)
+        this.BuildButtons()
 
         // this.startSpawn()
     };
@@ -63,18 +63,10 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     }
 
     private BuildButtons() {
-        const greenButton = new GreenButton(new Transform({
-            position: new Vector3(24, 1.1, 18),
-            rotation: new Quaternion(0, 0, 0, 1),
-            scale: new Vector3(2, 2, 2)
-        }), this.messageBus);
+        const greenButton = new GreenButton(this.messageBus);
         engine.addSystem(greenButton);
 
-        const redButton = new RedButton(new Transform({
-            position: new Vector3(23, 1.1, 18),
-            rotation: new Quaternion(0, 0, 0, 1),
-            scale: new Vector3(2, 2, 2)
-        }), this.messageBus);
+        const redButton = new RedButton(this.messageBus);
         engine.addSystem(redButton);
     }
 
