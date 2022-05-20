@@ -42,11 +42,11 @@ export class FallingBlock extends Entity {
 
     private BuildEvents() {
         // Allow the user to interact with the ball
-        let forwardVector: Vector3 = Vector3.Forward().rotate(Camera.instance.rotation) // Camera's forward vector
-        const vectorScale: number = 25
         this.addComponent(
             new OnPointerDown(
                 (e: any) => {
+                    let forwardVector: Vector3 = Vector3.Forward().rotate(Camera.instance.rotation) // Camera's forward vector
+                    const vectorScale: number = 22
                     // Apply impulse based on the direction of the camera
                     this.body.applyImpulse(
                         new CANNON.Vec3(
