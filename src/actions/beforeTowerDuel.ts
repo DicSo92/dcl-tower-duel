@@ -39,7 +39,7 @@ export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
         this.hasFinished = false
         this.playerSelector.goToPlay()
 
-        utils.setTimeout(5000, () => {
+        utils.setTimeout(100, () => {
             this.hasFinished = true
         })
     }
