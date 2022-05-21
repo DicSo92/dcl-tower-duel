@@ -12,7 +12,7 @@ export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     //Method when action starts
     onStart(): void {
         this.hasFinished = false
-        this.playerSelector.goToPlay()
+        this.playerSelector.goToLobby()
         this.hasFinished = true
     }
     //Method to run on every frame

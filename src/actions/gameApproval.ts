@@ -1,5 +1,6 @@
 import PlayerSelector from '@/playerSelector'
 import * as utils from '@dcl/ecs-scene-utils'
+import * as ui from '@dcl/ui-scene-utils'
 
 //Use IAction to define action for movement
 export class WaitTowerDuelAction implements utils.ActionsSequenceSystem.IAction {
@@ -30,6 +31,7 @@ export class WaitTowerDuelAction implements utils.ActionsSequenceSystem.IAction 
 export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     playerSelector: PlayerSelector
+    
     constructor(playerSelector: PlayerSelector) {
         this.playerSelector = playerSelector
     }

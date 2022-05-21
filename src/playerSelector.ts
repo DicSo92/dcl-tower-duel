@@ -10,6 +10,7 @@ export default class PlayerSelector implements ISystem {
     startPath: Vector3[]
     endPath: Vector3[]
     step: number
+    isActive: boolean = false
 
     constructor(messageBus: MessageBus) {
         this.messageBus = messageBus
@@ -54,20 +55,24 @@ export default class PlayerSelector implements ISystem {
         btn.addComponent(new BoxShape())
         btn.getComponent(Transform).position.y = 1
         btn.addComponent(new OnPointerDown(() => {
-            this.messageBus.emit("gameApproval", {
-                test: "text test"
+            this.messageBus.emit("modeSelection", {
+                test: "Emit modeSelection"
             })
         }))
     }
 
     goToPlay() {
+        this.isActive = true
         this.entity.addComponent(new utils.FollowPathComponent(this.startPath, this.step, () => {
-            return
+            this.isActive = false
         }))
     }
 
     goToLobby() {
-        this.entity.addComponent(new utils.FollowPathComponent(this.endPath, this.step))
+        this.isActive = true
+        this.entity.addComponent(new utils.FollowPathComponent(this.endPath, this.step, () => {
+            this.isActive = false
+        }))
     }
 
     update() {
