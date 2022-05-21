@@ -70,7 +70,7 @@ export default class Spawner implements ISystem {
     private startSpawn() {
         this.spawnInterval.addComponent(new Interval(2500, () => {
             const animation = this.spawnAnimation()
-            const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this.TowerDuel, false, animation);
+            const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this.TowerDuel, false, this.messageBus, animation);
             engine.addSystem(spawningBlock);
             if (this.TowerDuel.blockCount >= this.TowerDuel.maxCount) this.spawnInterval.removeComponent(Interval)
         }))
@@ -135,9 +135,14 @@ export default class Spawner implements ISystem {
         this.messageBus.on("greenButtonClick", (test) => {
             log('spawn block')
             const animation = this.spawnAnimation()
-            const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this.TowerDuel, false, animation);
+            const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this.TowerDuel, false, this.messageBus, animation);
             engine.addSystem(spawningBlock);
         })
+    }
+
+    public Delete() {
+        engine.removeEntity(this.entity)
+        engine.removeEntity(this.spawnInterval)
     }
 
     update(dt: number) {

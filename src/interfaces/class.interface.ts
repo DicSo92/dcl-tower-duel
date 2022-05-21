@@ -15,7 +15,9 @@ export interface ITowerDuel {
     lastPosition: Vector3
     fallingBlocks: FallingBlock[]
     playerInputsListener: Input
+    isActive: Boolean
 
+    CleanEntities(): void
     update?(dt: number): void
 }
 export interface ITowerBlock {
@@ -45,7 +47,7 @@ export interface IMainGame {
     world: CANNON.World
     messageBus: MessageBus
 
-    TowerDuel?: ITowerDuel // ITowerDuel[]
+    TowerDuel?: ITowerDuel[] // ITowerDuel
     liftToGame: PlayerSelector
 
     update?(dt: number): void

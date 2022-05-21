@@ -2,7 +2,7 @@ import { IMainGame, ITowerDuel } from "@/interfaces/class.interface";
 import * as utils from "@dcl/ecs-scene-utils";
 import { GoToPlayAction, WaitTowerDuelAction } from "@/actions/gameApproval";
 import { LaunchGameAction } from "@/actions/launchGame";
-import { BackToLobbyAction } from "@/actions/afterTowerDuel";
+import { BackToLobbyAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
 import PlayerSelector from "@/playerSelector";
 import { SelectModeAction } from "./actions/modeSelection";
 
@@ -10,15 +10,15 @@ export default class MainGame implements ISystem, IMainGame {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
-
-    TowerDuel?: ITowerDuel // ITowerDuel[]
+    TowerDuel: ITowerDuel[] = [] // ITowerDuel
     liftToGame: PlayerSelector
+    isActive: boolean = false
 
     constructor(cannonMaterial: CANNON.Material, world: CANNON.World, messageBus: MessageBus) {
         this.physicsMaterial = cannonMaterial
         this.world = world
         this.messageBus = messageBus
-        this.liftToGame = new PlayerSelector(this.messageBus)
+        this.liftToGame = new PlayerSelector(this, this.messageBus)
 
         this.Init();
     }
@@ -28,19 +28,20 @@ export default class MainGame implements ISystem, IMainGame {
     };
 
     private BuildEvents() {
-        this.messageBus.on('modeSelection', () => { // onModeSelection
+        this.messageBus.on('modeSelection', (test) => { // onModeSelection
             log('modeSelection')
             this.addSequence('modeSelection')
         })
-        this.messageBus.on("gameApproval", () => { // onGameApprove
+        this.messageBus.on("gameApproval", (test) => { // onGameApprove
             log('gameApproval')
+            this.isActive = true
             this.addSequence('gameApproval')
         })
-        this.messageBus.on("launchGame", () => { // onLaunchGame
+        this.messageBus.on("launchGame", (test) => { // onLaunchGame
             log('launchGame')
             this.addSequence('launchGame')
         })
-        this.messageBus.on("AfterTowerDuelSequence", () => { // onAfterTowerDuelSequence
+        this.messageBus.on("AfterTowerDuelSequence", (test) => { // onAfterTowerDuelSequence
             log('AfterTowerDuelSequence')
             this.addSequence('AfterTowerDuelSequence')
         })
@@ -64,13 +65,14 @@ export default class MainGame implements ISystem, IMainGame {
             }
             case "launchGame": {
                 sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                    .then(new LaunchGameAction(this.physicsMaterial, this.world, this.messageBus))
+                    .then(new LaunchGameAction(this, this.physicsMaterial, this.world, this.messageBus))
                 
                 break;
             }
             case "AfterTowerDuelSequence": {
                 sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new BackToLobbyAction(this.liftToGame))
+                    // .then(new FinaliseTowerDuelAction(this))
                 
                 break;
             }

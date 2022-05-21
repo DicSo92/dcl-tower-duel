@@ -1,15 +1,17 @@
+import MainGame from "@/mainGame"
 import TowerDuel from "@/towerDuel"
 import * as utils from '@dcl/ecs-scene-utils'
 
 //Use IAction to define action for movement
 export class LaunchGameAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
-    towerDuel?: TowerDuel
+    parent: MainGame
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
 
-    constructor(physicsMaterial: CANNON.Material, world: CANNON.World, messageBus: MessageBus) {
+    constructor(parent: MainGame, physicsMaterial: CANNON.Material, world: CANNON.World, messageBus: MessageBus) {
+        this.parent = parent
         this.physicsMaterial = physicsMaterial
         this.world = world
         this.messageBus = messageBus
@@ -17,11 +19,11 @@ export class LaunchGameAction implements utils.ActionsSequenceSystem.IAction {
 
     //Method when action starts
     onStart(): void {
-        this.towerDuel = new TowerDuel(this.physicsMaterial, this.world, this.messageBus)
+        this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.messageBus))
         this.hasFinished = true
-        this.messageBus.emit("AfterTowerDuelSequence", {
-            test: "AfterTowerDuelSequence"
-        })
+        // this.messageBus.emit("AfterTowerDuelSequence", {
+        //     test: "AfterTowerDuelSequence"
+        // })
     }
     //Method to run on every frame
     update(dt: number): void { }

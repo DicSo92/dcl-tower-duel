@@ -8,13 +8,15 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     world: CANNON.World
     TowerDuel: ITowerDuel
     isBase: Boolean
+    messageBus: MessageBus
     animation?: MoveTransformComponent
 
     entity: Entity
 
-    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, towerDuel: ITowerDuel, isBase: boolean, animation?: MoveTransformComponent) {
+    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, towerDuel: ITowerDuel, isBase: boolean, messageBus: MessageBus, animation?: MoveTransformComponent) {
         this.physicsMaterial = cannonMaterial
         this.world = world
+        this.messageBus = messageBus
         this.TowerDuel = towerDuel
         this.isBase = isBase
         this.animation = animation
@@ -70,6 +72,10 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
             this.TowerDuel.blockCount -= 1
             this.TowerDuel.blocks.pop()
+
+            this.messageBus.emit("gameFinished", {
+                test: "gameFinished"
+            })
         } else {
             const newScale: Vector3 = this.TowerDuel.lastScale.clone()
             newScale.x = newScale.x - Math.abs(offsetX)

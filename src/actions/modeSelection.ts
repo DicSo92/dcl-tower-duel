@@ -5,14 +5,11 @@ import * as ui from '@dcl/ui-scene-utils'
 export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     messageBus: MessageBus
-    prompt?: ui.OptionPrompt
+    prompt: ui.OptionPrompt
 
     constructor(messageBus: MessageBus) {
         this.messageBus = messageBus
-    }
 
-    //Method when action starts
-    onStart(): void {
         this.prompt = new ui.OptionPrompt(
             'Select your mode !',
             'Would you play solo or versus player ?',
@@ -33,6 +30,16 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
             'Solo',
             'Pvp'
         )
+        this.prompt.hide()
+        this.messageBus.on('modeSelectionExit', () => { // onModeSelection
+            log('modeSelection')
+            this.prompt.hide()
+        })
+    }
+
+    //Method when action starts
+    onStart(): void {
+        this.prompt.show()
     }
     
     update(dt: number): void { }

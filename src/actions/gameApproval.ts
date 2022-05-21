@@ -31,7 +31,7 @@ export class WaitTowerDuelAction implements utils.ActionsSequenceSystem.IAction 
 export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     playerSelector: PlayerSelector
-    
+
     constructor(playerSelector: PlayerSelector) {
         this.playerSelector = playerSelector
     }
@@ -48,5 +48,6 @@ export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
     //Method to run on every frame
     update(dt: number): void { }
     //Method to run at the end
-    onFinish(): void { }
+    onFinish(): void {
+    }
 }
