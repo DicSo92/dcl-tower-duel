@@ -20,7 +20,11 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     lastScale: Vector3
     lastPosition: Vector3
     fallingBlocks: FallingBlock[]
+    spawner?: Spawner
+    towerBlock?: TowerBlock
+    lift?: Lift
     playerInputsListener: Input
+    isActive: Boolean = false
 
     constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, messageBus: MessageBus) {
         this.physicsMaterial = cannonMaterial
@@ -35,6 +39,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.lastPosition = new Vector3(24, this.offsetY, 8)
         this.fallingBlocks = []
         this.playerInputsListener = Input.instance
+        this.isActive = true
 
         this.Init();
     }
@@ -42,16 +47,16 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     private Init = () => {
         this.BuildEvents()
 
-        const spawner = new Spawner(this.physicsMaterial, this.world, this, this.messageBus);
-        engine.addSystem(spawner);
+        this.spawner = new Spawner(this.physicsMaterial, this.world, this, this.messageBus);
+        engine.addSystem(this.spawner);
 
-        const towerBlock = new TowerBlock(this.physicsMaterial, this.world, this,true);
-        engine.addSystem(towerBlock);
+        this.towerBlock = new TowerBlock(this.physicsMaterial, this.world, this, true, this.messageBus);
+        engine.addSystem(this.towerBlock);
 
         engine.addSystem(new PhysicsSystem(this.fallingBlocks, this.world))
 
-        const lift = new Lift(this.playerInputsListener, this.messageBus)
-        engine.addSystem(lift)
+        this.lift = new Lift(this.playerInputsListener, this.messageBus)
+        engine.addSystem(this.lift)
 
         this.BuildButtons()
     };
@@ -72,6 +77,28 @@ export default class TowerDuel implements ISystem, ITowerDuel {
             currentBlock.stopBlock(prevBlock)
 
         })
+        this.messageBus.on("gameFinished", (test) => {
+            log('onGameFinished')
+            this.isActive = false
+            this.messageBus.emit("AfterTowerDuelSequence", {
+                test: "AfterTowerDuelSequence"
+            })
+        })
+    }
+
+    public CleanEntities() {
+        if (this.spawner) this.spawner?.Delete()
+        if (this.towerBlock) this.towerBlock?.Delete()
+        if (this.blocks) {
+            for (let block in this.blocks) {
+                this.blocks[block].Delete()
+            }
+        }
+        if (this.fallingBlocks) {
+            for (let block in this.fallingBlocks) {
+                this.fallingBlocks[block].Delete()
+            }
+        }
     }
 
     public update(dt: number) {

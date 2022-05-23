@@ -76,4 +76,8 @@ export class FallingBlock extends Entity {
             new CANNON.Vec3(this.body.position.x, this.body.position.y, this.body.position.z)
         )
     }
+
+    public Delete() {
+        engine.removeEntity(this)
+    }
 }

@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@dcl/ecs-scene-utils": "^1.7.5",
+    "@dcl/ui-scene-utils": "^1.8.3",
     "@types/axios": "^0.14.0",
     "axios": "^0.24.0",
     "cannon": "github:schteppe/cannon.js",
@@ -24,6 +25,11 @@
   },
   "bundledDependencies": [
     "@dcl/ecs-scene-utils",
+    "dclconnect"
+  ],
+  "bundleDependencies": [
+    "@dcl/ecs-scene-utils",
+    "@dcl/ui-scene-utils",
     "dclconnect"
   ]
 }
