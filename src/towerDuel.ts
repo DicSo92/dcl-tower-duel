@@ -96,8 +96,8 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     }
 
     public CleanEntities() {
-        if (this.spawner) this.spawner?.Delete()
-        if (this.towerBlock) this.towerBlock?.Delete()
+        this.spawner?.Delete()
+        this.lift?.Delete()
         if (this.blocks) {
             for (let block in this.blocks) {
                 this.blocks[block].Delete()
@@ -108,6 +108,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
                 this.fallingBlocks[block].Delete()
             }
         }
+        this.towerBlock?.Delete()
     }
 
     public update(dt: number) {

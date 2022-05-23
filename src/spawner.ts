@@ -7,6 +7,7 @@ import {
 } from "@dcl/ecs-scene-utils";
 import { ITowerDuel } from "@/interfaces/class.interface";
 import TowerBlock from "@/towerBlock";
+import { GlobalLiftFlag } from "./lift";
 
 export default class Spawner implements ISystem {
     TowerDuel: ITowerDuel
@@ -124,6 +125,14 @@ export default class Spawner implements ISystem {
 
         let StartPos = new Vector3(startX, posY, startZ)
         let EndPos = new Vector3(endX, posY, endZ)
+        const liftFlags = engine.getComponentGroup(GlobalLiftFlag).entities
+        for (let lift in liftFlags) {
+            liftFlags[lift].addComponent(new MoveTransformComponent(
+                liftFlags[lift].getComponent(Transform).position,
+                new Vector3(liftFlags[lift].getComponent(Transform).position.x, posY, liftFlags[lift].getComponent(Transform).position.z),
+                2.5))
+                
+        }
 
         return new MoveTransformComponent(StartPos, EndPos, 2.5)
     }

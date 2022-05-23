@@ -1,7 +1,7 @@
 import TowerBlock from "@/towerBlock";
 import {FallingBlock} from "@/fallingBlock";
-import {MoveTransformComponent} from "@dcl/ecs-scene-utils";
-import PlayerSelector from "@/playerSelector";
+import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
+import LiftToGame from "@/liftToGame";
 import Spawner from "@/spawner";
 import Lift from "@/lift";
 
@@ -53,7 +53,7 @@ export interface IMainGame {
     messageBus: MessageBus
 
     TowerDuel?: ITowerDuel[] // ITowerDuel
-    liftToGame: PlayerSelector
+    liftToGame: LiftToGame
 
     update?(dt: number): void
 }

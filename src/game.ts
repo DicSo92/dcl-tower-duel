@@ -49,13 +49,13 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
-        const blueButton = new BlueButton(new Transform({
-            position: new Vector3(25, 1.1, 18),
-            rotation: new Quaternion(0, 0, 0, 1),
-            scale: new Vector3(2, 2, 2)
-        }), this.messageBus);
+        // const blueButton = new BlueButton(new Transform({
+        //     position: new Vector3(25, 1.1, 18),
+        //     rotation: new Quaternion(0, 0, 0, 1),
+        //     scale: new Vector3(2, 2, 2)
+        // }), this.messageBus);
 
-        engine.addSystem(blueButton);
+        // engine.addSystem(blueButton);
     }
     private BuildEvents() {
 

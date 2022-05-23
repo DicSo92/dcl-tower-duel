@@ -15,7 +15,7 @@ export default class Lift implements ISystem {
     playerInputs: Input
     step: number = 0
     state: boolean = false
-    startPosY: number = .2
+    startPosY: number = 1
     endPosY: number = 4
 
     constructor(inputs: Input, towerDuel: ITowerDuel, messageBus: MessageBus) {
@@ -23,10 +23,10 @@ export default class Lift implements ISystem {
         // Global def
         this.global.setParent(this.TowerDuel.gameArea)
         this.global.addComponent(new Transform({
-            position: new Vector3(8, this.startPosY, 16),
+            position: new Vector3(13, this.startPosY, 13),
             scale: new Vector3(1, 1, 1)
         }))
-        this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -180, 0)
+        this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -135, 0)
         this.global.addComponent(new GlobalLiftFlag())
 
         // Lift
@@ -70,6 +70,11 @@ export default class Lift implements ISystem {
         let StartPos = new Vector3(this.global.getComponent(Transform).position.x, this.endPosY, this.global.getComponent(Transform).position.z)
         let EndPos = new Vector3(this.global.getComponent(Transform).position.x, this.startPosY, this.global.getComponent(Transform).position.z)
         this.global.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
+    }
+
+    public Delete() {
+        engine.removeEntity(this.global)
+        engine.removeEntity(this.lift)
     }
 
     update(dt: number) {
