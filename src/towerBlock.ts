@@ -10,7 +10,6 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     isBase: Boolean
     messageBus: MessageBus
     animation?: MoveTransformComponent
-
     entity: Entity
 
     constructor(cannonMaterial: CANNON.Material, world: CANNON.World, towerDuel: ITowerDuel, isBase: boolean, messageBus: MessageBus, animation?: MoveTransformComponent) {
@@ -114,6 +113,10 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         const randomMaterialColor = new Material()
         randomMaterialColor.albedoColor = Color3.FromInts(randomBetween(0, 255), randomBetween(0, 255), randomBetween(0, 255))
         this.entity.addComponent(randomMaterialColor)
+    }
+
+    public Delete() {
+        engine.removeEntity(this.entity)
     }
 
     update(dt: number) {
