@@ -9,8 +9,6 @@ import { ITowerDuel } from "@/interfaces/class.interface";
 import TowerBlock from "@/towerBlock";
 
 export default class Spawner implements ISystem {
-    physicsMaterial: CANNON.Material
-    world: CANNON.World
     TowerDuel: ITowerDuel
     messageBus: MessageBus
 
@@ -18,13 +16,12 @@ export default class Spawner implements ISystem {
     moveDuration: number = 10
     spawnInterval: Entity
 
-    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, towerDuel: ITowerDuel, messageBus: MessageBus) {
-        this.physicsMaterial = cannonMaterial
-        this.world = world
+    constructor(towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
-        this.messageBus = messageBus
+        this.messageBus = this.TowerDuel.messageBus
 
         this.entity = new Entity();
+        this.entity.setParent(this.TowerDuel.gameArea)
         this.spawnInterval = new Entity()
 
         this.Init();
@@ -49,14 +46,14 @@ export default class Spawner implements ISystem {
 
             //Define the positions of the path for move animation
             let path = [
-                new Vector3(29, posY, 1),
-                new Vector3(31, posY, 3),
-                new Vector3(31, posY, 13),
-                new Vector3(29, posY, 15),
-                new Vector3(19, posY, 15),
-                new Vector3(17, posY, 13),
-                new Vector3(17, posY, 3),
-                new Vector3(19, posY, 1),
+                new Vector3(13, posY, 1),
+                new Vector3(15, posY, 3),
+                new Vector3(15, posY, 13),
+                new Vector3(13, posY, 15),
+                new Vector3(3, posY, 15),
+                new Vector3(1, posY, 13),
+                new Vector3(1, posY, 3),
+                new Vector3(3, posY, 1),
             ]
             this.entity.addComponentOrReplace(
                 this.entity.addComponent(new FollowCurvedPathComponent(path, this.moveDuration, 25, true, true, () => {
@@ -70,7 +67,7 @@ export default class Spawner implements ISystem {
     private startSpawn() {
         this.spawnInterval.addComponent(new Interval(2500, () => {
             const animation = this.spawnAnimation()
-            const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this.TowerDuel, false, this.messageBus, animation);
+            const spawningBlock = new TowerBlock(this.TowerDuel, animation);
             engine.addSystem(spawningBlock);
             if (this.TowerDuel.blockCount >= this.TowerDuel.maxCount) this.spawnInterval.removeComponent(Interval)
         }))
@@ -110,10 +107,10 @@ export default class Spawner implements ISystem {
             endZ = Math.abs(endZ - outsideOpposite)
             endX = breakpoint
         }
-        if (endX < 18 ) {
-            setEndPosWithBreakpoint(18)
-        } else if (endX > 30) {
-            setEndPosWithBreakpoint(30)
+        if (endX < 2 ) {
+            setEndPosWithBreakpoint(2)
+        } else if (endX > 14) {
+            setEndPosWithBreakpoint(14)
         }
 
         log("adjacent", adjacent)
@@ -135,7 +132,7 @@ export default class Spawner implements ISystem {
         this.messageBus.on("greenButtonClick", (test) => {
             log('spawn block')
             const animation = this.spawnAnimation()
-            const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this.TowerDuel, false, this.messageBus, animation);
+            const spawningBlock = new TowerBlock(this.TowerDuel, animation);
             engine.addSystem(spawningBlock);
         })
     }

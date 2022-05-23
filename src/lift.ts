@@ -1,4 +1,5 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
+import {ITowerDuel} from "@/interfaces/class.interface";
 
 @Component("GlobalLiftFlag")
 export class GlobalLiftFlag { }
@@ -8,6 +9,7 @@ export class GlobalLiftFlag { }
 //          global: Parent entity for phisicals group (lift and buttons)
 //          lift: Real lift PlaneShape Entity
 export default class Lift implements ISystem {
+    TowerDuel: ITowerDuel
     global: Entity = new Entity()
     lift: Entity
     playerInputs: Input
@@ -16,15 +18,16 @@ export default class Lift implements ISystem {
     startPosY: number = .2
     endPosY: number = 4
 
-    constructor(inputs: Input, messageBus: MessageBus) {
+    constructor(inputs: Input, towerDuel: ITowerDuel, messageBus: MessageBus) {
+        this.TowerDuel = towerDuel
         // Global def
+        this.global.setParent(this.TowerDuel.gameArea)
         this.global.addComponent(new Transform({
-            position: new Vector3(24, this.startPosY, 16),
+            position: new Vector3(8, this.startPosY, 16),
             scale: new Vector3(1, 1, 1)
         }))
         this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -180, 0)
         this.global.addComponent(new GlobalLiftFlag())
-        engine.addEntity(this.global)
 
         // Lift
         this.lift = new Entity()
