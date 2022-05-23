@@ -21,6 +21,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         this.animation = animation
 
         this.entity = new Entity();
+        this.entity.setParent(this.TowerDuel.gameArea)
         this.Init();
     }
 
@@ -66,7 +67,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
         if (Math.abs(offsetX) > prevBlockTransform.scale.x || Math.abs(offsetZ) > prevBlockTransform.scale.z) { // If block not on top of the previous
             log('game end!')
-            const fallBlock = new FallingBlock(currentBlockTransform, this.physicsMaterial, this.world)
+            const fallBlock = new FallingBlock(currentBlockTransform, this.physicsMaterial, this.world, this.TowerDuel)
             this.TowerDuel.fallingBlocks.push(fallBlock)
 
             this.TowerDuel.blockCount -= 1

@@ -13,6 +13,8 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
+
+    gameArea: Entity
     blockCount: number
     maxCount: number
     blocks: TowerBlock[]
@@ -29,14 +31,21 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, messageBus: MessageBus) {
         this.physicsMaterial = cannonMaterial
         this.world = cannonWorld
-
         this.messageBus = messageBus
+
+        this.gameArea = new Entity()
+        this.gameArea.addComponent(new Transform({
+            position: new Vector3(16, 0, 0),
+            scale: new Vector3(1, 1, 1)
+        }))
+        engine.addEntity(this.gameArea)
+
         this.blockCount = 0
         this.maxCount = 10
         this.blocks = []
         this.offsetY = 0.2
         this.lastScale = new Vector3(4, 0.4, 4)
-        this.lastPosition = new Vector3(24, this.offsetY, 8)
+        this.lastPosition = new Vector3(8, this.offsetY, 8)
         this.fallingBlocks = []
         this.playerInputsListener = Input.instance
         this.isActive = true
@@ -51,12 +60,12 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         engine.addSystem(this.spawner);
 
         this.towerBlock = new TowerBlock(this.physicsMaterial, this.world, this, true, this.messageBus);
-        engine.addSystem(this.towerBlock);
+        // engine.addSystem(this.towerBlock);
 
         engine.addSystem(new PhysicsSystem(this.fallingBlocks, this.world))
 
-        this.lift = new Lift(this.playerInputsListener, this.messageBus)
-        engine.addSystem(this.lift)
+        this.lift = new Lift(this.playerInputsListener, this, this.messageBus)
+        // engine.addSystem(this.lift)
 
         this.BuildButtons()
     };

@@ -2,11 +2,15 @@ import TowerBlock from "@/towerBlock";
 import {FallingBlock} from "@/fallingBlock";
 import {MoveTransformComponent} from "@dcl/ecs-scene-utils";
 import PlayerSelector from "@/playerSelector";
+import Spawner from "@/spawner";
+import Lift from "@/lift";
 
 export interface ITowerDuel {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
+
+    gameArea: Entity
     blockCount: number
     maxCount: number
     blocks: TowerBlock[]
@@ -14,6 +18,9 @@ export interface ITowerDuel {
     lastScale: Vector3
     lastPosition: Vector3
     fallingBlocks: FallingBlock[]
+    spawner?: Spawner
+    towerBlock?: TowerBlock
+    lift?: Lift
     playerInputsListener: Input
     isActive: Boolean
 

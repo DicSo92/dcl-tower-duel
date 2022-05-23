@@ -1,3 +1,5 @@
+import {ITowerDuel} from "@/interfaces/class.interface";
+
 const THROW_STRENGTH_MULTIPLIER = 0.125
 
 export class FallingBlock extends Entity {
@@ -5,10 +7,12 @@ export class FallingBlock extends Entity {
     public isThrown: boolean = true
     public body: CANNON.Body
     public world: CANNON.World
+    TowerDuel: ITowerDuel
 
-    constructor(transform: Transform, cannonMaterial: CANNON.Material, cannonWorld: CANNON.World) {
+    constructor(transform: Transform, cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, towerDuel: ITowerDuel) {
         super()
-        engine.addEntity(this)
+        this.TowerDuel = towerDuel
+        this.setParent(this.TowerDuel.gameArea)
 
         this.addComponent(new BoxShape())
         this.addComponent(transform)
@@ -30,7 +34,6 @@ export class FallingBlock extends Entity {
 
         this.isActive = false
         this.isThrown = true
-        this.setParent(null)
 
         // Physics
         this.body.wakeUp()
