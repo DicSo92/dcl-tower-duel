@@ -1,4 +1,4 @@
-import PlayerSelector from '@/playerSelector'
+import liftToGame from '@/liftToGame'
 import * as utils from '@dcl/ecs-scene-utils'
 import * as ui from '@dcl/ui-scene-utils'
 
@@ -30,16 +30,16 @@ export class WaitTowerDuelAction implements utils.ActionsSequenceSystem.IAction 
 //Use IAction to define action for movement
 export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
-    playerSelector: PlayerSelector
+    liftToGame: liftToGame
 
-    constructor(playerSelector: PlayerSelector) {
-        this.playerSelector = playerSelector
+    constructor(liftToGame: liftToGame) {
+        this.liftToGame = liftToGame
     }
 
     //Method when action starts
     onStart(): void {
         this.hasFinished = false
-        this.playerSelector.goToPlay()
+        this.liftToGame.goToPlay()
 
         utils.setTimeout(100, () => {
             this.hasFinished = true

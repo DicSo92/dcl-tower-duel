@@ -3,7 +3,7 @@ import * as utils from "@dcl/ecs-scene-utils";
 import { GoToPlayAction, WaitTowerDuelAction } from "@/actions/gameApproval";
 import { LaunchGameAction } from "@/actions/launchGame";
 import { BackToLobbyAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
-import PlayerSelector from "@/playerSelector";
+import LiftToGame from "@/liftToGame";
 import { SelectModeAction } from "./actions/modeSelection";
 
 export default class MainGame implements ISystem, IMainGame {
@@ -11,14 +11,14 @@ export default class MainGame implements ISystem, IMainGame {
     world: CANNON.World
     messageBus: MessageBus
     TowerDuel: ITowerDuel[] = [] // ITowerDuel
-    liftToGame: PlayerSelector
+    liftToGame: LiftToGame
     isActive: boolean = false
 
     constructor(cannonMaterial: CANNON.Material, world: CANNON.World, messageBus: MessageBus) {
         this.physicsMaterial = cannonMaterial
         this.world = world
         this.messageBus = messageBus
-        this.liftToGame = new PlayerSelector(this, this.messageBus)
+        this.liftToGame = new LiftToGame(this, this.messageBus)
 
         this.Init();
     }

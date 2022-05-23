@@ -1,10 +1,10 @@
 import * as utils from "@dcl/ecs-scene-utils";
 import MainGame from "./mainGame";
 
-@Component("playerSelector")
-export class PlayerSelectorFlag { }
+@Component("liftToGame")
+export class LiftToGameFlag { }
 
-export default class PlayerSelector implements ISystem {
+export default class LiftToGame implements ISystem {
     entity: Entity
     selector: Entity
     parent: MainGame
@@ -37,7 +37,7 @@ export default class PlayerSelector implements ISystem {
         ]
         this.pathLength = this.startPath.length
         this.entity = new Entity()
-        this.entity.addComponent(new PlayerSelectorFlag())
+        this.entity.addComponent(new LiftToGameFlag())
         this.entity.addComponent(new Transform({
             position: this.startPos,
             scale: new Vector3(1, 1, 1)

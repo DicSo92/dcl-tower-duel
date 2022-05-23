@@ -1,25 +1,25 @@
 import { ITowerDuel } from '@/interfaces/class.interface'
 import MainGame from '@/mainGame'
-import PlayerSelector from '@/playerSelector'
+import LiftToGame from '@/liftToGame'
 import TowerDuel from '@/towerDuel'
 import * as utils from '@dcl/ecs-scene-utils'
 
 //Use IAction to define action for movement
 export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
-    playerSelector: PlayerSelector
-    constructor(playerSelector: PlayerSelector) {
-        this.playerSelector = playerSelector
+    liftToGame: LiftToGame
+    constructor(liftToGame: LiftToGame) {
+        this.liftToGame = liftToGame
     }
 
     //Method when action starts
     onStart(): void {
         this.hasFinished = false
-        this.playerSelector.goToLobby()
+        this.liftToGame.goToLobby()
     }
     //Method to run on every frame
     update(dt: number): void {
-        if (!this.playerSelector.isActive) {
+        if (!this.liftToGame.isActive) {
             this.hasFinished = true
         }
      }
