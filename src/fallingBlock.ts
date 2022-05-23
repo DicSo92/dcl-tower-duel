@@ -9,14 +9,14 @@ export class FallingBlock extends Entity {
     public world: CANNON.World
     TowerDuel: ITowerDuel
 
-    constructor(transform: Transform, cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, towerDuel: ITowerDuel) {
+    constructor(towerDuel: ITowerDuel, transform: Transform) {
         super()
         this.TowerDuel = towerDuel
         this.setParent(this.TowerDuel.gameArea)
 
         this.addComponent(new BoxShape())
         this.addComponent(transform)
-        this.world = cannonWorld
+        this.world = this.TowerDuel.world
 
         // Create physics body for block
         this.body = new CANNON.Body({
@@ -27,7 +27,7 @@ export class FallingBlock extends Entity {
 
         // Add material and dampening to stop the ball rotating and moving continuously
         this.body.sleep()
-        this.body.material = cannonMaterial
+        this.body.material = this.TowerDuel.physicsMaterial
         this.body.linearDamping = 0.4
         this.body.angularDamping = 0.4
         this.world.addBody(this.body) // Add block body to the world

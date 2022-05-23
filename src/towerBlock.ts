@@ -4,20 +4,17 @@ import FallingBlocks from "@/fallingBlocks";
 import { FallingBlock } from "@/fallingBlock";
 
 export default class TowerBlock implements ISystem, ITowerBlock {
-    physicsMaterial: CANNON.Material
-    world: CANNON.World
     TowerDuel: ITowerDuel
-    isBase: Boolean
     messageBus: MessageBus
+    isBase: Boolean
     animation?: MoveTransformComponent
     entity: Entity
 
-    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, towerDuel: ITowerDuel, isBase: boolean, messageBus: MessageBus, animation?: MoveTransformComponent) {
-        this.physicsMaterial = cannonMaterial
-        this.world = world
-        this.messageBus = messageBus
+    constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
-        this.isBase = isBase
+        this.messageBus = this.TowerDuel.messageBus
+
+        this.isBase = !!isBase
         this.animation = animation
 
         this.entity = new Entity();
@@ -47,8 +44,8 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             position: new CANNON.Vec3(this.TowerDuel.lastPosition.x, this.TowerDuel.lastPosition.y, this.TowerDuel.lastPosition.z), // m
             shape: new CANNON.Box(new CANNON.Vec3(this.TowerDuel.lastScale.x / 2, this.TowerDuel.lastScale.y / 2, this.TowerDuel.lastScale.z / 2))
         })
-        basePhysic.material = this.physicsMaterial
-        this.world.addBody(basePhysic)
+        basePhysic.material = this.TowerDuel.physicsMaterial
+        this.TowerDuel.world.addBody(basePhysic)
     };
     private SpawnBlock() {
         this.entity.addComponent(new Transform({ scale: this.TowerDuel.lastScale }))
@@ -67,7 +64,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
         if (Math.abs(offsetX) > prevBlockTransform.scale.x || Math.abs(offsetZ) > prevBlockTransform.scale.z) { // If block not on top of the previous
             log('game end!')
-            const fallBlock = new FallingBlock(currentBlockTransform, this.physicsMaterial, this.world, this.TowerDuel)
+            const fallBlock = new FallingBlock(this.TowerDuel, currentBlockTransform)
             this.TowerDuel.fallingBlocks.push(fallBlock)
 
             this.TowerDuel.blockCount -= 1
@@ -101,10 +98,10 @@ export default class TowerBlock implements ISystem, ITowerBlock {
                 position: new CANNON.Vec3(newPosition.x, newPosition.y, newPosition.z), // m
                 shape: new CANNON.Box(new CANNON.Vec3(newScale.x / 2, newScale.y / 2, newScale.z / 2))
             })
-            blockPhysic.material = this.physicsMaterial
-            this.world.addBody(blockPhysic)
+            blockPhysic.material = this.TowerDuel.physicsMaterial
+            this.TowerDuel.world.addBody(blockPhysic)
 
-            const fallingBlocks = new FallingBlocks(this.physicsMaterial, this.world, this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
+            const fallingBlocks = new FallingBlocks(this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
             engine.addSystem(fallingBlocks);
         }
     }

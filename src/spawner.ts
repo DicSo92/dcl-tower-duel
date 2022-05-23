@@ -9,8 +9,6 @@ import { ITowerDuel } from "@/interfaces/class.interface";
 import TowerBlock from "@/towerBlock";
 
 export default class Spawner implements ISystem {
-    physicsMaterial: CANNON.Material
-    world: CANNON.World
     TowerDuel: ITowerDuel
     messageBus: MessageBus
 
@@ -18,11 +16,9 @@ export default class Spawner implements ISystem {
     moveDuration: number = 10
     spawnInterval: Entity
 
-    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, towerDuel: ITowerDuel, messageBus: MessageBus) {
-        this.physicsMaterial = cannonMaterial
-        this.world = world
+    constructor(towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
-        this.messageBus = messageBus
+        this.messageBus = this.TowerDuel.messageBus
 
         this.entity = new Entity();
         this.entity.setParent(this.TowerDuel.gameArea)
@@ -71,7 +67,7 @@ export default class Spawner implements ISystem {
     private startSpawn() {
         this.spawnInterval.addComponent(new Interval(2500, () => {
             const animation = this.spawnAnimation()
-            const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this.TowerDuel, false, this.messageBus, animation);
+            const spawningBlock = new TowerBlock(this.TowerDuel, animation);
             engine.addSystem(spawningBlock);
             if (this.TowerDuel.blockCount >= this.TowerDuel.maxCount) this.spawnInterval.removeComponent(Interval)
         }))
@@ -136,7 +132,7 @@ export default class Spawner implements ISystem {
         this.messageBus.on("greenButtonClick", (test) => {
             log('spawn block')
             const animation = this.spawnAnimation()
-            const spawningBlock = new TowerBlock(this.physicsMaterial, this.world, this.TowerDuel, false, this.messageBus, animation);
+            const spawningBlock = new TowerBlock(this.TowerDuel, animation);
             engine.addSystem(spawningBlock);
         })
     }

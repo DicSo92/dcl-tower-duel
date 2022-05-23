@@ -28,12 +28,10 @@ export interface ITowerDuel {
     update?(dt: number): void
 }
 export interface ITowerBlock {
-    physicsMaterial: CANNON.Material
-    world: CANNON.World
     TowerDuel: ITowerDuel
+    messageBus: MessageBus
     isBase: Boolean
     animation?: MoveTransformComponent
-
     entity: Entity
 
     update?(dt: number): void

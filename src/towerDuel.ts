@@ -56,10 +56,10 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     private Init = () => {
         this.BuildEvents()
 
-        this.spawner = new Spawner(this.physicsMaterial, this.world, this, this.messageBus);
+        this.spawner = new Spawner(this);
         engine.addSystem(this.spawner);
 
-        this.towerBlock = new TowerBlock(this.physicsMaterial, this.world, this, true, this.messageBus);
+        this.towerBlock = new TowerBlock(this, undefined, true);
         // engine.addSystem(this.towerBlock);
 
         engine.addSystem(new PhysicsSystem(this.fallingBlocks, this.world))
