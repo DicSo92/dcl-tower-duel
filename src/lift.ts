@@ -69,6 +69,11 @@ export default class Lift implements ISystem {
         this.global.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
     }
 
+    public Delete() {
+        engine.removeEntity(this.global)
+        engine.removeEntity(this.lift)
+    }
+
     update(dt: number) {
 
     }

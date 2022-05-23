@@ -1,7 +1,7 @@
 import TowerBlock from "@/towerBlock";
 import {FallingBlock} from "@/fallingBlock";
 import {MoveTransformComponent} from "@dcl/ecs-scene-utils";
-import PlayerSelector from "@/playerSelector";
+import LiftToGame from "@/liftToGame";
 
 export interface ITowerDuel {
     physicsMaterial: CANNON.Material
@@ -48,7 +48,7 @@ export interface IMainGame {
     messageBus: MessageBus
 
     TowerDuel?: ITowerDuel[] // ITowerDuel
-    liftToGame: PlayerSelector
+    liftToGame: LiftToGame
 
     update?(dt: number): void
 }

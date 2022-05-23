@@ -69,8 +69,8 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             const fallBlock = new FallingBlock(currentBlockTransform, this.physicsMaterial, this.world)
             this.TowerDuel.fallingBlocks.push(fallBlock)
 
-            this.TowerDuel.blockCount -= 1
-            this.TowerDuel.blocks.pop()
+            // this.TowerDuel.blockCount -= 1
+            // this.TowerDuel.blocks.pop()
 
             this.messageBus.emit("gameFinished", {
                 test: "gameFinished"
