@@ -13,16 +13,16 @@ export default class Lift implements ISystem {
     playerInputs: Input
     step: number = 0
     state: boolean = false
-    startPosY: number = .2
+    startPosY: number = 1
     endPosY: number = 4
 
     constructor(inputs: Input, messageBus: MessageBus) {
         // Global def
         this.global.addComponent(new Transform({
-            position: new Vector3(24, this.startPosY, 16),
+            position: new Vector3(29, this.startPosY, 13),
             scale: new Vector3(1, 1, 1)
         }))
-        this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -180, 0)
+        this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -135, 0)
         this.global.addComponent(new GlobalLiftFlag())
         engine.addEntity(this.global)
 
