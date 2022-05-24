@@ -1,19 +1,21 @@
-import { GlobalLiftFlag } from "./lift";
+import { ITowerDuel } from "@/interfaces/class.interface";
 
 export default class GreenButton implements ISystem {
+    TowerDuel: ITowerDuel
     entity: Entity;
     transform: Transform
     messageBus: MessageBus
     clip = new AudioClip('sounds/click.mp3');
 
-    constructor(messageBus: MessageBus) {
+    constructor(towerDuel: ITowerDuel) {
+        this.TowerDuel = towerDuel
         this.entity = new Entity()
         this.transform = new Transform({
             position: new Vector3(-0.5, 1.1, 1),
             rotation: new Quaternion(0, 0, 0, 1),
             scale: new Vector3(2, 2, 2)
         })
-        this.messageBus = messageBus
+        this.messageBus = this.TowerDuel.messageBus
         this.Init()
     }
     Init = () => {
@@ -24,12 +26,7 @@ export default class GreenButton implements ISystem {
     }
     // -----------------------------------------------------------------------------------------------------------------
     buildButton = () => {
-        const globalLift = engine.getComponentGroup(GlobalLiftFlag)
-        for (let entity in globalLift.entities) {
-            this.entity.setParent(globalLift.entities[entity])
-        }
         this.entity.addComponent(this.transform)
-        // engine.addEntity(this.entity)
         this.entity.addComponent(new GLTFShape('models/Green_Button.glb'))
     }
     buildPole = () => {

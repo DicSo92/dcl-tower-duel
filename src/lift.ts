@@ -1,5 +1,7 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 import {ITowerDuel} from "@/interfaces/class.interface";
+import RedButton from "@/redButton";
+import GreenButton from "@/greenButton";
 
 @Component("GlobalLiftFlag")
 export class GlobalLiftFlag { }
@@ -38,6 +40,12 @@ export default class Lift implements ISystem {
         this.lift.addComponent(new PlaneShape())
         this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(90, 0, 0)
         this.lift.setParent(this.global)
+
+        // Buttons
+        const redButton = new RedButton(this.TowerDuel);
+        redButton.entity.setParent(this.global)
+        const greenButton = new GreenButton(this.TowerDuel);
+        greenButton.entity.setParent(this.global)
 
         // Instance the input object
         this.playerInputs = inputs

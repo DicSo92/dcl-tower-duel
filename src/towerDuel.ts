@@ -1,10 +1,7 @@
 import { ITowerDuel } from "@/interfaces/class.interface";
-import { Interval } from "@dcl/ecs-scene-utils";
 
 import Lift from "@/lift";
 import TowerBlock from "@/towerBlock";
-import GreenButton from "@/greenButton";
-import RedButton from "@/redButton";
 import PhysicsSystem from "@/physicsSystem";
 import { FallingBlock } from "@/fallingBlock";
 import Spawner from "@/spawner";
@@ -66,17 +63,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
         this.lift = new Lift(this.playerInputsListener, this, this.messageBus)
         // engine.addSystem(this.lift)
-
-        this.BuildButtons()
     };
-
-    private BuildButtons() {
-        const greenButton = new GreenButton(this.messageBus);
-        engine.addSystem(greenButton);
-
-        const redButton = new RedButton(this.messageBus);
-        engine.addSystem(redButton);
-    }
 
     private BuildEvents() {
         this.messageBus.on("redButtonClick", (test) => {
