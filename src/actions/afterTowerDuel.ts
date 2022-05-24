@@ -7,6 +7,7 @@ import * as utils from '@dcl/ecs-scene-utils'
 export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     liftToGame: LiftToGame
+
     constructor(liftToGame: LiftToGame) {
         this.liftToGame = liftToGame
     }
@@ -38,6 +39,11 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
         this.parent.TowerDuel.forEach((item: ITowerDuel) => {
             item.CleanEntities()
         })
+        if (this.parent.parent.userId) {
+            this.parent.messageBus.emit('removeUserInGame', {
+                user: this.parent.parent.userId
+            })
+        }
         this.hasFinished = true
     }
     

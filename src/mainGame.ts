@@ -1,10 +1,11 @@
 import { IMainGame, ITowerDuel } from "@/interfaces/class.interface";
 import * as utils from "@dcl/ecs-scene-utils";
-import { CleanAvatarsAction, GoToPlayAction, WaitTowerDuelAction } from "@/actions/gameApproval";
+import { GoToPlayAction, WaitTowerDuelAction } from "@/actions/gameApproval";
 import { LaunchGameAction } from "@/actions/launchGame";
 import { BackToLobbyAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
 import LiftToGame from "@/liftToGame";
 import { SelectModeAction } from "./actions/modeSelection";
+import Game from "./game";
 
 export default class MainGame implements ISystem, IMainGame {
     physicsMaterial: CANNON.Material
@@ -16,10 +17,12 @@ export default class MainGame implements ISystem, IMainGame {
     modeSelectionAction: SelectModeAction
 
     isActive: boolean = false
+    parent: Game;
 
-    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, messageBus: MessageBus) {
+    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, parent: Game, messageBus: MessageBus) {
         this.physicsMaterial = cannonMaterial
         this.world = world
+        this.parent = parent
         this.messageBus = messageBus
         this.liftToGame = new LiftToGame(this)
 
@@ -94,7 +97,7 @@ export default class MainGame implements ISystem, IMainGame {
             }
             case "launchGame": {
                 sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                    .then(new LaunchGameAction(this, this.physicsMaterial, this.world, this.messageBus))
+                    .then(new LaunchGameAction(this, this.physicsMaterial, this.world))
                 
                 break;
             }

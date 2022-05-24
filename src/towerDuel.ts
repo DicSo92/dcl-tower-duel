@@ -27,11 +27,11 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     isActive: Boolean = false
     parent: MainGame;
 
-    constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, parent: MainGame, messageBus: MessageBus) {
+    constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, parent: MainGame) {
         this.physicsMaterial = cannonMaterial
         this.world = cannonWorld
         this.parent = parent
-        this.messageBus = messageBus
+        this.messageBus = this.parent.messageBus
 
         this.gameArea = new Entity()
         this.gameArea.addComponent(new Transform({

@@ -8,18 +8,19 @@ export class LaunchGameAction implements utils.ActionsSequenceSystem.IAction {
     parent: MainGame
     physicsMaterial: CANNON.Material
     world: CANNON.World
-    messageBus: MessageBus
 
-    constructor(parent: MainGame, physicsMaterial: CANNON.Material, world: CANNON.World, messageBus: MessageBus) {
+    constructor(parent: MainGame, physicsMaterial: CANNON.Material, world: CANNON.World) {
         this.parent = parent
         this.physicsMaterial = physicsMaterial
         this.world = world
-        this.messageBus = messageBus
     }
 
     //Method when action starts
     onStart(): void {
-        this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent, this.messageBus))
+        this.parent.messageBus.emit('addUserInGame', {
+            user: this.parent.parent.userId
+        })
+        this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent))
         this.hasFinished = true
     }
     //Method to run on every frame
