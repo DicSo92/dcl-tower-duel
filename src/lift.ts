@@ -60,6 +60,16 @@ export default class Lift implements ISystem {
         })
     }
 
+    public autoMove() {
+        const posY = this.TowerDuel.offsetY + 0.4 * (this.TowerDuel.blockCount + 1)
+        const currentLiftPosition = this.global.getComponent(Transform).position
+        this.global.addComponentOrReplace(new MoveTransformComponent(
+            currentLiftPosition,
+            new Vector3(currentLiftPosition.x, posY, currentLiftPosition.z),
+            2.5)
+        )
+    }
+
     moveUp() {
         let StartPos = new Vector3(this.global.getComponent(Transform).position.x, this.startPosY, this.global.getComponent(Transform).position.z)
         let EndPos = new Vector3(this.global.getComponent(Transform).position.x, this.endPosY, this.global.getComponent(Transform).position.z)

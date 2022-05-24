@@ -100,9 +100,10 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             })
             blockPhysic.material = this.TowerDuel.physicsMaterial
             this.TowerDuel.world.addBody(blockPhysic)
-
             const fallingBlocks = new FallingBlocks(this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
             engine.addSystem(fallingBlocks);
+
+            this.TowerDuel.spawner?.spawnBlock()
         }
     }
 

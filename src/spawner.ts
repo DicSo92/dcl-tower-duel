@@ -33,8 +33,6 @@ export default class Spawner implements ISystem {
         this.entity.getComponent(ToggleComponent).toggle()
         engine.addEntity(this.entity)
         this.BuildEvents()
-
-        // this.startSpawn()
     };
 
     private BuildSpawner() {
@@ -65,14 +63,13 @@ export default class Spawner implements ISystem {
         )
     }
 
-    private startSpawn() {
-        this.spawnInterval.addComponent(new Interval(2500, () => {
-            const animation = this.spawnAnimation()
-            const spawningBlock = new TowerBlock(this.TowerDuel, animation);
-            engine.addSystem(spawningBlock);
-            if (this.TowerDuel.blockCount >= this.TowerDuel.maxCount) this.spawnInterval.removeComponent(Interval)
-        }))
-        engine.addEntity(this.spawnInterval)
+    public spawnBlock() {
+        log('spawn block')
+        const animation = this.spawnAnimation()
+        const spawningBlock = new TowerBlock(this.TowerDuel, animation);
+        engine.addSystem(spawningBlock);
+
+        this.TowerDuel.lift?.autoMove()
     }
 
     private spawnAnimation(): MoveTransformComponent {
@@ -125,24 +122,13 @@ export default class Spawner implements ISystem {
 
         let StartPos = new Vector3(startX, posY, startZ)
         let EndPos = new Vector3(endX, posY, endZ)
-        const liftFlags = engine.getComponentGroup(GlobalLiftFlag).entities
-        for (let lift in liftFlags) {
-            liftFlags[lift].addComponent(new MoveTransformComponent(
-                liftFlags[lift].getComponent(Transform).position,
-                new Vector3(liftFlags[lift].getComponent(Transform).position.x, posY, liftFlags[lift].getComponent(Transform).position.z),
-                2.5))
-                
-        }
 
-        return new MoveTransformComponent(StartPos, EndPos, 2.5)
+        return new MoveTransformComponent(StartPos, EndPos, 3)
     }
 
     private BuildEvents() {
         this.messageBus.on("greenButtonClick", (test) => {
-            log('spawn block')
-            const animation = this.spawnAnimation()
-            const spawningBlock = new TowerBlock(this.TowerDuel, animation);
-            engine.addSystem(spawningBlock);
+            this.spawnBlock()
         })
     }
 
