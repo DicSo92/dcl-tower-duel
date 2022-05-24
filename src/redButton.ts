@@ -45,9 +45,7 @@ export default class RedButton implements ISystem {
             new OnPointerDown(() => {
                 log('redButton click')
                 this.play()
-                this.messageBus.emit("redButtonClick", {
-                    test: "text test"
-                })
+                this.TowerDuel.StopBlock()
             }, {
                 button: ActionButton.POINTER,
                 showFeedback: true,

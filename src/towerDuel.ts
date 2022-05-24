@@ -5,6 +5,7 @@ import TowerBlock from "@/towerBlock";
 import PhysicsSystem from "@/physicsSystem";
 import { FallingBlock } from "@/fallingBlock";
 import Spawner from "@/spawner";
+import MainGame from "./mainGame";
 
 export default class TowerDuel implements ISystem, ITowerDuel {
     physicsMaterial: CANNON.Material
@@ -24,10 +25,12 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     lift?: Lift
     playerInputsListener: Input
     isActive: Boolean = false
+    parent: MainGame;
 
-    constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, messageBus: MessageBus) {
+    constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, parent: MainGame, messageBus: MessageBus) {
         this.physicsMaterial = cannonMaterial
         this.world = cannonWorld
+        this.parent = parent
         this.messageBus = messageBus
 
         this.gameArea = new Entity()
@@ -66,20 +69,17 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     };
 
     private BuildEvents() {
-        this.messageBus.on("redButtonClick", (test) => {
-            log('stop block')
-            const currentBlock: TowerBlock = this.blocks[this.blocks.length - 1]
-            const prevBlock: TowerBlock = this.blocks[this.blocks.length - 2]
-            currentBlock.stopBlock(prevBlock)
+    }
+    public StopBlock() {
+        log('stop block')
+        const currentBlock: TowerBlock = this.blocks[this.blocks.length - 1]
+        const prevBlock: TowerBlock = this.blocks[this.blocks.length - 2]
+        currentBlock.stopBlock(prevBlock)
+    }
 
-        })
-        this.messageBus.on("gameFinished", (test) => {
-            log('onGameFinished')
-            this.isActive = false
-            this.messageBus.emit("AfterTowerDuelSequence", {
-                test: "AfterTowerDuelSequence"
-            })
-        })
+    public GameFinish() {
+        this.isActive = false
+        this.parent.afterTowerDuel()
     }
 
     public CleanEntities() {

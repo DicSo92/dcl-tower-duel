@@ -19,11 +19,8 @@ export class LaunchGameAction implements utils.ActionsSequenceSystem.IAction {
 
     //Method when action starts
     onStart(): void {
-        this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.messageBus))
+        this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent, this.messageBus))
         this.hasFinished = true
-        // this.messageBus.emit("AfterTowerDuelSequence", {
-        //     test: "AfterTowerDuelSequence"
-        // })
     }
     //Method to run on every frame
     update(dt: number): void { }

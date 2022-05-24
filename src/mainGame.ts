@@ -1,6 +1,6 @@
 import { IMainGame, ITowerDuel } from "@/interfaces/class.interface";
 import * as utils from "@dcl/ecs-scene-utils";
-import { GoToPlayAction, WaitTowerDuelAction } from "@/actions/gameApproval";
+import { CleanAvatarsAction, GoToPlayAction, WaitTowerDuelAction } from "@/actions/gameApproval";
 import { LaunchGameAction } from "@/actions/launchGame";
 import { BackToLobbyAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
 import LiftToGame from "@/liftToGame";
@@ -10,15 +10,21 @@ export default class MainGame implements ISystem, IMainGame {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
+
     TowerDuel: ITowerDuel[] = [] // ITowerDuel
     liftToGame: LiftToGame
+    modeSelectionAction: SelectModeAction
+
     isActive: boolean = false
 
     constructor(cannonMaterial: CANNON.Material, world: CANNON.World, messageBus: MessageBus) {
         this.physicsMaterial = cannonMaterial
         this.world = world
         this.messageBus = messageBus
-        this.liftToGame = new LiftToGame(this, this.messageBus)
+        this.liftToGame = new LiftToGame(this)
+
+        // Actions
+        this.modeSelectionAction = new SelectModeAction(this)
 
         this.Init();
     }
@@ -28,23 +34,34 @@ export default class MainGame implements ISystem, IMainGame {
     };
 
     private BuildEvents() {
-        this.messageBus.on('modeSelection', (test) => { // onModeSelection
-            log('modeSelection')
-            this.addSequence('modeSelection')
-        })
-        this.messageBus.on("gameApproval", (test) => { // onGameApprove
-            log('gameApproval')
-            this.isActive = true
-            this.addSequence('gameApproval')
-        })
-        this.messageBus.on("launchGame", (test) => { // onLaunchGame
-            log('launchGame')
-            this.addSequence('launchGame')
-        })
-        this.messageBus.on("AfterTowerDuelSequence", (test) => { // onAfterTowerDuelSequence
-            log('AfterTowerDuelSequence')
-            this.addSequence('AfterTowerDuelSequence')
-        })
+    }
+
+    public modeSelection(type: string) {
+        log('modeSelection')
+        if (type === 'in') this.addSequence('modeSelection')
+        else this.modeSelectionAction?.prompt.hide()
+    }
+
+    public gameApprovalSolo(type: string) {
+        log('gameApproval')
+        this.isActive = true
+        this.addSequence('gameApprovalSolo')
+    }
+
+    public gameApprovalMulti(type: string) {
+        log('gameApproval')
+        this.isActive = true
+        this.addSequence('gameApprovalMulti')
+    }
+
+    public launchGame() {
+        log('launchGame')
+        this.addSequence('launchGame')
+    }
+
+    public afterTowerDuel() {
+        log('afterTowerDuel')
+        this.addSequence('AfterTowerDuelSequence')
     }
 
     private addSequence(type: string) {
@@ -52,15 +69,27 @@ export default class MainGame implements ISystem, IMainGame {
         switch (type) {
             case "modeSelection": {
                 sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                    .then(new SelectModeAction(this.messageBus))
+                    .then(this.modeSelectionAction)
                 
                 break;
             }
-            case "gameApproval": {
+            case "gameApprovalSolo": {
                 sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new GoToPlayAction(this.liftToGame))
-                    .then(new WaitTowerDuelAction(this.messageBus))
-                
+                    // .then(new CleanAvatarsAction(this.messageBus))
+                    .then(new WaitTowerDuelAction(this)) //, this.messageBus
+
+                break;
+            }
+            case "gameApprovalMulti": {
+                // Wait other player
+                // Find player
+                // Clean scene, move player
+
+                // sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                //     .then(new GoToPlayAction(this.liftToGame))
+                //     .then(new WaitTowerDuelAction(this.messageBus))
+
                 break;
             }
             case "launchGame": {

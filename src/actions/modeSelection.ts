@@ -1,40 +1,32 @@
+import MainGame from '@/mainGame'
 import * as utils from '@dcl/ecs-scene-utils'
 import * as ui from '@dcl/ui-scene-utils'
 
 //Use IAction to define action for movement
 export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
-    messageBus: MessageBus
     prompt: ui.OptionPrompt
+    parent: MainGame
 
-    constructor(messageBus: MessageBus) {
-        this.messageBus = messageBus
-
+    constructor(parent: MainGame) {
+        this.parent = parent
         this.prompt = new ui.OptionPrompt(
             'Select your mode !',
             'Would you play solo or versus player ?',
             () => {
                 log(`picked option Solo`)
-                this.messageBus.emit("gameApproval", {
-                    test: "gameApproval.solo"
-                })
+                this.parent.gameApprovalSolo('gameApprovalSolo')
                 this.hasFinished = true
             },
             () => {
-                log(`picked option B`)
-                this.messageBus.emit("gameApproval", {
-                    test: "gameApproval.pvp"
-                })
+                log(`picked option Multi`)
+                this.parent.gameApprovalMulti('gameApprovalMulti')
                 this.hasFinished = true
             },
             'Solo',
             'Pvp'
         )
         this.prompt.hide()
-        this.messageBus.on('modeSelectionExit', () => { // onModeSelection
-            log('modeSelection')
-            this.prompt.hide()
-        })
     }
 
     //Method when action starts
