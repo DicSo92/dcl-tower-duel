@@ -44,7 +44,9 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
                 user: this.parent.parent.userId
             })
         }
-        this.hasFinished = true
+        utils.setTimeout(1000, () => {
+            this.hasFinished = true
+        })
     }
     
     update(dt: number): void { }

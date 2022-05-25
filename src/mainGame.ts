@@ -102,8 +102,8 @@ export default class MainGame implements ISystem, IMainGame {
             }
             case "AfterTowerDuelSequence": {
                 sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                    .then(new BackToLobbyAction(this.liftToGame))
                     .then(new FinaliseTowerDuelAction(this))
+                    .then(new BackToLobbyAction(this.liftToGame))
                 
                 break;
             }
