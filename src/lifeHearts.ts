@@ -3,18 +3,19 @@ import Heart from "./heart";
 import Lift from "./lift";
 
 export default class LifeHearts implements ISystem {
+    TowerDuel: ITowerDuel
     messageBus: MessageBus
     entity: Entity;
     hearts: Heart[] = []
     maxHearts: number = 3
     heartCount: number = this.maxHearts
-    parent: Lift;
+    // parent: Lift;
 
-    constructor(parent: Lift) {
-        this.parent = parent
-        this.messageBus = this.parent.TowerDuel.messageBus
+    constructor(towerDuel: ITowerDuel, lift: Lift) {
+        this.TowerDuel = towerDuel
+        this.messageBus = towerDuel.messageBus
         this.entity = new Entity()
-        this.entity.setParent(this.parent.global)
+        this.entity.setParent(lift.global)
         this.entity.addComponent(new Transform({
             position: new Vector3(-.75, 1.5, -1.5),
             scale: new Vector3(1, 1, 1)
@@ -37,21 +38,17 @@ export default class LifeHearts implements ISystem {
 
     buildEvents = () => {
         this.messageBus.on('looseHeart', () => {
-            let fHearts = this.hearts.filter(heart => heart.isActive)
-            if (fHearts.length) {
-                fHearts[0].toggle()
-            } else {
-                log("No hearts remaining")
-            }
+            this.decremLife()
         })
     }
-    public decremLife() {
+    private decremLife() {
         let fHearts = this.hearts.filter(heart => heart.isActive)
         if (fHearts.length) {
             fHearts[0].toggle()
+            this.TowerDuel.spawner?.spawnBlock()
         } else {
             log("No hearts remaining")
-            this.parent.TowerDuel.GameFinish()
+            this.TowerDuel.GameFinish()
         }
     }
     update(dt: number) {

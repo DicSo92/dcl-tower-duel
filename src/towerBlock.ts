@@ -5,7 +5,7 @@ import { FallingBlock } from "@/fallingBlock";
 
 export default class TowerBlock implements ISystem, ITowerBlock {
     TowerDuel: ITowerDuel
-    // messageBus: MessageBus
+    messageBus: MessageBus
     isBase: Boolean
     animation?: MoveTransformComponent
     entity: Entity
@@ -13,7 +13,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
     constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
-        // this.messageBus = this.TowerDuel.messageBus
+        this.messageBus = this.TowerDuel.messageBus
 
         this.isBase = !!isBase
         this.animation = animation
@@ -48,11 +48,11 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         basePhysic.material = this.TowerDuel.physicsMaterial
         this.TowerDuel.world.addBody(basePhysic)
     };
+
     private SpawnBlock() {
         this.entity.addComponent(new Transform({ scale: this.TowerDuel.lastScale }))
         this.entity.addComponent(new BoxShape())
         if (this.animation) this.entity.addComponent(this.animation)
-        // this.setSpawnAnimation()
     }
 
     public stopBlock(prevBlock: ITowerBlock) {
@@ -68,14 +68,14 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         this.entity.removeComponent(BoxShape)
 
         if (Math.abs(offsetX) > prevBlockTransform.scale.x || Math.abs(offsetZ) > prevBlockTransform.scale.z) { // If block not on top of the previous
-            log('game end!')
+            log('Block missed')
             const fallBlock = new FallingBlock(this.TowerDuel, currentBlockTransform)
             this.TowerDuel.fallingBlocks.push(fallBlock)
 
             this.TowerDuel.blockCount -= 1
             this.TowerDuel.blocks.pop()
-            
-            this.TowerDuel.lift?.hearts.decremLife()
+
+            this.messageBus.emit("looseHeart", {})
         } else {
             const newScale: Vector3 = this.TowerDuel.lastScale.clone()
             newScale.x = newScale.x - Math.abs(offsetX)

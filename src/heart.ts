@@ -52,7 +52,7 @@ export default class Heart implements ISystem {
             }, {
                 button: ActionButton.POINTER,
                 showFeedback: true,
-                hoverText: "Toggle Block",
+                hoverText: "Remove Heart",
             })
         )
     }

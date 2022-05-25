@@ -44,7 +44,7 @@ export default class Lift implements ISystem {
         this.lift.setParent(this.global)
 
         // // User Interface
-        this.hearts = new LifeHearts(this)
+        this.hearts = new LifeHearts(this.TowerDuel, this)
 
         // Buttons
         const redButton = new RedButton(this.TowerDuel);
