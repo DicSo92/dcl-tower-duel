@@ -3,6 +3,7 @@ import { ITowerDuel } from "@/interfaces/class.interface";
 import RedButton from "@/redButton";
 import GreenButton from "@/greenButton";
 import LifeHearts from "./lifeHearts";
+import StaminaBar from "@/staminaBar";
 
 @Component("GlobalLiftFlag")
 export class GlobalLiftFlag { }
@@ -21,6 +22,7 @@ export default class Lift implements ISystem {
     startPos: Vector3 = new Vector3(14, 1, 14)
     endPosY: number = 4
     hearts: LifeHearts
+    staminaBar: StaminaBar
 
     constructor(inputs: Input, towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
@@ -45,6 +47,7 @@ export default class Lift implements ISystem {
 
         // // User Interface
         this.hearts = new LifeHearts(this.TowerDuel, this)
+        this.staminaBar = new StaminaBar(this.TowerDuel, this)
 
         // Buttons
         const redButton = new RedButton(this.TowerDuel);
