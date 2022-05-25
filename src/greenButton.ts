@@ -42,11 +42,9 @@ export default class GreenButton implements ISystem {
     buildEvents = () => {
         this.entity.addComponent(
             new OnPointerDown(() => {
-                log('greenButton click')
+                log('StarterButton click')
                 this.play()
-                this.messageBus.emit("greenButtonClick", {
-                    test: "text test"
-                })
+                this.messageBus.emit("StarterButton_" + this.TowerDuel.towerDuelId, { })
             }, {
                 button: ActionButton.POINTER,
                 showFeedback: true,

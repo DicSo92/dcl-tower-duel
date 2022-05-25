@@ -1,4 +1,5 @@
-import {ITowerDuel} from "@/interfaces/class.interface";
+import { ITowerDuel } from "@/interfaces/class.interface";
+import { ExpireIn } from "@dcl/ecs-scene-utils";
 
 const THROW_STRENGTH_MULTIPLIER = 0.125
 
@@ -41,6 +42,8 @@ export class FallingBlock extends Entity {
         this.body.angularVelocity.setZero()
 
         this.BuildEvents()
+
+        this.addComponent(new ExpireIn(4000))
     }
 
     private BuildEvents() {

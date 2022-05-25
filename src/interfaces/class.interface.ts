@@ -10,6 +10,7 @@ import { SelectModeAction } from "@/actions/modeSelection";
 export interface ITowerDuel {
     physicsMaterial: CANNON.Material
     world: CANNON.World
+    towerDuelId: string
     messageBus: MessageBus
 
     gameArea: Entity

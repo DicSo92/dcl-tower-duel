@@ -41,7 +41,8 @@ export default class LifeHearts implements ISystem {
             this.decremLife()
         })
     }
-    private decremLife() {
+
+    public decremLife() {
         let fHearts = this.hearts.filter(heart => heart.isActive)
         if (fHearts.length) {
             fHearts[0].toggle()

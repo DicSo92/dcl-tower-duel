@@ -22,10 +22,13 @@ export default class LiftToGame implements ISystem {
         this.lift = new Entity()
         this.lift.addComponent(new Transform({
             position: new Vector3(0, 0, 0),
-            scale: new Vector3(this.radius, 0.02, this.radius)
+            scale: new Vector3(this.radius, 1, this.radius)
         }))
         this.lift.addComponent(new GLTFShape('models/openedLiftToGame.glb'))
-
+        // const animator = new Animator()
+        // animator.addClip(new AnimationState('UpAndDown'))
+        // this.lift.addComponent(animator)
+        
         this.startPath = [
             this.startPos,
             new Vector3(this.startPos.x, 6, this.startPos.z),
@@ -67,6 +70,9 @@ export default class LiftToGame implements ISystem {
         }))
 
         engine.addEntity(this.entity)
+
+        // this.lift.getComponent(Animator).getClip('UpAndDown').reset()
+        // this.lift.getComponent(Animator).getClip('UpAndDown').play()
     }
 
     goToPlay() {
