@@ -2,6 +2,7 @@ import BlueButton from "@/blueButton";
 import { loadColliders } from "@/colliderSetup";
 import { IMainGame } from "@/interfaces/class.interface";
 import MainGame from "@/mainGame";
+import { getUserData } from "@decentraland/Identity"
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -14,8 +15,9 @@ export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
-
     mainGame?: IMainGame
+    usersInGame: Array<String> = []
+    userId?: string
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
@@ -26,8 +28,14 @@ export default class Game implements ISystem {
         this.buildScene()
         this.BuildEvents()
 
-        this.mainGame = new MainGame(this.physicsMaterial, this.world, this.messageBus)
+        this.mainGame = new MainGame(this.physicsMaterial, this.world, this, this.messageBus)
         engine.addSystem(this.mainGame)
+
+        executeTask(async () => {
+            let data = await getUserData()
+            log(data)
+            this.userId = data?.userId
+        })
     }
 
     private SetupWorldConfig() {
@@ -58,7 +66,30 @@ export default class Game implements ISystem {
         // engine.addSystem(blueButton);
     }
     private BuildEvents() {
-
+        this.messageBus.emit('getUsersInGame', {})
+        this.messageBus.on('getUsersInGame', () => {
+            if (this.usersInGame.length > 0) {
+                this.messageBus.emit('setUsersInGame', { users: this.usersInGame })
+            }
+        })
+        this.messageBus.on('setUsersInGame', (users) => {
+            if (users) {
+                this.usersInGame = [...users]
+            }
+            log('usersInGame', this.usersInGame)
+        })
+        this.messageBus.on('addUserInGame', (data) => {
+            if (data) {
+                this.usersInGame = [...this.usersInGame, data.user]
+            }
+            log('usersInGame', this.usersInGame)
+        })
+        this.messageBus.on('removeUserInGame', (data) => {
+            if (data) {
+                this.usersInGame = [...this.usersInGame.filter((item: String) => item !== data.user)]
+            }
+            log('usersInGame', this.usersInGame)
+        })
     }
 
     update(dt: number): void {

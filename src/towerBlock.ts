@@ -5,14 +5,14 @@ import { FallingBlock } from "@/fallingBlock";
 
 export default class TowerBlock implements ISystem, ITowerBlock {
     TowerDuel: ITowerDuel
-    messageBus: MessageBus
+    // messageBus: MessageBus
     isBase: Boolean
     animation?: MoveTransformComponent
     entity: Entity
 
     constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
-        this.messageBus = this.TowerDuel.messageBus
+        // this.messageBus = this.TowerDuel.messageBus
 
         this.isBase = !!isBase
         this.animation = animation
@@ -70,9 +70,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             // this.TowerDuel.blockCount -= 1
             // this.TowerDuel.blocks.pop()
 
-            this.messageBus.emit("gameFinished", {
-                test: "gameFinished"
-            })
+            this.TowerDuel.GameFinish()
         } else {
             const newScale: Vector3 = this.TowerDuel.lastScale.clone()
             newScale.x = newScale.x - Math.abs(offsetX)

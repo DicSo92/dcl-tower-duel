@@ -4,6 +4,8 @@ import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 import LiftToGame from "@/liftToGame";
 import Spawner from "@/spawner";
 import Lift from "@/lift";
+import MainGame from "@/mainGame";
+import { SelectModeAction } from "@/actions/modeSelection";
 
 export interface ITowerDuel {
     physicsMaterial: CANNON.Material
@@ -23,13 +25,16 @@ export interface ITowerDuel {
     lift?: Lift
     playerInputsListener: Input
     isActive: Boolean
+    parent: MainGame
 
     CleanEntities(): void
+    StopBlock(): void
+    GameFinish(): void
     update?(dt: number): void
 }
 export interface ITowerBlock {
     TowerDuel: ITowerDuel
-    messageBus: MessageBus
+    // messageBus: MessageBus
     isBase: Boolean
     animation?: MoveTransformComponent
     entity: Entity
@@ -54,6 +59,13 @@ export interface IMainGame {
 
     TowerDuel?: ITowerDuel[] // ITowerDuel
     liftToGame: LiftToGame
+    modeSelectionAction: SelectModeAction
+    isActive: boolean
 
+    modeSelection(type: string): void
+    gameApprovalSolo(type: string): void
+    gameApprovalMulti(type: string): void
+    launchGame(type: string): void
+    afterTowerDuel(type: string): void
     update?(dt: number): void
 }

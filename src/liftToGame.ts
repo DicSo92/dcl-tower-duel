@@ -8,7 +8,6 @@ export default class LiftToGame implements ISystem {
     entity: Entity
     lift: Entity
     parent: MainGame
-    messageBus: MessageBus
     startPos: Vector3 = new Vector3(19, 0, 24)
     endPos: Vector3 = new Vector3(29, 1, 13)
     startPath: Vector3[]
@@ -17,9 +16,8 @@ export default class LiftToGame implements ISystem {
     isActive: boolean = false
     radius: number = 1.5
 
-    constructor(parent: MainGame, messageBus: MessageBus) {
+    constructor(parent: MainGame) {
         this.parent = parent
-        this.messageBus = messageBus
 
         this.lift = new Entity()
         this.lift.addComponent(new Transform({
@@ -57,17 +55,13 @@ export default class LiftToGame implements ISystem {
             onCameraEnter: () => {
                 log("enter trigger modeSelection")
                 if (!this.parent.isActive && !this.isActive) {
-                    this.messageBus.emit("modeSelection", {
-                        test: "Emit modeSelection"
-                    })
+                    this.parent.modeSelection('in')
                 }
             },
             onCameraExit: () => {
                 log("exit trigger modeSelection")
                 if (!this.parent.isActive && !this.isActive) {
-                    this.messageBus.emit("modeSelectionExit", {
-                        test: "Emit modeSelectionExit"
-                    })
+                    this.parent.modeSelection('out')
                 }
             }
         }))
