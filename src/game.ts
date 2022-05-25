@@ -3,6 +3,8 @@ import { loadColliders } from "@/colliderSetup";
 import { IMainGame } from "@/interfaces/class.interface";
 import MainGame from "@/mainGame";
 import { getUserData } from "@decentraland/Identity"
+import Heart from "@/heart";
+import LifeHearts from "@/lifeHearts";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -54,6 +56,8 @@ export default class Game implements ISystem {
         groundBody.addShape(new CANNON.Plane())
         groundBody.material = this.physicsMaterial
         this.world.addBody(groundBody)
+
+        const hearts = new LifeHearts(new Vector3(24, 0.5, 24), this.messageBus)
     }
 
     private buildScene() {
