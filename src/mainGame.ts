@@ -1,7 +1,7 @@
 import { IMainGame, ITowerDuel } from "@/interfaces/class.interface";
 import * as utils from "@dcl/ecs-scene-utils";
-import { GoToPlayAction, WaitTowerDuelAction } from "@/actions/gameApproval";
-import { LaunchGameAction } from "@/actions/launchGame";
+import { GoToPlayAction, CleanTowerDuelAction } from "@/actions/gameApproval";
+import { LaunchSoloGameAction } from "@/actions/launchGame";
 import { BackToLobbyAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
 import LiftToGame from "@/liftToGame";
 import { SelectModeAction } from "./actions/modeSelection";
@@ -79,8 +79,7 @@ export default class MainGame implements ISystem, IMainGame {
             case "gameApprovalSolo": {
                 sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new GoToPlayAction(this.liftToGame))
-                    // .then(new CleanAvatarsAction(this.messageBus))
-                    .then(new WaitTowerDuelAction(this)) //, this.messageBus
+                    .then(new CleanTowerDuelAction(this))
 
                 break;
             }
@@ -97,7 +96,7 @@ export default class MainGame implements ISystem, IMainGame {
             }
             case "launchGame": {
                 sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                    .then(new LaunchGameAction(this, this.physicsMaterial, this.world))
+                    .then(new LaunchSoloGameAction(this, this.physicsMaterial, this.world))
                 
                 break;
             }

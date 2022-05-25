@@ -38,9 +38,7 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     onStart(): void {
         log('FinaliseTowerDuelAction')
         this.parent.isActive = false
-        this.parent.TowerDuel.forEach((item: ITowerDuel) => {
-            item.CleanEntities()
-        })
+        this.parent.TowerDuel[0].lift?.reset()
         if (this.parent.parent.userId) {
             this.parent.messageBus.emit('removeUserInGame', {
                 user: this.parent.parent.userId

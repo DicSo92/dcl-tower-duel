@@ -8,11 +8,13 @@ export default class LifeHearts implements ISystem {
     hearts: Heart[] = []
     maxHearts: number = 3
     heartCount: number = this.maxHearts
+    parent: Lift;
 
     constructor(parent: Lift) {
-        this.messageBus = parent.TowerDuel.messageBus
+        this.parent = parent
+        this.messageBus = this.parent.TowerDuel.messageBus
         this.entity = new Entity()
-        this.entity.setParent(parent.global)
+        this.entity.setParent(this.parent.global)
         this.entity.addComponent(new Transform({
             position: new Vector3(-.75, 1.5, -1.5),
             scale: new Vector3(1, 1, 1)
@@ -43,7 +45,15 @@ export default class LifeHearts implements ISystem {
             }
         })
     }
-
+    public decremLife() {
+        let fHearts = this.hearts.filter(heart => heart.isActive)
+        if (fHearts.length) {
+            fHearts[0].toggle()
+        } else {
+            log("No hearts remaining")
+            this.parent.TowerDuel.GameFinish()
+        }
+    }
     update(dt: number) {
         // log("Update", dt)
     }

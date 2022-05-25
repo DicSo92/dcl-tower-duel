@@ -7,7 +7,6 @@ import {
 } from "@dcl/ecs-scene-utils";
 import { ITowerDuel } from "@/interfaces/class.interface";
 import TowerBlock from "@/towerBlock";
-import { GlobalLiftFlag } from "./lift";
 
 export default class Spawner implements ISystem {
     TowerDuel: ITowerDuel
@@ -16,6 +15,7 @@ export default class Spawner implements ISystem {
     entity: Entity
     moveDuration: number = 10
     spawnInterval: Entity
+    spawningBlock?: TowerBlock
 
     constructor(towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
@@ -66,8 +66,8 @@ export default class Spawner implements ISystem {
     public spawnBlock() {
         log('spawn block')
         const animation = this.spawnAnimation()
-        const spawningBlock = new TowerBlock(this.TowerDuel, animation);
-        engine.addSystem(spawningBlock);
+        this.spawningBlock = new TowerBlock(this.TowerDuel, animation);
+        engine.addSystem(this.spawningBlock);
 
         this.TowerDuel.lift?.autoMove()
     }
@@ -135,6 +135,8 @@ export default class Spawner implements ISystem {
     public Delete() {
         engine.removeEntity(this.entity)
         engine.removeEntity(this.spawnInterval)
+        this.spawningBlock?.Delete()
+        engine.removeSystem(this)
     }
 
     update(dt: number) {
