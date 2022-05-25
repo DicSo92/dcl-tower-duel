@@ -57,7 +57,6 @@ export default class Game implements ISystem {
         groundBody.material = this.physicsMaterial
         this.world.addBody(groundBody)
 
-        const hearts = new LifeHearts(new Vector3(24, 0.5, 24), this.messageBus)
     }
 
     private buildScene() {

@@ -1,5 +1,5 @@
 import { FallingBlock } from "@/fallingBlock";
-import {ITowerDuel} from "@/interfaces/class.interface";
+import { ITowerDuel } from "@/interfaces/class.interface";
 
 export default class FallingBlocks implements ISystem {
     TowerDuel: ITowerDuel
@@ -51,6 +51,9 @@ export default class FallingBlocks implements ISystem {
         this.TowerDuel.fallingBlocks.push(fallBlock)
     }
 
+    public Delete() {
+        engine.removeSystem(this)
+    }
     update(dt: number) {
         // log("Update", dt)
     }

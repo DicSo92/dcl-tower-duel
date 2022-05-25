@@ -5,14 +5,15 @@ import { FallingBlock } from "@/fallingBlock";
 
 export default class TowerBlock implements ISystem, ITowerBlock {
     TowerDuel: ITowerDuel
-    // messageBus: MessageBus
+    messageBus: MessageBus
     isBase: Boolean
     animation?: MoveTransformComponent
     entity: Entity
+    fallingBlocks?: FallingBlocks
 
     constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
-        // this.messageBus = this.TowerDuel.messageBus
+        this.messageBus = this.TowerDuel.messageBus
 
         this.isBase = !!isBase
         this.animation = animation
@@ -47,11 +48,11 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         basePhysic.material = this.TowerDuel.physicsMaterial
         this.TowerDuel.world.addBody(basePhysic)
     };
+
     private SpawnBlock() {
         this.entity.addComponent(new Transform({ scale: this.TowerDuel.lastScale }))
         this.entity.addComponent(new BoxShape())
         if (this.animation) this.entity.addComponent(this.animation)
-        // this.setSpawnAnimation()
     }
 
     public stopBlock(prevBlock: ITowerBlock) {
@@ -59,18 +60,22 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
         const currentBlockTransform = this.entity.getComponent(Transform)
         const prevBlockTransform = prevBlock.entity.getComponent(Transform)
+
         const offsetX = prevBlockTransform.position.x - currentBlockTransform.position.x
         const offsetZ = prevBlockTransform.position.z - currentBlockTransform.position.z
 
+        this.entity.removeComponent(Transform)
+        this.entity.removeComponent(BoxShape)
+
         if (Math.abs(offsetX) > prevBlockTransform.scale.x || Math.abs(offsetZ) > prevBlockTransform.scale.z) { // If block not on top of the previous
-            log('game end!')
+            log('Block missed')
             const fallBlock = new FallingBlock(this.TowerDuel, currentBlockTransform)
             this.TowerDuel.fallingBlocks.push(fallBlock)
 
-            // this.TowerDuel.blockCount -= 1
-            // this.TowerDuel.blocks.pop()
+            this.TowerDuel.blockCount -= 1
+            this.TowerDuel.blocks.pop()
 
-            this.TowerDuel.GameFinish()
+            this.messageBus.emit("looseHeart", {})
         } else {
             const newScale: Vector3 = this.TowerDuel.lastScale.clone()
             newScale.x = newScale.x - Math.abs(offsetX)
@@ -81,10 +86,6 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             newPosition.x = newPosition.x + offsetX / 2
             newPosition.z = newPosition.z + offsetZ / 2
             this.TowerDuel.lastPosition = newPosition
-
-            this.entity.getComponent(BoxShape).visible = false
-            this.entity.removeComponent(Transform)
-            this.entity.removeComponent(BoxShape)
 
             this.entity.addComponent(new BoxShape())
             this.entity.addComponent(new Transform({
@@ -98,8 +99,8 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             })
             blockPhysic.material = this.TowerDuel.physicsMaterial
             this.TowerDuel.world.addBody(blockPhysic)
-            const fallingBlocks = new FallingBlocks(this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
-            engine.addSystem(fallingBlocks);
+            this.fallingBlocks = new FallingBlocks(this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
+            engine.addSystem(this.fallingBlocks);
 
             this.TowerDuel.spawner?.spawnBlock()
         }
@@ -113,7 +114,9 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     }
 
     public Delete() {
+        this.fallingBlocks?.Delete()
         engine.removeEntity(this.entity)
+        engine.removeSystem(this)
     }
 
     update(dt: number) {

@@ -26,6 +26,9 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     playerInputsListener: Input
     isActive: Boolean = false
     parent: MainGame;
+    physicsSystem?: PhysicsSystem;
+    currentBlock?: TowerBlock
+    prevBlock?: TowerBlock
 
     constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, parent: MainGame) {
         this.physicsMaterial = cannonMaterial
@@ -62,9 +65,12 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.towerBlock = new TowerBlock(this, undefined, true);
         // engine.addSystem(this.towerBlock);
 
-        engine.addSystem(new PhysicsSystem(this.fallingBlocks, this.world))
+        this.physicsSystem = new PhysicsSystem(this.fallingBlocks, this.world)
+        engine.addSystem(this.physicsSystem)
 
-        this.lift = new Lift(this.playerInputsListener, this, this.messageBus)
+        if (!this.lift) {
+            this.lift = new Lift(this.playerInputsListener, this)
+        }
         // engine.addSystem(this.lift)
     };
 
@@ -72,19 +78,22 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     }
     public StopBlock() {
         log('stop block')
-        const currentBlock: TowerBlock = this.blocks[this.blocks.length - 1]
-        const prevBlock: TowerBlock = this.blocks[this.blocks.length - 2]
-        currentBlock.stopBlock(prevBlock)
+        this.currentBlock = this.blocks[this.blocks.length - 1]
+        this.prevBlock = this.blocks[this.blocks.length - 2]
+        if(this.prevBlock) this.currentBlock?.stopBlock(this.prevBlock)
     }
 
     public GameFinish() {
         this.isActive = false
+        this.spawner?.Delete()
         this.parent.afterTowerDuel()
     }
 
     public CleanEntities() {
-        this.spawner?.Delete()
-        this.lift?.Delete()
+        engine.removeEntity(this.gameArea)
+        this.currentBlock?.Delete()
+        this.prevBlock?.Delete()
+        this.towerBlock?.Delete()
         if (this.blocks) {
             for (let block in this.blocks) {
                 this.blocks[block].Delete()
@@ -95,7 +104,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
                 this.fallingBlocks[block].Delete()
             }
         }
-        this.towerBlock?.Delete()
+        if(this.physicsSystem) engine.removeSystem(this.physicsSystem)
     }
 
     public update(dt: number) {

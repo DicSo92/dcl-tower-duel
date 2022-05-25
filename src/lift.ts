@@ -1,7 +1,8 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
-import {ITowerDuel} from "@/interfaces/class.interface";
+import { ITowerDuel } from "@/interfaces/class.interface";
 import RedButton from "@/redButton";
 import GreenButton from "@/greenButton";
+import LifeHearts from "./lifeHearts";
 
 @Component("GlobalLiftFlag")
 export class GlobalLiftFlag { }
@@ -17,29 +18,33 @@ export default class Lift implements ISystem {
     playerInputs: Input
     step: number = 0
     state: boolean = false
-    startPosY: number = 1
+    startPos: Vector3 = new Vector3(14, 1, 14)
     endPosY: number = 4
+    hearts: LifeHearts
 
-    constructor(inputs: Input, towerDuel: ITowerDuel, messageBus: MessageBus) {
+    constructor(inputs: Input, towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
         // Global def
         this.global.setParent(this.TowerDuel.gameArea)
         this.global.addComponent(new Transform({
-            position: new Vector3(13, this.startPosY, 13),
+            position: this.startPos,
             scale: new Vector3(1, 1, 1)
         }))
-        this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -135, 0)
+        // this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -135, 0)
         this.global.addComponent(new GlobalLiftFlag())
 
         // Lift
         this.lift = new Entity()
         this.lift.addComponent(new Transform({
             position: new Vector3(0, 0, 0),
-            scale: new Vector3(4, 3, 1),
+            scale: new Vector3(2, 0.02, 2),
         }))
-        this.lift.addComponent(new PlaneShape())
-        this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(90, 0, 0)
+        this.lift.addComponent(new GLTFShape('models/openedLiftToGame.glb'))
+        // this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 45, 0)
         this.lift.setParent(this.global)
+
+        // // User Interface
+        this.hearts = new LifeHearts(this.TowerDuel, this)
 
         // Buttons
         const redButton = new RedButton(this.TowerDuel);
@@ -50,22 +55,22 @@ export default class Lift implements ISystem {
         // Instance the input object
         this.playerInputs = inputs
         // button down event
-        this.playerInputs.subscribe("BUTTON_UP", ActionButton.PRIMARY, false, (e) => {
-            if (this.step === 0 && !this.state) {
-                this.step = 1
-                this.state = true
-                this.moveUp()
-            }
-        })
+        // this.playerInputs.subscribe("BUTTON_UP", ActionButton.PRIMARY, false, (e) => {
+        //     if (this.step === 0 && !this.state) {
+        //         this.step = 1
+        //         this.state = true
+        //         this.moveUp()
+        //     }
+        // })
 
         // button up event
-        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
-            if (this.step === 1 && !this.state) {
-                this.step = 0
-                this.state = true
-                this.moveDown()
-            }
-        })
+        // this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
+        //     if (this.step === 1 && !this.state) {
+        //         this.step = 0
+        //         this.state = true
+        //         this.moveDown()
+        //     }
+        // })
     }
 
     public autoMove() {
@@ -78,85 +83,29 @@ export default class Lift implements ISystem {
         )
     }
 
+    reset() {
+        this.global.addComponentOrReplace(new MoveTransformComponent(this.global.getComponent(Transform).position, this.startPos, 1, () => { this.state = false }))
+    }
+
     moveUp() {
-        let StartPos = new Vector3(this.global.getComponent(Transform).position.x, this.startPosY, this.global.getComponent(Transform).position.z)
+        let StartPos = new Vector3(this.global.getComponent(Transform).position.x, this.startPos.y, this.global.getComponent(Transform).position.z)
         let EndPos = new Vector3(this.global.getComponent(Transform).position.x, this.endPosY, this.global.getComponent(Transform).position.z)
         this.global.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
     }
 
     moveDown() {
         let StartPos = new Vector3(this.global.getComponent(Transform).position.x, this.endPosY, this.global.getComponent(Transform).position.z)
-        let EndPos = new Vector3(this.global.getComponent(Transform).position.x, this.startPosY, this.global.getComponent(Transform).position.z)
+        let EndPos = new Vector3(this.global.getComponent(Transform).position.x, this.startPos.y, this.global.getComponent(Transform).position.z)
         this.global.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
     }
 
     public Delete() {
         engine.removeEntity(this.global)
         engine.removeEntity(this.lift)
+        engine.removeSystem(this)
     }
 
     update(dt: number) {
 
     }
 }
-
-// import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
-
-// export default class Lift implements ISystem {
-//     entity: Entity
-//     playerInputs: Input
-//     step: number = 0
-//     state: boolean = false
-//     posX: number = 24
-//     posZ: number = 14
-//     startPosY: number = 0.2
-//     endPosY: number = 10
-
-//     constructor(inputs: Input, messageBus: MessageBus) {
-//         // Lift
-//         this.entity = new Entity()
-//         this.entity.addComponent(new Transform({
-//             position: new Vector3(this.posX, this.startPosY, this.posZ),
-//             scale: new Vector3(3, 3, 1),
-//         }))
-//         this.entity.addComponent(new PlaneShape())
-//         engine.addEntity(this.entity)
-//         this.entity.getComponent(Transform).rotation.eulerAngles = new Vector3(90, 0, 0)
-
-//         // Instance the input object
-//         this.playerInputs = inputs
-//         // button down event
-//         this.playerInputs.subscribe("BUTTON_UP", ActionButton.PRIMARY, false, (e) => {
-//             if (this.step === 0 && !this.state) {
-//                 this.step = 1
-//                 this.state = true
-//                 this.moveUp()
-//             }
-//         })
-
-//         // button up event
-//         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
-//             if (this.step === 1 && !this.state) {
-//                 this.step = 0
-//                 this.state = true
-//                 this.moveDown()
-//             }
-//         })
-//     }
-
-//     moveUp() {
-//         let StartPos = new Vector3(this.posX, this.startPosY, this.posZ)
-//         let EndPos = new Vector3(this.posX, this.endPosY, this.posZ)
-//         this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
-//      }
-
-//     moveDown() {
-//         let StartPos = new Vector3(this.posX, this.endPosY, this.posZ)
-//         let EndPos = new Vector3(this.posX, this.startPosY, this.posZ)
-//         this.entity.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
-//     }
-
-//     update(dt: number) {
-
-//     }
-// }
