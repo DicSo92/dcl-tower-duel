@@ -84,13 +84,13 @@ export default class Game implements ISystem {
         })
         this.messageBus.on('addUserInGame', (data) => {
             if (data) {
-                this.usersInGame = [...this.usersInGame, data.user]
+                this.usersInGame.push(data.user)
             }
             log('usersInGame', this.usersInGame)
         })
         this.messageBus.on('removeUserInGame', (data) => {
             if (data) {
-                this.usersInGame = [...this.usersInGame.filter((item: String) => item !== data.user)]
+                this.usersInGame = this.usersInGame.filter((item: String) => item !== data.user)
             }
             log('usersInGame', this.usersInGame)
         })

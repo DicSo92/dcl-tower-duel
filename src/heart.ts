@@ -40,6 +40,7 @@ export default class Heart implements ISystem {
     // -----------------------------------------------------------------------------------------------------------------
     buildHeart = () => {
         this.base.addComponent(this.heartBase)
+        this.heart.addComponentOrReplace(this.isActive ? this.heartOff : this.heartOn) // init other color for smooth first transition
         this.heart.addComponentOrReplace(this.isActive ? this.heartOn : this.heartOff)
     }
 
