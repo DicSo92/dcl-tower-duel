@@ -9,7 +9,7 @@ export default class StaminaBar implements ISystem {
     staminaOn: Entity
     staminaOff: Entity
     maxStamina: number = 10
-    staminaCount: number = 2
+    staminaCount: number = 0
 
     cellSize: number = 0.1015 // 0.203 for 0.5 barScale
     barScale: number = 0.25
@@ -78,6 +78,9 @@ export default class StaminaBar implements ISystem {
     }
 
     buildEvents = () => {
+        this.messageBus.on("addStamina_" + this.TowerDuel.towerDuelId, () => {
+            if (this.staminaCount < this.maxStamina) this.setStamina(this.staminaCount + 1)
+        })
 
     }
     update(dt: number) {

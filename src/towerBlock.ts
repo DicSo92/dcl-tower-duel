@@ -104,6 +104,8 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             engine.addSystem(this.fallingBlocks);
 
             this.TowerDuel.spawner?.spawnBlock()
+
+            this.messageBus.emit("addStamina_" + this.TowerDuel.towerDuelId, {})
         }
     }
 
