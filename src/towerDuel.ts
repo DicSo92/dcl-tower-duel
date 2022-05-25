@@ -10,6 +10,7 @@ import MainGame from "./mainGame";
 export default class TowerDuel implements ISystem, ITowerDuel {
     physicsMaterial: CANNON.Material
     world: CANNON.World
+    towerDuelId: string
     messageBus: MessageBus
 
     gameArea: Entity
@@ -30,15 +31,16 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     currentBlock?: TowerBlock
     prevBlock?: TowerBlock
 
-    constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, parent: MainGame) {
+    constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, parent: MainGame, pos: Vector3) {
         this.physicsMaterial = cannonMaterial
         this.world = cannonWorld
         this.parent = parent
+        this.towerDuelId = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
         this.messageBus = this.parent.messageBus
 
         this.gameArea = new Entity()
         this.gameArea.addComponent(new Transform({
-            position: new Vector3(16, 0, 0),
+            position: pos,
             scale: new Vector3(1, 1, 1)
         }))
         engine.addEntity(this.gameArea)
@@ -60,7 +62,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.BuildEvents()
 
         this.spawner = new Spawner(this);
-        engine.addSystem(this.spawner);
+        // engine.addSystem(this.spawner);
 
         this.towerBlock = new TowerBlock(this, undefined, true);
         // engine.addSystem(this.towerBlock);
@@ -86,6 +88,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     public GameFinish() {
         this.isActive = false
         this.spawner?.Delete()
+        if(this.spawner) engine.removeSystem(this.spawner)
         this.parent.afterTowerDuel()
     }
 

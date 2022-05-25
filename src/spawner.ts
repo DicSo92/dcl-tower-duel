@@ -31,7 +31,7 @@ export default class Spawner implements ISystem {
     Init = () => {
         this.BuildSpawner()
         this.entity.getComponent(ToggleComponent).toggle()
-        engine.addEntity(this.entity)
+        engine.addSystem(this)
         this.BuildEvents()
     };
 
@@ -127,7 +127,7 @@ export default class Spawner implements ISystem {
     }
 
     private BuildEvents() {
-        this.messageBus.on("greenButtonClick", (test) => {
+        this.messageBus.on("StarterButton_" + this.TowerDuel.towerDuelId, () => {
             this.spawnBlock()
         })
     }
@@ -136,7 +136,6 @@ export default class Spawner implements ISystem {
         engine.removeEntity(this.entity)
         engine.removeEntity(this.spawnInterval)
         this.spawningBlock?.Delete()
-        engine.removeSystem(this)
     }
 
     update(dt: number) {

@@ -75,7 +75,8 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             this.TowerDuel.blockCount -= 1
             this.TowerDuel.blocks.pop()
 
-            this.messageBus.emit("looseHeart", {})
+            // this.messageBus.emit("looseHeart_"+this.TowerDuel.towerDuelId, {})
+            this.TowerDuel.lift?.hearts.decremLife()
         } else {
             const newScale: Vector3 = this.TowerDuel.lastScale.clone()
             newScale.x = newScale.x - Math.abs(offsetX)
@@ -114,7 +115,6 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     }
 
     public Delete() {
-        this.fallingBlocks?.Delete()
         engine.removeEntity(this.entity)
         engine.removeSystem(this)
     }

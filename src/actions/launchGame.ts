@@ -16,20 +16,20 @@ export class LaunchSoloGameAction implements utils.ActionsSequenceSystem.IAction
         this.world = world
     }
 
-    //Method when action starts
     onStart(): void {
         this.parent.messageBus.emit('addUserInGame', {
             user: this.parent.parent.userId
         })
-        this.parent.TowerDuel[0] = new TowerDuel(this.physicsMaterial, this.world, this.parent)
+        this.parent.TowerDuel[0] = new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0))
+        // this.parent.TowerDuel[1] = new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(0, 0, 0))
         this.hasFinished = true
     }
-    //Method to run on every frame
+
     update(dt: number): void { }
-    //Method to run at the end
+    
     onFinish(): void { }
 }
-//Use IAction to define action for movement
+
 export class LaunchMultGameAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
@@ -42,7 +42,6 @@ export class LaunchMultGameAction implements utils.ActionsSequenceSystem.IAction
         this.world = world
     }
 
-    //Method when action starts
     onStart(): void {
         this.parent.TowerDuel.forEach((item: ITowerDuel) => {
             item.CleanEntities()
@@ -50,11 +49,11 @@ export class LaunchMultGameAction implements utils.ActionsSequenceSystem.IAction
         this.parent.messageBus.emit('addUserInGame', {
             user: this.parent.parent.userId
         })
-        this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent))
+        this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0)))
         this.hasFinished = true
     }
-    //Method to run on every frame
+    
     update(dt: number): void { }
-    //Method to run at the end
+    
     onFinish(): void { }
 }

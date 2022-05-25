@@ -19,10 +19,10 @@ export class CleanTowerDuelAction implements utils.ActionsSequenceSystem.IAction
         utils.setTimeout(5000, () => {
             this.parent.TowerDuel.forEach((item: ITowerDuel) => {
                 item.CleanEntities()
+                item.lift?.Delete()
                 engine.removeSystem(item)
             })
             if (this.parent.TowerDuel.length > 0) {
-                this.parent.TowerDuel[0].lift?.Delete()
                 engine.removeSystem(this.parent.TowerDuel[0])
                 this.parent.TowerDuel = []
             }

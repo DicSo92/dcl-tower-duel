@@ -5,9 +5,6 @@ import GreenButton from "@/greenButton";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
 
-@Component("GlobalLiftFlag")
-export class GlobalLiftFlag { }
-
 //  @class Lift
 //      @param:
 //          global: Parent entity for phisicals group (lift and buttons)
@@ -33,7 +30,6 @@ export default class Lift implements ISystem {
             scale: new Vector3(1, 1, 1)
         }))
         // this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -135, 0)
-        this.global.addComponent(new GlobalLiftFlag())
 
         // Lift
         this.lift = new Entity()
@@ -103,6 +99,7 @@ export default class Lift implements ISystem {
     }
 
     public Delete() {
+        engine.removeSystem(this.hearts)
         engine.removeEntity(this.global)
         engine.removeEntity(this.lift)
         engine.removeSystem(this)
