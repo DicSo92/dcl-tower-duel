@@ -64,7 +64,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
         engine.addSystem(new PhysicsSystem(this.fallingBlocks, this.world))
 
-        this.lift = new Lift(this.playerInputsListener, this, this.messageBus)
+        this.lift = new Lift(this.playerInputsListener, this)
         // engine.addSystem(this.lift)
     };
 

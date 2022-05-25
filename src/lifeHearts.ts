@@ -1,5 +1,6 @@
 import { ITowerDuel } from "@/interfaces/class.interface";
 import Heart from "./heart";
+import Lift from "./lift";
 
 export default class LifeHearts implements ISystem {
     messageBus: MessageBus
@@ -8,14 +9,15 @@ export default class LifeHearts implements ISystem {
     maxHearts: number = 3
     heartCount: number = this.maxHearts
 
-    constructor(position: Vector3, messageBus: MessageBus) {
-        this.messageBus = messageBus
+    constructor(parent: Lift) {
+        this.messageBus = parent.TowerDuel.messageBus
         this.entity = new Entity()
-        engine.addEntity(this.entity)
+        this.entity.setParent(parent.global)
         this.entity.addComponent(new Transform({
-            position: position,
+            position: new Vector3(-.75, 1.5, -1.5),
             scale: new Vector3(1, 1, 1)
         }))
+        this.entity.getComponent(Transform).rotation.eulerAngles = new Vector3(45, 0, 0)
         this.Init()
     }
     Init = () => {

@@ -13,6 +13,7 @@ export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     }
     
     onStart(): void {
+        log('BackToLobbyAction')
         this.hasFinished = false
         this.liftToGame.goToLobby()
     }
@@ -35,6 +36,7 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     }
     
     onStart(): void {
+        log('FinaliseTowerDuelAction')
         this.parent.isActive = false
         this.parent.TowerDuel.forEach((item: ITowerDuel) => {
             item.CleanEntities()

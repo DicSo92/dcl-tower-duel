@@ -1,7 +1,8 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
-import {ITowerDuel} from "@/interfaces/class.interface";
+import { ITowerDuel } from "@/interfaces/class.interface";
 import RedButton from "@/redButton";
 import GreenButton from "@/greenButton";
+import LifeHearts from "./lifeHearts";
 
 @Component("GlobalLiftFlag")
 export class GlobalLiftFlag { }
@@ -19,27 +20,31 @@ export default class Lift implements ISystem {
     state: boolean = false
     startPosY: number = 1
     endPosY: number = 4
+    hearts: LifeHearts
 
-    constructor(inputs: Input, towerDuel: ITowerDuel, messageBus: MessageBus) {
+    constructor(inputs: Input, towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
         // Global def
         this.global.setParent(this.TowerDuel.gameArea)
         this.global.addComponent(new Transform({
-            position: new Vector3(13, this.startPosY, 13),
+            position: new Vector3(14, this.startPosY, 14),
             scale: new Vector3(1, 1, 1)
         }))
-        this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -135, 0)
+        // this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -135, 0)
         this.global.addComponent(new GlobalLiftFlag())
 
         // Lift
         this.lift = new Entity()
         this.lift.addComponent(new Transform({
             position: new Vector3(0, 0, 0),
-            scale: new Vector3(4, 3, 1),
+            scale: new Vector3(2, 0.02, 2),
         }))
-        this.lift.addComponent(new PlaneShape())
-        this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(90, 0, 0)
+        this.lift.addComponent(new GLTFShape('models/openedLiftToGame.glb'))
+        // this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 45, 0)
         this.lift.setParent(this.global)
+
+        // // User Interface
+        this.hearts = new LifeHearts(this)
 
         // Buttons
         const redButton = new RedButton(this.TowerDuel);

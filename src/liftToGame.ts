@@ -9,12 +9,12 @@ export default class LiftToGame implements ISystem {
     lift: Entity
     parent: MainGame
     startPos: Vector3 = new Vector3(19, 0, 24)
-    endPos: Vector3 = new Vector3(29, 1, 13)
+    endPos: Vector3 = new Vector3(30, 1, 14)
     startPath: Vector3[]
     endPath: Vector3[]
     pathLength: number
     isActive: boolean = false
-    radius: number = 1.5
+    radius: number = 2
 
     constructor(parent: MainGame) {
         this.parent = parent
@@ -24,7 +24,7 @@ export default class LiftToGame implements ISystem {
             position: new Vector3(0, 0, 0),
             scale: new Vector3(this.radius, 0.02, this.radius)
         }))
-        this.lift.addComponent(new CylinderShape())
+        this.lift.addComponent(new GLTFShape('models/openedLiftToGame.glb'))
 
         this.startPath = [
             this.startPos,
@@ -67,19 +67,20 @@ export default class LiftToGame implements ISystem {
         }))
 
         engine.addEntity(this.entity)
-
     }
 
     goToPlay() {
         this.isActive = true
         this.entity.addComponent(new utils.FollowPathComponent(this.startPath, this.pathLength, () => {
-            this.lift.getComponent(CylinderShape).visible = false
+            if (this.lift.getComponent(GLTFShape).visible !== false) {
+                this.lift.getComponent(GLTFShape).visible = false
+            }
             this.isActive = false
         }))
     }
 
     goToLobby() {
-        this.lift.getComponent(CylinderShape).visible = true
+        this.lift.getComponent(GLTFShape).visible = true
         this.isActive = true
         this.entity.addComponent(new utils.FollowPathComponent(this.endPath, this.pathLength, () => {
             this.isActive = false
