@@ -50,8 +50,10 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     };
 
     private SpawnBlock() {
+        let block = new BoxShape()
+        block.withCollisions = false
+        this.entity.addComponent(block)
         this.entity.addComponent(new Transform({ scale: this.TowerDuel.lastScale }))
-        this.entity.addComponent(new BoxShape())
         if (this.animation) this.entity.addComponent(this.animation)
     }
 

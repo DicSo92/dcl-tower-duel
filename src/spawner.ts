@@ -36,7 +36,9 @@ export default class Spawner implements ISystem {
     };
 
     private BuildSpawner() {
-        this.entity.addComponent(new BoxShape())
+        let box = new BoxShape()
+        box.withCollisions = false
+        this.entity.addComponent(box)
         this.entity.addComponent(new Transform({ scale: new Vector3(1, 0.5, 1) }))
 
         // Move entity infinitely
