@@ -77,7 +77,17 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
             // this.messageBus.emit("looseHeart_"+this.TowerDuel.towerDuelId, {})
             this.TowerDuel.lift?.hearts.decremLife()
-        } else {
+        }
+        else if (Math.abs(offsetX) <= 0.1 && Math.abs(offsetZ) <= 0.1) { // perfect placement (with error margin)
+            this.entity.addComponent(new BoxShape())
+            this.entity.addComponent(new Transform({
+                position: new Vector3(prevBlockTransform.position.x, currentBlockTransform.position.y, prevBlockTransform.position.z),
+                scale: prevBlockTransform.scale
+            }))
+
+            this.TowerDuel.spawner?.spawnBlock()
+        }
+        else {
             const newScale: Vector3 = this.TowerDuel.lastScale.clone()
             newScale.x = newScale.x - Math.abs(offsetX)
             newScale.z = newScale.z - Math.abs(offsetZ)
