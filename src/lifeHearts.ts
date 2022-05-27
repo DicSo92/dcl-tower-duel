@@ -1,6 +1,5 @@
-import { ITowerDuel } from "@/interfaces/class.interface";
+import { ILift, ITowerDuel } from "@/interfaces/class.interface";
 import Heart from "./heart";
-import Lift from "./lift";
 
 export default class LifeHearts implements ISystem {
     TowerDuel: ITowerDuel
@@ -11,7 +10,7 @@ export default class LifeHearts implements ISystem {
     heartCount: number = this.maxHearts
     // parent: Lift;
 
-    constructor(towerDuel: ITowerDuel, lift: Lift) {
+    constructor(towerDuel: ITowerDuel, lift: ILift) {
         this.TowerDuel = towerDuel
         this.messageBus = towerDuel.messageBus
         this.entity = new Entity()

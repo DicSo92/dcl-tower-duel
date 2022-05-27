@@ -8,6 +8,8 @@ import MainGame from "@/mainGame";
 import { SelectModeAction } from "@/actions/modeSelection";
 import { AssetsGame } from "@/assets";
 import PhysicsSystem from "@/physicsSystem";
+import LifeHearts from "@/lifeHearts";
+import StaminaBar from "@/staminaBar";
 
 export interface ITowerDuel {
     physicsMaterial: CANNON.Material
@@ -28,7 +30,7 @@ export interface ITowerDuel {
     fallingBlocks: FallingBlock[]
     spawner?: Spawner
     towerBlock?: TowerBlock
-    lift?: Lift
+    lift: ILift
     playerInputsListener: Input
     isActive: Boolean
     physicsSystem?: PhysicsSystem;
@@ -49,24 +51,48 @@ export interface ITowerBlock {
 
     update?(dt: number): void
 }
-export interface IPlayerSelector {
+export interface ILiftToGame {
     entity: Entity
-    selector: Entity
-    messageBus: MessageBus
+    lift: Entity
+    parent: MainGame
+    startPos: Vector3
+    endPos: Vector3
     startPath: Vector3[]
     endPath: Vector3[]
-    step: number
+    pathLength: number
+    isActive: boolean
+    radius: number
 
+    goToPlay(): void
+    goToLobby(): void
     update?(dt: number): void
 }
-
+export interface ILift {
+    TowerDuel: ITowerDuel
+    global: Entity
+    lift: Entity
+    playerInputs: Input
+    step: number
+    state: boolean
+    startPos: Vector3
+    endPosY: number
+    hearts: LifeHearts
+    staminaBar: StaminaBar
+    
+    autoMove(): void
+    reset(): void
+    moveUp(): void
+    moveDown(): void
+    Delete(): void
+    update?(dt: number): void
+}
 export interface IMainGame {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
 
     TowerDuel?: ITowerDuel[] // ITowerDuel
-    liftToGame: LiftToGame
+    liftToGame: ILiftToGame
     modeSelectionAction: SelectModeAction
     isActive: boolean
 

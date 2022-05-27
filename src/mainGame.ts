@@ -1,4 +1,4 @@
-import { IMainGame, ITowerDuel } from "@/interfaces/class.interface";
+import { ILiftToGame, IMainGame, ITowerDuel } from "@/interfaces/class.interface";
 import * as utils from "@dcl/ecs-scene-utils";
 import { GoToPlayAction, CleanTowerDuelAction } from "@/actions/gameApproval";
 import { LaunchSoloGameAction } from "@/actions/launchGame";
@@ -13,7 +13,7 @@ export default class MainGame implements ISystem, IMainGame {
     messageBus: MessageBus
 
     TowerDuel: ITowerDuel[] = [] // ITowerDuel
-    liftToGame: LiftToGame
+    liftToGame: ILiftToGame
     modeSelectionAction: SelectModeAction
 
     isActive: boolean = false
