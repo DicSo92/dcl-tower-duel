@@ -60,6 +60,26 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
+        const higherTower = new Entity()
+        higherTower.addComponent(new Transform({
+            position: new Vector3(8, -.5, 24),
+        }))
+        higherTower.addComponent(new GLTFShape('models/higherTower.glb'))
+        const htAnimator = new Animator()
+        const tower = new AnimationState('tower_anim', { layer: 0 })
+        const under = new AnimationState('under_anim', { layer: 1 })
+        const base = new AnimationState('base_anim', { layer: 2 })
+        htAnimator.addClip(tower)
+        htAnimator.addClip(under)
+        htAnimator.addClip(base)
+        higherTower.addComponent(htAnimator)
+        engine.addEntity(higherTower)
+        tower.reset()
+        under.reset()
+        base.reset()
+        tower.play()
+        under.play()
+        base.play()
         // const blueButton = new BlueButton(new Transform({
         //     position: new Vector3(25, 1.1, 18),
         //     rotation: new Quaternion(0, 0, 0, 1),
@@ -71,7 +91,7 @@ export default class Game implements ISystem {
     private BuildEvents() {
         this.messageBus.emit('getUsersInGame', {})
         this.messageBus.on('getUsersInGame', () => {
-            if (this.usersInGame.length > 0) {
+            if (this.usersInGame.length) {
                 this.messageBus.emit('setUsersInGame', { users: this.usersInGame })
             }
         })
