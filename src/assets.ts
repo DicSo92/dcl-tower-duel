@@ -1,4 +1,4 @@
-export class AssetsGame {
+export class GameAsset {
     heartBase: GLTFShape
     heartOn: GLTFShape
     heartOff: GLTFShape
@@ -10,7 +10,7 @@ export class AssetsGame {
     }
 }
 
-export class AssetsScene {
+export class SceneAsset {
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
 
@@ -26,4 +26,4 @@ export class AssetsScene {
     // public getModel() { return this.higherTowerModel }
 }
 
-export default { AssetsGame, AssetsScene }
+export default { GameAsset, SceneAsset }

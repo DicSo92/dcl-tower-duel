@@ -1,8 +1,8 @@
 import { loadColliders } from "@/colliderSetup";
-import { IAssetsGame, IAssetsScene, IMainGame } from "@/interfaces/class.interface";
+import { IGameAsset, ISceneAsset, IMainGame } from "@/interfaces/class.interface";
 import MainGame from "@/mainGame";
 import { getUserData } from "@decentraland/Identity"
-import { AssetsGame, AssetsScene } from "@/assets";
+import { GameAsset, SceneAsset } from "@/assets";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -15,8 +15,8 @@ export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
-    assetsGame: IAssetsGame
-    assetsScene: IAssetsScene
+    gameAsset: IGameAsset
+    sceneAsset: ISceneAsset
     mainGame?: IMainGame
     usersInGame: Array<String> = []
     userId?: string
@@ -25,9 +25,9 @@ export default class Game implements ISystem {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
         this.world = new CANNON.World()
         this.messageBus = new MessageBus()
-        this.assetsGame = new AssetsGame()
-        this.assetsScene = new AssetsScene()
-        log("assetsScene", this.assetsScene.higherTowerModel)
+        this.gameAsset = new GameAsset()
+        this.sceneAsset = new SceneAsset()
+        log("assetsScene", this.sceneAsset.higherTowerModel)
 
         this.SetupWorldConfig()
         this.buildScene()
@@ -68,9 +68,9 @@ export default class Game implements ISystem {
         higherTower.addComponent(new Transform({
             position: new Vector3(8, -.5, 24),
         }))
-        higherTower.addComponent(this.assetsScene.higherTowerModel)
+        higherTower.addComponent(this.sceneAsset.higherTowerModel)
         const htAnimator = new Animator()
-        this.assetsScene.higherTowerAnimStates.forEach(item => {
+        this.sceneAsset.higherTowerAnimStates.forEach(item => {
             htAnimator.addClip(item)
             item.reset()
             item.play()
@@ -85,6 +85,7 @@ export default class Game implements ISystem {
 
         // engine.addSystem(blueButton);
     }
+    
     private BuildEvents() {
         this.messageBus.emit('getUsersInGame', {})
         this.messageBus.on('getUsersInGame', () => {

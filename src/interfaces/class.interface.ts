@@ -1,22 +1,35 @@
 import TowerBlock from "@/towerBlock";
 import {FallingBlock} from "@/fallingBlock";
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
-import LiftToGame from "@/liftToGame";
 import Spawner from "@/spawner";
-import Lift from "@/lift";
 import MainGame from "@/mainGame";
 import { SelectModeAction } from "@/actions/modeSelection";
-import { AssetsGame } from "@/assets";
+import { GameAsset } from "@/assets";
 import PhysicsSystem from "@/physicsSystem";
 import LifeHearts from "@/lifeHearts";
 import StaminaBar from "@/staminaBar";
 
+export interface IGame {
+    physicsMaterial: CANNON.Material
+    world: CANNON.World
+    messageBus: MessageBus
+    gameAsset: IGameAsset
+    sceneAsset: ISceneAsset
+    mainGame?: IMainGame
+    usersInGame: Array<String>
+    userId?: string
+
+    SetupWorldConfig(): void
+    buildScene(): void
+    BuildEvents(): void
+    update?(dt: number): void
+}
 export interface ITowerDuel {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     mainGame: MainGame;
     messageBus: MessageBus
-    assetsGame: AssetsGame
+    gameAsset: GameAsset
 
     towerDuelId: string
 
@@ -104,13 +117,13 @@ export interface IMainGame {
     update?(dt: number): void
 }
 
-export interface IAssetsGame {
+export interface IGameAsset {
     heartBase: GLTFShape
     heartOn: GLTFShape
     heartOff: GLTFShape
 }
 
-export interface IAssetsScene { 
+export interface ISceneAsset { 
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
 }
