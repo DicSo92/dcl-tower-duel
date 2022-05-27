@@ -1,4 +1,4 @@
-export class AssetsGame {
+export class GameAssets {
     heartBase: GLTFShape
     heartOn: GLTFShape
     heartOff: GLTFShape
@@ -10,12 +10,12 @@ export class AssetsGame {
     }
 }
 
-export class AssetsScene {
+export class SceneAssets {
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
 
     constructor() {
-        this.higherTowerModel = new GLTFShape('models/HigherTower.glb')        
+        this.higherTowerModel = new GLTFShape('models/HigherTower.glb')
         this.higherTowerAnimStates = [
             new AnimationState('tower_anim', { layer: 0 }),
             new AnimationState('under_anim', { layer: 1 }),
@@ -26,4 +26,4 @@ export class AssetsScene {
     // public getModel() { return this.higherTowerModel }
 }
 
-export default { AssetsGame, AssetsScene }
+export default { GameAssets, SceneAssets }

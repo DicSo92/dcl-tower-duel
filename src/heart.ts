@@ -29,9 +29,9 @@ export default class Heart implements ISystem {
             scale: new Vector3(0.13, 0.13, 0.13)
         }))
 
-        this.heartBase = this.TowerDuel.assetsGame.heartBase
-        this.heartOn = this.TowerDuel.assetsGame.heartOn
-        this.heartOff = this.TowerDuel.assetsGame.heartOff
+        this.heartBase = this.TowerDuel.gameAssets.heartBase
+        this.heartOn = this.TowerDuel.gameAssets.heartOn
+        this.heartOff = this.TowerDuel.gameAssets.heartOff
 
         this.Init()
     }

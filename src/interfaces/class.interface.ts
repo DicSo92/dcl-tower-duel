@@ -6,7 +6,7 @@ import Spawner from "@/spawner";
 import Lift from "@/lift";
 import MainGame from "@/mainGame";
 import { SelectModeAction } from "@/actions/modeSelection";
-import { AssetsGame } from "@/assets";
+import { GameAssets } from "@/assets";
 import PhysicsSystem from "@/physicsSystem";
 
 export interface ITowerDuel {
@@ -14,7 +14,7 @@ export interface ITowerDuel {
     world: CANNON.World
     mainGame: MainGame;
     messageBus: MessageBus
-    assetsGame: AssetsGame
+    gameAssets: GameAssets
 
     towerDuelId: string
 
@@ -78,13 +78,13 @@ export interface IMainGame {
     update?(dt: number): void
 }
 
-export interface IAssetsGame {
+export interface IGameAssets {
     heartBase: GLTFShape
     heartOn: GLTFShape
     heartOff: GLTFShape
 }
 
-export interface IAssetsScene { 
+export interface ISceneAssets {
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
 }
