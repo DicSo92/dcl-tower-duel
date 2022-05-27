@@ -56,13 +56,13 @@ export default class LiftToGame implements ISystem {
         let triggerSphere = new utils.TriggerSphereShape()
         this.entity.addComponent(new utils.TriggerComponent(triggerSphere, {
             onCameraEnter: () => {
-                log("enter trigger modeSelection")
+                // log("enter trigger modeSelection")
                 if (!this.parent.isActive && !this.isActive) {
                     this.parent.modeSelection('in')
                 }
             },
             onCameraExit: () => {
-                log("exit trigger modeSelection")
+                // log("exit trigger modeSelection")
                 if (!this.parent.isActive && !this.isActive) {
                     this.parent.modeSelection('out')
                 }
