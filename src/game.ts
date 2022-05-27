@@ -1,8 +1,8 @@
 import { loadColliders } from "@/colliderSetup";
-import { IMainGame } from "@/interfaces/class.interface";
+import { IAssetsGame, IAssetsScene, IMainGame } from "@/interfaces/class.interface";
 import MainGame from "@/mainGame";
 import { getUserData } from "@decentraland/Identity"
-import Assets from "@/assets";
+import { AssetsGame, AssetsScene } from "@/assets";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -15,7 +15,8 @@ export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
-    assets: Assets
+    assetsGame: IAssetsGame
+    assetsScene: IAssetsScene
     mainGame?: IMainGame
     usersInGame: Array<String> = []
     userId?: string
@@ -24,11 +25,14 @@ export default class Game implements ISystem {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
         this.world = new CANNON.World()
         this.messageBus = new MessageBus()
-        this.assets = new Assets()
+        this.assetsGame = new AssetsGame()
+        this.assetsScene = new AssetsScene()
+        log("assetsScene", this.assetsScene.higherTowerModel)
 
         this.SetupWorldConfig()
         this.buildScene()
         this.BuildEvents()
+
 
         this.mainGame = new MainGame(this.physicsMaterial, this.world, this, this.messageBus)
         engine.addSystem(this.mainGame)
@@ -60,6 +64,19 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
+        const higherTower = new Entity()
+        higherTower.addComponent(new Transform({
+            position: new Vector3(8, -.5, 24),
+        }))
+        higherTower.addComponent(this.assetsScene.higherTowerModel)
+        const htAnimator = new Animator()
+        this.assetsScene.higherTowerAnimStates.forEach(item => {
+            htAnimator.addClip(item)
+            item.reset()
+            item.play()
+        })
+        higherTower.addComponent(htAnimator)
+        engine.addEntity(higherTower)
         // const blueButton = new BlueButton(new Transform({
         //     position: new Vector3(25, 1.1, 18),
         //     rotation: new Quaternion(0, 0, 0, 1),
@@ -71,7 +88,7 @@ export default class Game implements ISystem {
     private BuildEvents() {
         this.messageBus.emit('getUsersInGame', {})
         this.messageBus.on('getUsersInGame', () => {
-            if (this.usersInGame.length > 0) {
+            if (this.usersInGame.length) {
                 this.messageBus.emit('setUsersInGame', { users: this.usersInGame })
             }
         })
