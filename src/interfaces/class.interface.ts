@@ -1,14 +1,29 @@
 import TowerBlock from "@/towerBlock";
-import {FallingBlock} from "@/fallingBlock";
+import { FallingBlock } from "@/fallingBlock";
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
-import LiftToGame from "@/liftToGame";
 import Spawner from "@/spawner";
-import Lift from "@/lift";
 import MainGame from "@/mainGame";
 import { SelectModeAction } from "@/actions/modeSelection";
 import { GameAssets } from "@/assets";
 import PhysicsSystem from "@/physicsSystem";
+import LifeHearts from "@/lifeHearts";
+import StaminaBar from "@/staminaBar";
 
+export interface IGame {
+    physicsMaterial: CANNON.Material
+    world: CANNON.World
+    messageBus: MessageBus
+    gameAsset: IGameAssets
+    sceneAsset: ISceneAssets
+    mainGame?: IMainGame
+    usersInGame: Array<String>
+    userId?: string
+
+    SetupWorldConfig(): void
+    buildScene(): void
+    BuildEvents(): void
+    update?(dt: number): void
+}
 export interface ITowerDuel {
     physicsMaterial: CANNON.Material
     world: CANNON.World
@@ -28,7 +43,7 @@ export interface ITowerDuel {
     fallingBlocks: FallingBlock[]
     spawner?: Spawner
     towerBlock?: TowerBlock
-    lift?: Lift
+    lift: ILift
     playerInputsListener: Input
     isActive: Boolean
     physicsSystem?: PhysicsSystem;
@@ -49,24 +64,48 @@ export interface ITowerBlock {
 
     update?(dt: number): void
 }
-export interface IPlayerSelector {
+export interface ILiftToGame {
     entity: Entity
-    selector: Entity
-    messageBus: MessageBus
+    lift: Entity
+    parent: MainGame
+    startPos: Vector3
+    endPos: Vector3
     startPath: Vector3[]
     endPath: Vector3[]
-    step: number
+    pathLength: number
+    isActive: boolean
+    radius: number
 
+    goToPlay(): void
+    goToLobby(): void
     update?(dt: number): void
 }
+export interface ILift {
+    TowerDuel: ITowerDuel
+    global: Entity
+    lift: Entity
+    playerInputs: Input
+    step: number
+    state: boolean
+    startPos: Vector3
+    endPosY: number
+    hearts: LifeHearts
+    staminaBar: StaminaBar
 
+    autoMove(): void
+    reset(): void
+    moveUp(): void
+    moveDown(): void
+    Delete(): void
+    update?(dt: number): void
+}
 export interface IMainGame {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
 
     TowerDuel?: ITowerDuel[] // ITowerDuel
-    liftToGame: LiftToGame
+    liftToGame: ILiftToGame
     modeSelectionAction: SelectModeAction
     isActive: boolean
 

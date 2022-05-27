@@ -1,14 +1,12 @@
-import { ITowerDuel } from '@/interfaces/class.interface'
+import { ILiftToGame } from '@/interfaces/class.interface'
 import MainGame from '@/mainGame'
-import LiftToGame from '@/liftToGame'
-import TowerDuel from '@/towerDuel'
 import * as utils from '@dcl/ecs-scene-utils'
 
 export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
-    liftToGame: LiftToGame
+    liftToGame: ILiftToGame
 
-    constructor(liftToGame: LiftToGame) {
+    constructor(liftToGame: ILiftToGame) {
         this.liftToGame = liftToGame
     }
     

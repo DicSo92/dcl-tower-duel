@@ -1,4 +1,4 @@
-import { ITowerDuel } from "@/interfaces/class.interface";
+import { ILift, ITowerDuel } from "@/interfaces/class.interface";
 
 import Lift from "@/lift";
 import TowerBlock from "@/towerBlock";
@@ -27,7 +27,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     fallingBlocks: FallingBlock[]
     spawner?: Spawner
     towerBlock?: TowerBlock
-    lift?: Lift
+    lift: ILift
     playerInputsListener: Input
     isActive: Boolean = false
     physicsSystem?: PhysicsSystem;
@@ -61,6 +61,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.isActive = true
 
         this.Init();
+        this.lift = new Lift(this.playerInputsListener, this)
     }
 
     private Init = () => {
@@ -74,11 +75,6 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
         this.physicsSystem = new PhysicsSystem(this.fallingBlocks, this.world)
         engine.addSystem(this.physicsSystem)
-
-        if (!this.lift) {
-            this.lift = new Lift(this.playerInputsListener, this)
-        }
-        // engine.addSystem(this.lift)
     };
 
     private BuildEvents() {
