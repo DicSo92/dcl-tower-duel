@@ -82,6 +82,8 @@ export interface IGameAssets {
     heartBase: GLTFShape
     heartOn: GLTFShape
     heartOff: GLTFShape
+
+    blockMaterials: Material[]
 }
 
 export interface ISceneAssets {

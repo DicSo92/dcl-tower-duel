@@ -1,12 +1,34 @@
+const COLORS: string[] = [
+    "#7400B8",
+    "#6930C3",
+    "#5E60CE",
+    "#5390D9",
+    "#4EA8DE",
+    "#48BFE3",
+    "#56CFE1",
+    "#64DFDF",
+    "#72EFDD",
+    "#80FFDB",
+]
+
 export class GameAssets {
     heartBase: GLTFShape
     heartOn: GLTFShape
     heartOff: GLTFShape
 
+    blockMaterials: Material[] = []
+
     constructor() {
         this.heartBase = new GLTFShape('models/HeartBase.glb')
         this.heartOn = new GLTFShape('models/HeartOn.glb')
         this.heartOff = new GLTFShape('models/HeartOff.glb')
+
+        COLORS.forEach(color => {
+            const material = new Material()
+            material.albedoColor = Color3.FromHexString(color)
+            this.blockMaterials.push(material)
+        })
+
     }
 }
 

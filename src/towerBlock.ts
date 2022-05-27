@@ -25,9 +25,9 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
     Init = () => {
         this.isBase ? this.BuildBase() : this.SpawnBlock()
-        this.setRandomMaterial()
-        engine.addEntity(this.entity)
         this.TowerDuel.blockCount += 1
+        this.setMaterial()
+        engine.addEntity(this.entity)
         this.TowerDuel.blocks.push(this)
     };
 
@@ -119,11 +119,10 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         }
     }
 
-    private setRandomMaterial() {
-        const randomBetween = (min: number, max: number) => min + Math.floor(Math.random() * (max - min + 1));
-        const randomMaterialColor = new Material()
-        randomMaterialColor.albedoColor = Color3.FromInts(randomBetween(0, 255), randomBetween(0, 255), randomBetween(0, 255))
-        this.entity.addComponent(randomMaterialColor)
+    private setMaterial() {
+        const countToChangeColor = 3
+        const step = (Math.ceil(this.TowerDuel.blockCount / countToChangeColor) - 1) % 10 // (% 10) get last digit of number (12 % 10 = 2)
+        this.entity.addComponent(this.TowerDuel.gameAssets.blockMaterials[step])
     }
 
     public Delete() {
