@@ -6,12 +6,17 @@ import Spawner from "@/spawner";
 import Lift from "@/lift";
 import MainGame from "@/mainGame";
 import { SelectModeAction } from "@/actions/modeSelection";
+import Assets from "@/assets";
+import PhysicsSystem from "@/physicsSystem";
 
 export interface ITowerDuel {
     physicsMaterial: CANNON.Material
     world: CANNON.World
-    towerDuelId: string
+    mainGame: MainGame;
     messageBus: MessageBus
+    assets: Assets
+
+    towerDuelId: string
 
     gameArea: Entity
     blockCount: number
@@ -26,7 +31,9 @@ export interface ITowerDuel {
     lift?: Lift
     playerInputsListener: Input
     isActive: Boolean
-    parent: MainGame
+    physicsSystem?: PhysicsSystem;
+    currentBlock?: TowerBlock
+    prevBlock?: TowerBlock
 
     CleanEntities(): void
     StopBlock(): void

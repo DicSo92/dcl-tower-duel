@@ -1,6 +1,7 @@
 import { ITowerDuel } from "@/interfaces/class.interface";
 
 export default class Heart implements ISystem {
+    TowerDuel: ITowerDuel
     messageBus: MessageBus
 
     entity: Entity;
@@ -11,8 +12,9 @@ export default class Heart implements ISystem {
     base: Entity
     isActive: Boolean
 
-    constructor(position: Vector3, messageBus: MessageBus, isActive: boolean) {
-        this.messageBus = messageBus
+    constructor(towerDuel: ITowerDuel, position: Vector3, isActive: boolean) {
+        this.TowerDuel = towerDuel
+        this.messageBus = towerDuel.messageBus
         this.isActive = isActive
 
         this.entity = new Entity()
@@ -27,9 +29,9 @@ export default class Heart implements ISystem {
             scale: new Vector3(0.13, 0.13, 0.13)
         }))
 
-        this.heartBase = new GLTFShape('models/HeartBase.glb')
-        this.heartOn =  new GLTFShape('models/HeartOn.glb')
-        this.heartOff =  new GLTFShape('models/HeartOff.glb')
+        this.heartBase = this.TowerDuel.assets.heartBase
+        this.heartOn = this.TowerDuel.assets.heartOn
+        this.heartOff = this.TowerDuel.assets.heartOff
 
         this.Init()
     }

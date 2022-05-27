@@ -6,12 +6,16 @@ import PhysicsSystem from "@/physicsSystem";
 import { FallingBlock } from "@/fallingBlock";
 import Spawner from "@/spawner";
 import MainGame from "./mainGame";
+import Assets from "@/assets";
 
 export default class TowerDuel implements ISystem, ITowerDuel {
     physicsMaterial: CANNON.Material
     world: CANNON.World
-    towerDuelId: string
+    mainGame: MainGame;
     messageBus: MessageBus
+    assets: Assets
+
+    towerDuelId: string
 
     gameArea: Entity
     blockCount: number
@@ -26,17 +30,18 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     lift?: Lift
     playerInputsListener: Input
     isActive: Boolean = false
-    parent: MainGame;
     physicsSystem?: PhysicsSystem;
     currentBlock?: TowerBlock
     prevBlock?: TowerBlock
 
-    constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, parent: MainGame, pos: Vector3) {
+    constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, mainGame: MainGame, pos: Vector3) {
         this.physicsMaterial = cannonMaterial
         this.world = cannonWorld
-        this.parent = parent
+        this.mainGame = mainGame
+        this.messageBus = this.mainGame.messageBus
+        this.assets = this.mainGame.parent.assets
+
         this.towerDuelId = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-        this.messageBus = this.parent.messageBus
 
         this.gameArea = new Entity()
         this.gameArea.addComponent(new Transform({
@@ -89,7 +94,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.isActive = false
         this.spawner?.Delete()
         if(this.spawner) engine.removeSystem(this.spawner)
-        this.parent.afterTowerDuel()
+        this.mainGame.afterTowerDuel()
     }
 
     public CleanEntities() {

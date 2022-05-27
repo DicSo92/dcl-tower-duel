@@ -2,6 +2,7 @@ import { loadColliders } from "@/colliderSetup";
 import { IMainGame } from "@/interfaces/class.interface";
 import MainGame from "@/mainGame";
 import { getUserData } from "@decentraland/Identity"
+import Assets from "@/assets";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -14,6 +15,7 @@ export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
+    assets: Assets
     mainGame?: IMainGame
     usersInGame: Array<String> = []
     userId?: string
@@ -22,6 +24,7 @@ export default class Game implements ISystem {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
         this.world = new CANNON.World()
         this.messageBus = new MessageBus()
+        this.assets = new Assets()
 
         this.SetupWorldConfig()
         this.buildScene()

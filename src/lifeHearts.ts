@@ -30,7 +30,7 @@ export default class LifeHearts implements ISystem {
     // -----------------------------------------------------------------------------------------------------------------
     buildHearts = () => {
         for (let i = 1; i <= this.maxHearts; i++) {
-            const heart = new Heart(new Vector3(0.5 * i, 0, 0), this.messageBus, true)
+            const heart = new Heart(this.TowerDuel, new Vector3(0.5 * i, 0, 0), true)
             heart.entity.setParent(this.entity)
             this.hearts.push(heart)
         }
