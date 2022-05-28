@@ -54,22 +54,24 @@ export default class Lift implements ISystem {
         // Instance the input object
         this.playerInputs = inputs
         // button down event
-        // this.playerInputs.subscribe("BUTTON_UP", ActionButton.PRIMARY, false, (e) => {
-        //     if (this.step === 0 && !this.state) {
-        //         this.step = 1
-        //         this.state = true
-        //         this.moveUp()
-        //     }
-        // })
+        this.playerInputs.subscribe("BUTTON_UP", ActionButton.PRIMARY, false, (e) => {
+            this.TowerDuel.StopBlock()
+            // if (this.step === 0 && !this.state) {
+                // this.step = 1
+                // this.state = true
+                // this.moveUp()
+            // }
+        })
 
         // button up event
-        // this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
-        //     if (this.step === 1 && !this.state) {
-        //         this.step = 0
-        //         this.state = true
-        //         this.moveDown()
-        //     }
-        // })
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
+            this.TowerDuel.StopBlock()
+            // if (this.step === 1 && !this.state) {
+                // this.step = 0
+                // this.state = true
+                // this.moveDown()
+            // }
+        })
     }
 
     public autoMove() {
