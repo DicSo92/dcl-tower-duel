@@ -9,7 +9,7 @@ export default class LiftToGame implements ISystem {
     lift: Entity
     parent: MainGame
     startPos: Vector3 = new Vector3(19, 0, 24)
-    endPos: Vector3 = new Vector3(30, 1, 14)
+    endPos: Vector3 = new Vector3(30, 1, 2)
     startPath: Vector3[]
     endPath: Vector3[]
     pathLength: number

@@ -16,7 +16,7 @@ export default class Lift implements ISystem {
     playerInputs: Input
     step: number = 0
     state: boolean = false
-    startPos: Vector3 = new Vector3(14, 1, 14)
+    startPos: Vector3 = new Vector3(14, 1, 2)
     endPosY: number = 4
     hearts: LifeHearts
     staminaBar: StaminaBar
