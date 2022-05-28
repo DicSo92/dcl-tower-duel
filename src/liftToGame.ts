@@ -53,7 +53,7 @@ export default class LiftToGame implements ISystem {
         }))
         this.lift.setParent(this.entity)
 
-        let triggerSphere = new utils.TriggerSphereShape()
+        let triggerSphere = new utils.TriggerSphereShape(2.5)
         this.entity.addComponent(new utils.TriggerComponent(triggerSphere, {
             onCameraEnter: () => {
                 // log("enter trigger modeSelection")
@@ -86,8 +86,8 @@ export default class LiftToGame implements ISystem {
     }
 
     goToLobby() {
-        this.lift.getComponent(GLTFShape).visible = true
         this.isActive = true
+        this.lift.getComponent(GLTFShape).visible = true
         this.entity.addComponent(new utils.FollowPathComponent(this.endPath, this.pathLength, () => {
             this.isActive = false
         }))

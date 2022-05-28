@@ -29,7 +29,7 @@ export default class Lift implements ISystem {
             position: this.startPos,
             scale: new Vector3(1, 1, 1)
         }))
-        // this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -135, 0)
+        this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
 
         // Lift
         this.lift = new Entity()
@@ -38,7 +38,7 @@ export default class Lift implements ISystem {
             scale: new Vector3(2, 0.02, 2),
         }))
         this.lift.addComponent(new GLTFShape('models/openedLiftToGame.glb'))
-        // this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 45, 0)
+        // this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
         this.lift.setParent(this.global)
 
         // // User Interface
