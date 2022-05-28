@@ -4,17 +4,18 @@ import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 import Spawner from "@/spawner";
 import MainGame from "@/mainGame";
 import { SelectModeAction } from "@/actions/modeSelection";
-import { GameAsset } from "@/assets";
+import { GameAssets } from "@/assets";
 import PhysicsSystem from "@/physicsSystem";
 import LifeHearts from "@/lifeHearts";
 import StaminaBar from "@/staminaBar";
+import NumericalCounter from "@/numericalCounter";
 
 export interface IGame {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
-    gameAsset: IGameAsset
-    sceneAsset: ISceneAsset
+    gameAssets: IGameAssets
+    sceneAssets: ISceneAssets
     mainGame?: IMainGame
     usersInGame: Array<String>
     userId?: string
@@ -29,7 +30,7 @@ export interface ITowerDuel {
     world: CANNON.World
     mainGame: MainGame;
     messageBus: MessageBus
-    gameAsset: GameAsset
+    gameAssets: GameAssets
 
     towerDuelId: string
 
@@ -91,6 +92,7 @@ export interface ILift {
     endPosY: number
     hearts: LifeHearts
     staminaBar: StaminaBar
+    numericalCounter: NumericalCounter
     
     autoMove(): void
     reset(): void
@@ -117,13 +119,15 @@ export interface IMainGame {
     update?(dt: number): void
 }
 
-export interface IGameAsset {
+export interface IGameAssets {
     heartBase: GLTFShape
     heartOn: GLTFShape
     heartOff: GLTFShape
+    numericalCounter: GLTFShape
+    numericalCounterAnimStates: AnimationState[]
 }
 
-export interface ISceneAsset { 
+export interface ISceneAssets { 
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
 }

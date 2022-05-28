@@ -6,14 +6,14 @@ import PhysicsSystem from "@/physicsSystem";
 import { FallingBlock } from "@/fallingBlock";
 import Spawner from "@/spawner";
 import MainGame from "./mainGame";
-import { GameAsset } from "@/assets";
+import { GameAssets } from "@/assets";
 
 export default class TowerDuel implements ISystem, ITowerDuel {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     mainGame: MainGame;
     messageBus: MessageBus
-    gameAsset: GameAsset
+    gameAssets: GameAssets
 
     towerDuelId: string
 
@@ -39,7 +39,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.world = cannonWorld
         this.mainGame = mainGame
         this.messageBus = this.mainGame.messageBus
-        this.gameAsset = this.mainGame.parent.gameAsset
+        this.gameAssets = this.mainGame.parent.gameAssets
 
         this.towerDuelId = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 
@@ -59,9 +59,9 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.fallingBlocks = []
         this.playerInputsListener = Input.instance
         this.isActive = true
+        this.lift = new Lift(this.playerInputsListener, this)
 
         this.Init();
-        this.lift = new Lift(this.playerInputsListener, this)
     }
 
     private Init = () => {

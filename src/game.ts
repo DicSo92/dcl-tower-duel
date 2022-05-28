@@ -1,8 +1,8 @@
 import { loadColliders } from "@/colliderSetup";
-import { IGameAsset, ISceneAsset, IMainGame } from "@/interfaces/class.interface";
+import { IGameAssets, ISceneAssets, IMainGame } from "@/interfaces/class.interface";
 import MainGame from "@/mainGame";
 import { getUserData } from "@decentraland/Identity"
-import { GameAsset, SceneAsset } from "@/assets";
+import { GameAssets, SceneAssets } from "@/assets";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -15,8 +15,8 @@ export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
-    gameAsset: IGameAsset
-    sceneAsset: ISceneAsset
+    gameAssets: IGameAssets
+    sceneAssets: ISceneAssets
     mainGame?: IMainGame
     usersInGame: Array<String> = []
     userId?: string
@@ -25,9 +25,9 @@ export default class Game implements ISystem {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
         this.world = new CANNON.World()
         this.messageBus = new MessageBus()
-        this.gameAsset = new GameAsset()
-        this.sceneAsset = new SceneAsset()
-        log("assetsScene", this.sceneAsset.higherTowerModel)
+        this.gameAssets = new GameAssets()
+        this.sceneAssets = new SceneAssets()
+        log("assetsScene", this.sceneAssets.higherTowerModel)
 
         this.SetupWorldConfig()
         this.buildScene()
@@ -68,9 +68,9 @@ export default class Game implements ISystem {
         higherTower.addComponent(new Transform({
             position: new Vector3(8, -.5, 24),
         }))
-        higherTower.addComponent(this.sceneAsset.higherTowerModel)
+        higherTower.addComponent(this.sceneAssets.higherTowerModel)
         const htAnimator = new Animator()
-        this.sceneAsset.higherTowerAnimStates.forEach(item => {
+        this.sceneAssets.higherTowerAnimStates.forEach(item => {
             htAnimator.addClip(item)
             item.reset()
             item.play()
