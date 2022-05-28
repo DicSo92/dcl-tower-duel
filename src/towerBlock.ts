@@ -1,4 +1,4 @@
-import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
+import { MoveTransformComponent, ScaleTransformComponent, InterpolationType } from "@dcl/ecs-scene-utils";
 import { ITowerBlock, ITowerDuel } from "@/interfaces/class.interface";
 import FallingBlocks from "@/fallingBlocks";
 import { FallingBlock } from "@/fallingBlock";
@@ -53,7 +53,13 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         let block = new BoxShape()
         block.withCollisions = false
         this.entity.addComponent(block)
-        this.entity.addComponent(new Transform({ scale: this.TowerDuel.lastScale }))
+        this.entity.addComponent(new Transform())
+
+        let StartSize = new Vector3(0.4, 0.1, 0.4)
+        let EndSize = this.TowerDuel.lastScale
+        this.entity.addComponent(new ScaleTransformComponent(StartSize, EndSize, 0.3, undefined, InterpolationType.EASEINQUAD))
+
+        // this.entity.addComponent(new Transform({ scale: this.TowerDuel.lastScale }))
         if (this.animation) this.entity.addComponent(this.animation)
     }
 
