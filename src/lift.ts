@@ -49,8 +49,8 @@ export default class Lift implements ISystem {
         this.numericalCounter = new NumericalCounter(this.TowerDuel, this)
 
         // Buttons
-        const redButton = new RedButton(this.TowerDuel);
-        redButton.entity.setParent(this.global)
+        // const redButton = new RedButton(this.TowerDuel);
+        // redButton.entity.setParent(this.global)
         const greenButton = new GreenButton(this.TowerDuel);
         greenButton.entity.setParent(this.global)
 

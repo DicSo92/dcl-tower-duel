@@ -4,11 +4,15 @@ export class GameAssets {
     heartOff: GLTFShape
     numericalCounter: GLTFShape
     numericalCounterAnimStates: AnimationState[]
+    liftOpen: GLTFShape
+    liftClose: GLTFShape
 
     constructor() {
         this.heartBase = new GLTFShape('models/HeartBase.glb')
         this.heartOn = new GLTFShape('models/HeartOn.glb')
         this.heartOff = new GLTFShape('models/HeartOff.glb')
+        this.liftOpen = new GLTFShape('models/liftToGameWithInvi.glb')
+        this.liftClose = new GLTFShape('models/closedLiftToGame.glb')
 
         this.numericalCounter = new GLTFShape('models/numericalCounter.glb')
         this.numericalCounterAnimStates = [
