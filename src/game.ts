@@ -64,6 +64,21 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
+        const gameStarterPlot = new Entity()
+        gameStarterPlot.addComponent(new Transform({
+            position: new Vector3(16, 0, 24),
+            scale: new Vector3(2, 2, 2)
+        }))
+        gameStarterPlot.addComponent(this.sceneAssets.gameStarter)
+        const gspAnimator = new Animator()
+        this.sceneAssets.gameStarterAnimStates.forEach(item => {
+            gspAnimator.addClip(item)
+            item.reset()
+            item.play()
+        })
+        gameStarterPlot.addComponent(gspAnimator)
+        engine.addEntity(gameStarterPlot)
+
         const higherTower = new Entity()
         higherTower.addComponent(new Transform({
             position: new Vector3(8, -.5, 24),
@@ -77,6 +92,7 @@ export default class Game implements ISystem {
         })
         higherTower.addComponent(htAnimator)
         engine.addEntity(higherTower)
+
         // const blueButton = new BlueButton(new Transform({
         //     position: new Vector3(25, 1.1, 18),
         //     rotation: new Quaternion(0, 0, 0, 1),

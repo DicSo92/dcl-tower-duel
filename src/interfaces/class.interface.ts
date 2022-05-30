@@ -127,7 +127,9 @@ export interface IGameAssets {
     numericalCounterAnimStates: AnimationState[]
 }
 
-export interface ISceneAssets { 
+export interface ISceneAssets {
+    gameStarter: GLTFShape
+    gameStarterAnimStates: AnimationState[] 
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
 }
