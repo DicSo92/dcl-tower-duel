@@ -93,6 +93,14 @@ export default class Game implements ISystem {
         higherTower.addComponent(htAnimator)
         engine.addEntity(higherTower)
 
+        const povFloor = new Entity()
+        povFloor.addComponent(new Transform({
+            position: new Vector3(16, 0, 24),
+            scale: new Vector3(1, 1, 1)
+        }))
+        povFloor.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        povFloor.addComponent(this.sceneAssets.povFloor)
+        engine.addEntity(povFloor)
         // const blueButton = new BlueButton(new Transform({
         //     position: new Vector3(25, 1.1, 18),
         //     rotation: new Quaternion(0, 0, 0, 1),

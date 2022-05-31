@@ -28,6 +28,7 @@ export class SceneAssets {
     higherTowerAnimStates: AnimationState[]
     gameStarter: GLTFShape
     gameStarterAnimStates: AnimationState[]
+    povFloor: GLTFShape
 
     constructor() {
         this.gameStarter = new GLTFShape('models/liftToGameBase.glb')
@@ -43,6 +44,7 @@ export class SceneAssets {
             new AnimationState('under_anim', { layer: 1 }),
             new AnimationState('base_anim', { layer: 2 }),
         ]
+        this.povFloor = new GLTFShape('models/povFloor.glb')
     }
 }
 

@@ -20,19 +20,19 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     gameArea: Entity
     blockCount: number
     maxCount: number
-    blocks: TowerBlock[]
     offsetY: number
     lastScale: Vector3
     lastPosition: Vector3
-    fallingBlocks: FallingBlock[]
-    spawner?: Spawner
-    towerBlock?: TowerBlock
-    lift: ILift
-    playerInputsListener: Input
     isActive: Boolean = false
-    physicsSystem?: PhysicsSystem;
+    spawner?: Spawner
+    playerInputsListener: Input
+    towerBlock?: TowerBlock
     currentBlock?: TowerBlock
     prevBlock?: TowerBlock
+    lift: ILift
+    blocks: TowerBlock[]
+    fallingBlocks: FallingBlock[]
+    physicsSystem?: PhysicsSystem;
 
     constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, mainGame: MainGame, pos: Vector3) {
         this.physicsMaterial = cannonMaterial
