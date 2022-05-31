@@ -16,6 +16,7 @@ export default class Spawner implements ISystem {
     moveDuration: number = 10
     spawnInterval: Entity
     spawningBlock?: TowerBlock
+    spawnSpeed: number = 3
 
     constructor(towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
@@ -123,7 +124,7 @@ export default class Spawner implements ISystem {
         let StartPos = new Vector3(startX, posY, startZ)
         let EndPos = new Vector3(endX, posY, endZ)
 
-        return new MoveTransformComponent(StartPos, EndPos, 3)
+        return new MoveTransformComponent(StartPos, EndPos, this.spawnSpeed)
     }
 
     private BuildEvents() {
