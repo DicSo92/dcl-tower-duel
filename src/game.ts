@@ -34,7 +34,9 @@ export default class Game implements ISystem {
         this.BuildEvents()
 
 
-        this.mainGame = new MainGame(this.physicsMaterial, this.world, this, this.messageBus)
+        this.mainGame = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'left')
+        engine.addSystem(this.mainGame)
+        this.mainGame = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'right')
         engine.addSystem(this.mainGame)
 
         executeTask(async () => {

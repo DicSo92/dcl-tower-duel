@@ -17,7 +17,7 @@ export default class Lift implements ISystem {
     playerInputs: Input
     step: number = 0
     state: boolean = false
-    startPos: Vector3 = new Vector3(14, 1, 2)
+    startPos: Vector3
     endPosY: number = 4
     hearts: LifeHearts
     staminaBar: StaminaBar
@@ -25,13 +25,22 @@ export default class Lift implements ISystem {
 
     constructor(inputs: Input, towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
+        if (this.TowerDuel.mainGame.side === 'left') {
+            this.startPos = new Vector3(14, 1, 2)
+        } else {
+            this.startPos = new Vector3(2, 1, 2)
+        }
         // Global def
         this.global.setParent(this.TowerDuel.gameArea)
         this.global.addComponent(new Transform({
             position: this.startPos,
             scale: new Vector3(1, 1, 1)
         }))
-        this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        if (this.TowerDuel.mainGame.side === 'left') {
+            this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        } else {
+            this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 180, 0)
+        }
 
         // Lift
         this.lift = new Entity()

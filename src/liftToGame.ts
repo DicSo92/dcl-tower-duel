@@ -8,8 +8,8 @@ export default class LiftToGame implements ISystem {
     entity: Entity
     lift: Entity
     parent: MainGame
-    startPos: Vector3 = new Vector3(19, 0, 24)
-    endPos: Vector3 = new Vector3(30, 1, 2)
+    startPos: Vector3
+    endPos: Vector3
     startPath: Vector3[]
     endPath: Vector3[]
     pathLength: number
@@ -18,7 +18,13 @@ export default class LiftToGame implements ISystem {
 
     constructor(parent: MainGame) {
         this.parent = parent
-
+        if (this.parent.side === 'left') {
+            this.startPos = new Vector3(16 + 3, 0, 24)
+            this.endPos = new Vector3(30, 1, 2)
+        } else {
+            this.startPos = new Vector3(16 - 3, 0, 24)
+            this.endPos = new Vector3(2, 1, 2)
+        }
         this.lift = new Entity()
         this.lift.addComponent(new Transform({
             position: new Vector3(0, 0, 0),
