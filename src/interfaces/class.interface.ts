@@ -16,7 +16,8 @@ export interface IGame {
     messageBus: MessageBus
     gameAssets: IGameAssets
     sceneAssets: ISceneAssets
-    mainGame?: IMainGame
+    mainGame0?: IMainGame
+    mainGame1?: IMainGame
     usersInGame: Array<String>
     userId?: string
 

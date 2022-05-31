@@ -17,7 +17,8 @@ export default class Game implements ISystem {
     messageBus: MessageBus
     gameAssets: IGameAssets
     sceneAssets: ISceneAssets
-    mainGame?: IMainGame
+    mainGame0?: IMainGame
+    mainGame1?: IMainGame
     usersInGame: Array<String> = []
     userId?: string
 
@@ -34,10 +35,10 @@ export default class Game implements ISystem {
         this.BuildEvents()
 
 
-        this.mainGame = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'left')
-        engine.addSystem(this.mainGame)
-        this.mainGame = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'right')
-        engine.addSystem(this.mainGame)
+        this.mainGame0 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'left')
+        engine.addSystem(this.mainGame0)
+        this.mainGame1 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'right')
+        engine.addSystem(this.mainGame1)
 
         executeTask(async () => {
             let data = await getUserData()

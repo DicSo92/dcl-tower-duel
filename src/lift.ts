@@ -1,6 +1,5 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 import { ITowerDuel } from "@/interfaces/class.interface";
-import RedButton from "@/redButton";
 import GreenButton from "@/greenButton";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
@@ -73,6 +72,22 @@ export default class Lift implements ISystem {
         // button up event
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
             this.TowerDuel.StopBlock()
+        })
+        // button Spell 1
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_3, false, (e) => {
+            log("Key 1")
+        })
+        // button Spell 2
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_4, false, (e) => {
+            log("Key 2")
+        })
+        // button Spell 3
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_5, false, (e) => {
+            log("Key 3")
+        })
+        // button Spell 4
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_6, false, (e) => {
+            log("Key 4")
         })
     }
 
