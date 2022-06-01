@@ -33,9 +33,10 @@ export class GameAssets {
         })
 
         const material = new Material()
-        material.albedoColor = new Color4(0,0,0,0)
+        material.albedoColor = Color3.Yellow()
         material.metallic = 0.0
         material.roughness = 1.0
+        material.emissiveColor = new Color3(1.325, 1.125, 0.0)
         this.glowMaterial = material
     }
 }

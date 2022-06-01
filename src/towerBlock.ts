@@ -13,7 +13,6 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     colorRatio: number = 0
     isGlowing: boolean = false
     glowEntity?: Entity
-    transparentColor: Color4
 
     constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
@@ -21,7 +20,6 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
         this.isBase = !!isBase
         this.animation = animation
-        this.transparentColor = new Color4(0,0,0,0)
 
         this.entity = new Entity();
         this.entity.setParent(this.TowerDuel.gameArea)
@@ -93,10 +91,12 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         }
         else if (Math.abs(offsetX) <= 0.1 && Math.abs(offsetZ) <= 0.1) { // perfect placement (with error margin)
             this.entity.addComponent(new BoxShape())
-            this.entity.addComponent(new Transform({
+            const transform = new Transform({
                 position: new Vector3(prevBlockTransform.position.x, currentBlockTransform.position.y, prevBlockTransform.position.z),
                 scale: prevBlockTransform.scale
-            }))
+            })
+            this.entity.addComponent(transform)
+            this.glowAnimation(transform)
 
             this.TowerDuel.spawner?.spawnBlock()
         }
@@ -126,11 +126,6 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             this.fallingBlocks = new FallingBlocks(this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
             engine.addSystem(this.fallingBlocks);
 
-            this.glowAnimation(new Transform({
-                position: newPosition,
-                scale: newScale
-            }))
-
             this.TowerDuel.spawner?.spawnBlock()
 
             this.messageBus.emit("addStamina_" + this.TowerDuel.towerDuelId, {})
@@ -139,21 +134,20 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
     private glowAnimation(transform: Transform) {
         let newTransform = new Transform({
-            position: transform.position,
+            position: new Vector3(
+                transform.position.x,
+                transform.position.y - 0.2,
+                transform.position.z,
+            ),
             scale: new Vector3(
                 transform.scale.x + 0.01,
-                transform.scale.y + 0.01,
+                0.04,
                 transform.scale.z + 0.01,
             )
         })
 
         this.glowEntity = new Entity()
         this.glowEntity.addComponent(new BoxShape())
-        // const material = new Material()
-        // material.albedoColor = this.transparentColor
-        // // material.albedoColor = Color3.Gray()
-        // material.metallic = 0.0
-        // material.roughness = 1.0
         this.glowEntity.addComponent(this.TowerDuel.gameAssets.glowMaterial)
         this.glowEntity.addComponent(newTransform)
         this.glowEntity.setParent(this.TowerDuel.gameArea)
@@ -168,50 +162,11 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
     public Delete() {
         engine.removeEntity(this.entity)
+        if (this.glowEntity) engine.removeEntity(this.glowEntity)
         engine.removeSystem(this)
     }
 
     update(dt: number) {
-        if (this.glowEntity && this.isGlowing) {
 
-            this.glowEntity.getComponent(Material).albedoColor = Color4.Lerp(Color4.Green(), this.transparentColor, this.colorRatio)
-            if (this.colorRatio < 1) {
-                this.colorRatio += 0.05
-            } else {
-                this.colorRatio = 0
-                this.isGlowing = false
-
-                // this.glowEntity.getComponent(BoxShape).visible = false
-                this.glowEntity.removeComponent(Material)
-                this.glowEntity.setParent(null)
-                engine.removeEntity(this.glowEntity)
-                engine.removeSystem(this)
-            }
-            // ---------------------------------------------------------------------------------------------------------
-            // this.glowEntity.getComponent(Material).emissiveColor = Color3.Lerp(new Color3(1.75, 1.25, 0.0), Color3.Black(), this.colorRatio)
-            // if (this.colorRatio < 1) {
-            //     this.colorRatio += 0.01
-            // } else {
-            //     this.colorRatio = 0
-            //     this.isGlowing = false
-            //     // this.glowEntity.getComponent(BoxShape).visible = false
-            // }
-            // ---------------------------------------------------------------------------------------------------------
-            // if (this.colorRatio >= 0) {
-            //     this.glowEntity.getComponent(Material).emissiveColor = new Color3(
-            //         map(this.colorRatio, 0, 1, 0, 1.75),
-            //         map(this.colorRatio, 0, 1, 0, 1.25),
-            //         map(this.colorRatio, 0, 1, 0, 0),
-            //     )
-            //
-            //     this.colorRatio -= 0.05
-            // } else {
-            //     this.colorRatio = 1
-            //     this.isGlowing = false
-            //     // this.glowEntity.getComponent(BoxShape).visible = false
-            // }
-        }
-
-        // log("Update", dt)
     }
 }
