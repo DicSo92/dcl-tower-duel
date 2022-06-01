@@ -29,6 +29,8 @@ export class SceneAssets {
     gameStarter: GLTFShape
     gameStarterAnimStates: AnimationState[]
     povFloor: GLTFShape
+    mobius: GLTFShape
+    mobiusAnimStates: AnimationState[]
 
     constructor() {
         this.gameStarter = new GLTFShape('models/liftToGameBase.glb')
@@ -45,6 +47,11 @@ export class SceneAssets {
             new AnimationState('base_anim', { layer: 2 }),
         ]
         this.povFloor = new GLTFShape('models/povFloor.glb')
+        this.mobius = new GLTFShape('models/Mobius.glb')
+        this.mobiusAnimStates = [
+            new AnimationState('mobius_anim_0', { layer: 0 }),
+            new AnimationState('mobius_anim_1', { layer: 1 }),
+        ]
     }
 }
 

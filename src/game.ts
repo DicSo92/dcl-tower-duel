@@ -3,13 +3,13 @@ import { IGameAssets, ISceneAssets, IMainGame } from "@/interfaces/class.interfa
 import MainGame from "@/mainGame";
 import { getUserData } from "@decentraland/Identity"
 import { GameAssets, SceneAssets } from "@/assets";
+import * as utils from "@dcl/ecs-scene-utils";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
     const game = new Game()
     engine.addSystem(game);
 });
-
 
 export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
@@ -82,6 +82,9 @@ export default class Game implements ISystem {
         gameStarterPlot.addComponent(gspAnimator)
         engine.addEntity(gameStarterPlot)
 
+        this.BuildMobius(gameStarterPlot, true)
+        this.BuildMobius(gameStarterPlot, false)
+
         const higherTower = new Entity()
         higherTower.addComponent(new Transform({
             position: new Vector3(8, 0, 24),
@@ -105,15 +108,55 @@ export default class Game implements ISystem {
         povFloor.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
         povFloor.addComponent(this.sceneAssets.povFloor)
         engine.addEntity(povFloor)
-        // const blueButton = new BlueButton(new Transform({
-        //     position: new Vector3(25, 1.1, 18),
-        //     rotation: new Quaternion(0, 0, 0, 1),
-        //     scale: new Vector3(2, 2, 2)
-        // }), this.messageBus);
-
-        // engine.addSystem(blueButton);
     }
-    
+
+    private BuildMobius(parent: Entity, left: boolean) {
+        const mobius = new Entity()
+        mobius.setParent(parent)
+        mobius.addComponent(new Transform({
+            position: left ? new Vector3(0, 2.25, -1.1) : new Vector3(0, 2.25, 1.1),
+            scale: new Vector3(.05, .05, .05)
+        }))
+        mobius.addComponent(this.sceneAssets.mobius)
+        const mbAnimator = new Animator()
+        this.sceneAssets.mobiusAnimStates.forEach(item => {
+            mbAnimator.addClip(item)
+            item.reset()
+            item.play()
+        })
+        mobius.addComponent(mbAnimator)
+        this.MobiusRotation(mobius, left ? 'fluid' : '') // 'fuilde'; 'sacade'
+    }
+
+    private MobiusRotation(mobiusLeft: Entity, type?: string) {
+        let addedAngle = { x: 0, y: 0, z: 0 }
+
+        if (type === 'sacade') {
+            addedAngle.x = 90
+            addedAngle.y = 90
+            addedAngle.z = 45
+        } else if (type === 'fluid') {
+            addedAngle.x = 45
+            addedAngle.y = 45
+            addedAngle.z = - 90
+        } else {
+            addedAngle.x = 45
+            addedAngle.y = 45
+            addedAngle.z = - 45
+        }
+
+        const start = mobiusLeft.getComponent(Transform).rotation
+        const end = Quaternion.Euler(
+            mobiusLeft.getComponent(Transform).rotation.eulerAngles.x + addedAngle.x,
+            mobiusLeft.getComponent(Transform).rotation.eulerAngles.y + addedAngle.y,
+            mobiusLeft.getComponent(Transform).rotation.eulerAngles.z + addedAngle.z
+        )
+        
+        mobiusLeft.addComponentOrReplace(new utils.RotateTransformComponent(start, end, 2, () => {
+            this.MobiusRotation(mobiusLeft, type)
+        }))
+    }
+
     private BuildEvents() {
         this.messageBus.emit('getUsersInGame', {})
         this.messageBus.on('getUsersInGame', () => {
@@ -142,6 +185,5 @@ export default class Game implements ISystem {
     }
 
     update(dt: number): void {
-
     }
 }

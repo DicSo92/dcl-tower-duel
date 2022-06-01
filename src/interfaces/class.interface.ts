@@ -136,4 +136,6 @@ export interface ISceneAssets {
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
     povFloor: GLTFShape
+    mobius: GLTFShape
+    mobiusAnimStates: AnimationState[]
 }
