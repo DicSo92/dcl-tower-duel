@@ -17,6 +17,7 @@ export class GameAssets {
     heartOff: GLTFShape
 
     blockMaterials: Material[] = []
+    glowMaterial: Material
 
     constructor() {
         this.heartBase = new GLTFShape('models/HeartBase.glb')
@@ -26,9 +27,16 @@ export class GameAssets {
         COLORS.forEach(color => {
             const material = new Material()
             material.albedoColor = Color3.FromHexString(color)
+            material.metallic = 0.0
+            material.roughness = 1.0
             this.blockMaterials.push(material)
         })
 
+        const material = new Material()
+        material.albedoColor = new Color4(0,0,0,0)
+        material.metallic = 0.0
+        material.roughness = 1.0
+        this.glowMaterial = material
     }
 }
 
