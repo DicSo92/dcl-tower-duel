@@ -20,8 +20,12 @@ export class LaunchSoloGameAction implements utils.ActionsSequenceSystem.IAction
         this.parent.messageBus.emit('addUserInGame', {
             user: this.parent.parent.userId
         })
-        this.parent.TowerDuel[0] = new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0))
-        // this.parent.TowerDuel[1] = new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(0, 0, 0))
+        if (this.parent.side === 'left') {
+            this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0)))
+            // this.parent.TowerDuel[1] = new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(0, 0, 0))
+        } else {
+            this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(0, 0, 0)))
+        }
         this.hasFinished = true
     }
 

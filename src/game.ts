@@ -3,6 +3,7 @@ import { IGameAssets, ISceneAssets, IMainGame } from "@/interfaces/class.interfa
 import MainGame from "@/mainGame";
 import { getUserData } from "@decentraland/Identity"
 import { GameAssets, SceneAssets } from "@/assets";
+import * as utils from "@dcl/ecs-scene-utils";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -10,14 +11,14 @@ onSceneReadyObservable.add(() => {
     engine.addSystem(game);
 });
 
-
 export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
     gameAssets: IGameAssets
     sceneAssets: ISceneAssets
-    mainGame?: IMainGame
+    mainGame0?: IMainGame
+    mainGame1?: IMainGame
     usersInGame: Array<String> = []
     userId?: string
 
@@ -34,8 +35,10 @@ export default class Game implements ISystem {
         this.BuildEvents()
 
 
-        this.mainGame = new MainGame(this.physicsMaterial, this.world, this, this.messageBus)
-        engine.addSystem(this.mainGame)
+        this.mainGame0 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'left')
+        engine.addSystem(this.mainGame0)
+        this.mainGame1 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'right')
+        engine.addSystem(this.mainGame1)
 
         executeTask(async () => {
             let data = await getUserData()
@@ -64,9 +67,28 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
+        const gameStarterPlot = new Entity()
+        gameStarterPlot.addComponent(new Transform({
+            position: new Vector3(16, 0, 24),
+            scale: new Vector3(1.5, 1.5, 1.5)
+        }))
+        gameStarterPlot.addComponent(this.sceneAssets.gameStarter)
+        const gspAnimator = new Animator()
+        this.sceneAssets.gameStarterAnimStates.forEach(item => {
+            gspAnimator.addClip(item)
+            item.reset()
+            item.play()
+        })
+        gameStarterPlot.addComponent(gspAnimator)
+        engine.addEntity(gameStarterPlot)
+
+        this.BuildMobius(gameStarterPlot, true)
+        this.BuildMobius(gameStarterPlot, false)
+
         const higherTower = new Entity()
         higherTower.addComponent(new Transform({
-            position: new Vector3(8, -.5, 24),
+            position: new Vector3(8, 0, 24),
+            scale: new Vector3(1,1,1)
         }))
         higherTower.addComponent(this.sceneAssets.higherTowerModel)
         const htAnimator = new Animator()
@@ -77,15 +99,64 @@ export default class Game implements ISystem {
         })
         higherTower.addComponent(htAnimator)
         engine.addEntity(higherTower)
-        // const blueButton = new BlueButton(new Transform({
-        //     position: new Vector3(25, 1.1, 18),
-        //     rotation: new Quaternion(0, 0, 0, 1),
-        //     scale: new Vector3(2, 2, 2)
-        // }), this.messageBus);
 
-        // engine.addSystem(blueButton);
+        const povFloor = new Entity()
+        povFloor.addComponent(new Transform({
+            position: new Vector3(16, 0, 24),
+            scale: new Vector3(1, 1, 1)
+        }))
+        povFloor.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        povFloor.addComponent(this.sceneAssets.povFloor)
+        engine.addEntity(povFloor)
     }
-    
+
+    private BuildMobius(parent: Entity, left: boolean) {
+        const mobius = new Entity()
+        mobius.setParent(parent)
+        mobius.addComponent(new Transform({
+            position: left ? new Vector3(0, 2.25, -1.1) : new Vector3(0, 2.25, 1.1),
+            scale: new Vector3(.05, .05, .05)
+        }))
+        mobius.addComponent(this.sceneAssets.mobius)
+        const mbAnimator = new Animator()
+        this.sceneAssets.mobiusAnimStates.forEach(item => {
+            mbAnimator.addClip(item)
+            item.reset()
+            item.play()
+        })
+        mobius.addComponent(mbAnimator)
+        this.MobiusRotation(mobius, left ? 'fluid' : '') // 'fuilde'; 'sacade'
+    }
+
+    private MobiusRotation(mobiusLeft: Entity, type?: string) {
+        let addedAngle = { x: 0, y: 0, z: 0 }
+
+        if (type === 'sacade') {
+            addedAngle.x = 90
+            addedAngle.y = 90
+            addedAngle.z = 45
+        } else if (type === 'fluid') {
+            addedAngle.x = 45
+            addedAngle.y = 45
+            addedAngle.z = - 90
+        } else {
+            addedAngle.x = 45
+            addedAngle.y = 45
+            addedAngle.z = - 45
+        }
+
+        const start = mobiusLeft.getComponent(Transform).rotation
+        const end = Quaternion.Euler(
+            mobiusLeft.getComponent(Transform).rotation.eulerAngles.x + addedAngle.x,
+            mobiusLeft.getComponent(Transform).rotation.eulerAngles.y + addedAngle.y,
+            mobiusLeft.getComponent(Transform).rotation.eulerAngles.z + addedAngle.z
+        )
+        
+        mobiusLeft.addComponentOrReplace(new utils.RotateTransformComponent(start, end, 2, () => {
+            this.MobiusRotation(mobiusLeft, type)
+        }))
+    }
+
     private BuildEvents() {
         this.messageBus.emit('getUsersInGame', {})
         this.messageBus.on('getUsersInGame', () => {
@@ -114,6 +185,5 @@ export default class Game implements ISystem {
     }
 
     update(dt: number): void {
-
     }
 }

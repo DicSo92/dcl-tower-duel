@@ -27,9 +27,10 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
     Init = () => {
         this.isBase ? this.BuildBase() : this.SpawnBlock()
-        this.TowerDuel.blockCount += 1
-        this.setMaterial()
         engine.addEntity(this.entity)
+        this.TowerDuel.blockCount += 1
+        this.TowerDuel.lift.numericalCounter.setScore(this.TowerDuel.blockCount)
+        this.setMaterial()
         this.TowerDuel.blocks.push(this)
     };
 
@@ -83,6 +84,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             this.TowerDuel.fallingBlocks.push(fallBlock)
 
             this.TowerDuel.blockCount -= 1
+            this.TowerDuel.lift.numericalCounter.setScore(this.TowerDuel.blockCount)
             this.TowerDuel.blocks.pop()
 
             // this.messageBus.emit("looseHeart_"+this.TowerDuel.towerDuelId, {})

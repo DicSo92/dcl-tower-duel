@@ -15,7 +15,7 @@ export class CleanTowerDuelAction implements utils.ActionsSequenceSystem.IAction
     onStart(): void {
         this.hasFinished = false
 
-        utils.setTimeout(5000, () => {
+        // utils.setTimeout(5000, () => {
             this.parent.TowerDuel.forEach((item: ITowerDuel) => {
                 item.CleanEntities()
                 item.lift?.Delete()
@@ -26,7 +26,7 @@ export class CleanTowerDuelAction implements utils.ActionsSequenceSystem.IAction
                 this.parent.TowerDuel = []
             }
             this.hasFinished = true
-        })
+        // })
     }
     //Method to run on every frame
     update(dt: number): void { }

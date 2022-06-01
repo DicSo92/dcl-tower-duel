@@ -1,9 +1,9 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 import { ITowerDuel } from "@/interfaces/class.interface";
-import RedButton from "@/redButton";
 import GreenButton from "@/greenButton";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
+import NumericalCounter from "./numericalCounter";
 
 //  @class Lift
 //      @param:
@@ -16,20 +16,30 @@ export default class Lift implements ISystem {
     playerInputs: Input
     step: number = 0
     state: boolean = false
-    startPos: Vector3 = new Vector3(14, 1, 14)
+    startPos: Vector3
     endPosY: number = 4
     hearts: LifeHearts
     staminaBar: StaminaBar
+    numericalCounter: NumericalCounter
 
     constructor(inputs: Input, towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
+        if (this.TowerDuel.mainGame.side === 'left') {
+            this.startPos = new Vector3(14, 1, 2)
+        } else {
+            this.startPos = new Vector3(2, 1, 2)
+        }
         // Global def
         this.global.setParent(this.TowerDuel.gameArea)
         this.global.addComponent(new Transform({
             position: this.startPos,
             scale: new Vector3(1, 1, 1)
         }))
-        // this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -135, 0)
+        if (this.TowerDuel.mainGame.side === 'left') {
+            this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        } else {
+            this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 180, 0)
+        }
 
         // Lift
         this.lift = new Entity()
@@ -38,38 +48,49 @@ export default class Lift implements ISystem {
             scale: new Vector3(2, 0.02, 2),
         }))
         this.lift.addComponent(new GLTFShape('models/openedLiftToGame.glb'))
-        // this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 45, 0)
+        // this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
         this.lift.setParent(this.global)
 
         // // User Interface
         this.hearts = new LifeHearts(this.TowerDuel, this)
         this.staminaBar = new StaminaBar(this.TowerDuel, this)
+        this.numericalCounter = new NumericalCounter(this.TowerDuel, this)
 
         // Buttons
-        const redButton = new RedButton(this.TowerDuel);
-        redButton.entity.setParent(this.global)
+        // const redButton = new RedButton(this.TowerDuel);
+        // redButton.entity.setParent(this.global)
         const greenButton = new GreenButton(this.TowerDuel);
         greenButton.entity.setParent(this.global)
 
         // Instance the input object
         this.playerInputs = inputs
         // button down event
-        // this.playerInputs.subscribe("BUTTON_UP", ActionButton.PRIMARY, false, (e) => {
-        //     if (this.step === 0 && !this.state) {
-        //         this.step = 1
-        //         this.state = true
-        //         this.moveUp()
-        //     }
-        // })
+        this.playerInputs.subscribe("BUTTON_UP", ActionButton.PRIMARY, false, (e) => {
+            this.TowerDuel.StopBlock()
+        })
 
         // button up event
-        // this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
-        //     if (this.step === 1 && !this.state) {
-        //         this.step = 0
-        //         this.state = true
-        //         this.moveDown()
-        //     }
-        // })
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
+            this.TowerDuel.StopBlock()
+        })
+        // button Spell 1
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_3, false, (e) => {
+            log("Key 1 : Speed down spawn")
+            if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
+        })
+        // button Spell 2
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_4, false, (e) => {
+            log("Key 2 : Speed up spawn")
+            if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed -= .5
+        })
+        // button Spell 3
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_5, false, (e) => {
+            log("Key 3")
+        })
+        // button Spell 4
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_6, false, (e) => {
+            log("Key 4")
+        })
     }
 
     public autoMove() {

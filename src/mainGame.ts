@@ -18,12 +18,14 @@ export default class MainGame implements ISystem, IMainGame {
 
     isActive: boolean = false
     parent: Game;
+    side: string
 
-    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, parent: Game, messageBus: MessageBus) {
+    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, parent: Game, messageBus: MessageBus, side: string) {
         this.physicsMaterial = cannonMaterial
         this.world = world
         this.parent = parent
         this.messageBus = messageBus
+        this.side = side
         this.liftToGame = new LiftToGame(this)
 
         // Actions

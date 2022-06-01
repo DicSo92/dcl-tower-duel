@@ -8,14 +8,16 @@ import { GameAssets } from "@/assets";
 import PhysicsSystem from "@/physicsSystem";
 import LifeHearts from "@/lifeHearts";
 import StaminaBar from "@/staminaBar";
+import NumericalCounter from "@/numericalCounter";
 
 export interface IGame {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
-    gameAsset: IGameAssets
-    sceneAsset: ISceneAssets
-    mainGame?: IMainGame
+    gameAssets: IGameAssets
+    sceneAssets: ISceneAssets
+    mainGame0?: IMainGame
+    mainGame1?: IMainGame
     usersInGame: Array<String>
     userId?: string
 
@@ -91,7 +93,8 @@ export interface ILift {
     endPosY: number
     hearts: LifeHearts
     staminaBar: StaminaBar
-
+    numericalCounter: NumericalCounter
+    
     autoMove(): void
     reset(): void
     moveUp(): void
@@ -121,11 +124,19 @@ export interface IGameAssets {
     heartBase: GLTFShape
     heartOn: GLTFShape
     heartOff: GLTFShape
-
+    numericalCounter: GLTFShape
+    numericalCounterAnimStates: AnimationState[]
+    liftOpen: GLTFShape
+    liftClose: GLTFShape
     blockMaterials: Material[]
 }
 
 export interface ISceneAssets {
+    gameStarter: GLTFShape
+    gameStarterAnimStates: AnimationState[] 
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
+    povFloor: GLTFShape
+    mobius: GLTFShape
+    mobiusAnimStates: AnimationState[]
 }
