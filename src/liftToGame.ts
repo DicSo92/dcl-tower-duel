@@ -14,15 +14,15 @@ export default class LiftToGame implements ISystem {
     endPath: Vector3[]
     pathLength: number
     isActive: boolean = false
-    radius: number = 2
+    radius: number = 1.5
 
     constructor(parent: MainGame) {
         this.parent = parent
         if (this.parent.side === 'left') {
-            this.startPos = new Vector3(16 + 3, 0, 24)
+            this.startPos = new Vector3(16 + 2.25, 0, 24)
             this.endPos = new Vector3(30, 1, 2)
         } else {
-            this.startPos = new Vector3(16 - 3, 0, 24)
+            this.startPos = new Vector3(16 - 2.25, 0, 24)
             this.endPos = new Vector3(2, 1, 2)
         }
         this.lift = new Entity()

@@ -70,7 +70,7 @@ export default class Game implements ISystem {
         const gameStarterPlot = new Entity()
         gameStarterPlot.addComponent(new Transform({
             position: new Vector3(16, 0, 24),
-            scale: new Vector3(2, 2, 2)
+            scale: new Vector3(1.5, 1.5, 1.5)
         }))
         gameStarterPlot.addComponent(this.sceneAssets.gameStarter)
         const gspAnimator = new Animator()
@@ -85,6 +85,7 @@ export default class Game implements ISystem {
         const higherTower = new Entity()
         higherTower.addComponent(new Transform({
             position: new Vector3(8, -.5, 24),
+            scale: new Vector3(2,1,2)
         }))
         higherTower.addComponent(this.sceneAssets.higherTowerModel)
         const htAnimator = new Animator()
