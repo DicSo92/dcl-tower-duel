@@ -44,7 +44,7 @@ export default class Spawner implements ISystem {
 
         // Move entity infinitely
         this.entity.addComponent(new ToggleComponent(ToggleState.Off,(value: ToggleState) => {
-            const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
+            const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.blockCount
 
             //Define the positions of the path for move animation
             let path = [
@@ -76,7 +76,7 @@ export default class Spawner implements ISystem {
     }
 
     private spawnAnimation(): MoveTransformComponent {
-        const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
+        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.blockCount
 
         // const startX = 32
         // const startZ = 9 // cant be same as block position (8)

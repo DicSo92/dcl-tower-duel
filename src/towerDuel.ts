@@ -18,20 +18,21 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     towerDuelId: string
 
     gameArea: Entity
-    blockCount: number
-    maxCount: number
-    offsetY: number
-    lastScale: Vector3
-    lastPosition: Vector3
-    isActive: Boolean = false
+    blockCount: number = 0
+    maxCount: number = 10
+    blockScaleY: number = 0.4
+    offsetY: number = 0.2
+    lastScale: Vector3 = new Vector3(4, this.blockScaleY, 4)
+    lastPosition: Vector3 = new Vector3(8, this.offsetY, 8)
+    isActive: Boolean = true
     spawner?: Spawner
-    playerInputsListener: Input
+    playerInputsListener: Input = Input.instance
     towerBlock?: TowerBlock
     currentBlock?: TowerBlock
     prevBlock?: TowerBlock
-    lift: ILift
-    blocks: TowerBlock[]
-    fallingBlocks: FallingBlock[]
+    lift?: ILift
+    blocks: TowerBlock[] = []
+    fallingBlocks: FallingBlock[] = []
     physicsSystem?: PhysicsSystem;
 
     constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, mainGame: MainGame, pos: Vector3) {
@@ -50,22 +51,13 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         }))
         engine.addEntity(this.gameArea)
 
-        this.blockCount = 0
-        this.maxCount = 10
-        this.blocks = []
-        this.offsetY = 0.2
-        this.lastScale = new Vector3(4, 0.4, 4)
-        this.lastPosition = new Vector3(8, this.offsetY, 8)
-        this.fallingBlocks = []
-        this.playerInputsListener = Input.instance
-        this.isActive = true
-        this.lift = new Lift(this.playerInputsListener, this)
-
         this.Init();
     }
 
     private Init = () => {
         this.BuildEvents()
+
+        this.lift = new Lift(this.playerInputsListener, this)
 
         this.spawner = new Spawner(this);
         // engine.addSystem(this.spawner);

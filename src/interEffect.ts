@@ -7,6 +7,7 @@ export default class InterEffect implements ISystem {
     blockTransform: Transform
     isPerfect: boolean = false
     borderEntity: Entity
+    borderScaleY: number = 0.04
 
     constructor(towerDuel: ITowerDuel, transform: Transform, isPerfect: boolean) {
         this.TowerDuel = towerDuel
@@ -25,12 +26,12 @@ export default class InterEffect implements ISystem {
         let newTransform = new Transform({
             position: new Vector3(
                 this.blockTransform.position.x,
-                this.blockTransform.position.y - 0.18,
+                this.blockTransform.position.y - (this.TowerDuel.blockScaleY / 2 - this.borderScaleY / 2),
                 this.blockTransform.position.z,
             ),
             scale: new Vector3(
                 this.blockTransform.scale.x + 0.01,
-                0.04,
+                this.borderScaleY,
                 this.blockTransform.scale.z + 0.01,
             )
         })

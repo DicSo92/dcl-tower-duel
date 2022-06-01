@@ -12,6 +12,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     entity: Entity
     fallingBlocks?: FallingBlocks
     interEffect?: InterEffect
+    marginError: number = 0.15
 
     constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
@@ -29,7 +30,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         this.isBase ? this.BuildBase() : this.SpawnBlock()
         engine.addEntity(this.entity)
         this.TowerDuel.blockCount += 1
-        this.TowerDuel.lift.numericalCounter.setScore(this.TowerDuel.blockCount)
+        this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blockCount)
         this.setMaterial()
         this.TowerDuel.blocks.push(this)
     };
@@ -84,13 +85,13 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             this.TowerDuel.fallingBlocks.push(fallBlock)
 
             this.TowerDuel.blockCount -= 1
-            this.TowerDuel.lift.numericalCounter.setScore(this.TowerDuel.blockCount)
+            this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blockCount)
             this.TowerDuel.blocks.pop()
 
             // this.messageBus.emit("looseHeart_"+this.TowerDuel.towerDuelId, {})
             this.TowerDuel.lift?.hearts.decremLife()
         }
-        else if (Math.abs(offsetX) <= 0.2 && Math.abs(offsetZ) <= 0.2) { // perfect placement (with error margin)
+        else if (Math.abs(offsetX) <= this.marginError && Math.abs(offsetZ) <= this.marginError) { // perfect placement (with error margin)
             this.entity.addComponent(new BoxShape())
             const transform = new Transform({
                 position: new Vector3(prevBlockTransform.position.x, currentBlockTransform.position.y, prevBlockTransform.position.z),
