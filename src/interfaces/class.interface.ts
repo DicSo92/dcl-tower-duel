@@ -94,7 +94,7 @@ export interface ILift {
     hearts: LifeHearts
     staminaBar: StaminaBar
     numericalCounter: NumericalCounter
-    
+
     autoMove(): void
     reset(): void
     moveUp(): void
@@ -128,12 +128,15 @@ export interface IGameAssets {
     numericalCounterAnimStates: AnimationState[]
     liftOpen: GLTFShape
     liftClose: GLTFShape
+
     blockMaterials: Material[]
+    glowMaterial: Material
+    noGlowMaterial: Material
 }
 
 export interface ISceneAssets {
     gameStarter: GLTFShape
-    gameStarterAnimStates: AnimationState[] 
+    gameStarterAnimStates: AnimationState[]
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
     povFloor: GLTFShape

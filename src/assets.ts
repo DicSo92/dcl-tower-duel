@@ -50,6 +50,7 @@ export class GameAssets {
         noGlowMaterial.roughness = 1.0
         noGlowMaterial.emissiveColor = new Color3(0, 1.1, 1.3)
         this.noGlowMaterial = noGlowMaterial
+
         this.liftOpen = new GLTFShape('models/liftToGameWithInvi.glb')
         this.liftClose = new GLTFShape('models/closedLiftToGame.glb')
 
