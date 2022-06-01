@@ -4,6 +4,7 @@ import GreenButton from "@/greenButton";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
+import RedButton from "@/redButton";
 
 //  @class Lift
 //      @param:
@@ -57,19 +58,15 @@ export default class Lift implements ISystem {
         this.numericalCounter = new NumericalCounter(this.TowerDuel, this)
 
         // Buttons
-        // const redButton = new RedButton(this.TowerDuel);
-        // redButton.entity.setParent(this.global)
+        const redButton = new RedButton(this.TowerDuel);
+        redButton.entity.setParent(this.global)
         const greenButton = new GreenButton(this.TowerDuel);
         greenButton.entity.setParent(this.global)
 
         // Instance the input object
         this.playerInputs = inputs
-        // button down event
-        this.playerInputs.subscribe("BUTTON_UP", ActionButton.PRIMARY, false, (e) => {
-            this.TowerDuel.StopBlock()
-        })
 
-        // button up event
+        // button down event
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
             this.TowerDuel.StopBlock()
         })
