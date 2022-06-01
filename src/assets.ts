@@ -18,6 +18,7 @@ export class GameAssets {
 
     blockMaterials: Material[] = []
     glowMaterial: Material
+    noGlowMaterial: Material
 
     constructor() {
         this.heartBase = new GLTFShape('models/HeartBase.glb')
@@ -32,12 +33,19 @@ export class GameAssets {
             this.blockMaterials.push(material)
         })
 
-        const material = new Material()
-        material.albedoColor = Color3.Yellow()
-        material.metallic = 0.0
-        material.roughness = 1.0
-        material.emissiveColor = new Color3(1.325, 1.125, 0.0)
-        this.glowMaterial = material
+        const glowMaterial = new Material()
+        glowMaterial.albedoColor = Color3.Yellow()
+        glowMaterial.metallic = 0.0
+        glowMaterial.roughness = 1.0
+        glowMaterial.emissiveColor = new Color3(1.325, 1.125, 0.0)
+        this.glowMaterial = glowMaterial
+
+        const noGlowMaterial = new Material()
+        noGlowMaterial.albedoColor = new Color3(0.1, 0.1, 0.1)
+        noGlowMaterial.metallic = 0.0
+        noGlowMaterial.roughness = 1.0
+        noGlowMaterial.emissiveColor = new Color3(0, 1.1, 1.3)
+        this.noGlowMaterial = noGlowMaterial
     }
 }
 

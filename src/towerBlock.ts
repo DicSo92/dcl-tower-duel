@@ -2,6 +2,7 @@ import { MoveTransformComponent, ScaleTransformComponent, InterpolationType, map
 import { ITowerBlock, ITowerDuel } from "@/interfaces/class.interface";
 import FallingBlocks from "@/fallingBlocks";
 import { FallingBlock } from "@/fallingBlock";
+import InterEffect from "@/interEffect";
 
 export default class TowerBlock implements ISystem, ITowerBlock {
     TowerDuel: ITowerDuel
@@ -10,9 +11,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     animation?: MoveTransformComponent
     entity: Entity
     fallingBlocks?: FallingBlocks
-    colorRatio: number = 0
-    isGlowing: boolean = false
-    glowEntity?: Entity
+    interEffect?: InterEffect
 
     constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
@@ -89,14 +88,16 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             // this.messageBus.emit("looseHeart_"+this.TowerDuel.towerDuelId, {})
             this.TowerDuel.lift?.hearts.decremLife()
         }
-        else if (Math.abs(offsetX) <= 0.1 && Math.abs(offsetZ) <= 0.1) { // perfect placement (with error margin)
+        else if (Math.abs(offsetX) <= 0.2 && Math.abs(offsetZ) <= 0.2) { // perfect placement (with error margin)
             this.entity.addComponent(new BoxShape())
             const transform = new Transform({
                 position: new Vector3(prevBlockTransform.position.x, currentBlockTransform.position.y, prevBlockTransform.position.z),
                 scale: prevBlockTransform.scale
             })
             this.entity.addComponent(transform)
-            this.glowAnimation(transform)
+
+            this.interEffect = new InterEffect(this.TowerDuel, transform, true)
+            engine.addSystem(this.interEffect)
 
             this.TowerDuel.spawner?.spawnBlock()
         }
@@ -126,32 +127,16 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             this.fallingBlocks = new FallingBlocks(this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
             engine.addSystem(this.fallingBlocks);
 
+            this.interEffect = new InterEffect(this.TowerDuel, new Transform({
+                position: newPosition,
+                scale: newScale
+            }), false)
+            engine.addSystem(this.interEffect)
+
             this.TowerDuel.spawner?.spawnBlock()
 
             this.messageBus.emit("addStamina_" + this.TowerDuel.towerDuelId, {})
         }
-    }
-
-    private glowAnimation(transform: Transform) {
-        let newTransform = new Transform({
-            position: new Vector3(
-                transform.position.x,
-                transform.position.y - 0.2,
-                transform.position.z,
-            ),
-            scale: new Vector3(
-                transform.scale.x + 0.01,
-                0.04,
-                transform.scale.z + 0.01,
-            )
-        })
-
-        this.glowEntity = new Entity()
-        this.glowEntity.addComponent(new BoxShape())
-        this.glowEntity.addComponent(this.TowerDuel.gameAssets.glowMaterial)
-        this.glowEntity.addComponent(newTransform)
-        this.glowEntity.setParent(this.TowerDuel.gameArea)
-        this.isGlowing = true
     }
 
     private setMaterial() {
@@ -162,7 +147,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
     public Delete() {
         engine.removeEntity(this.entity)
-        if (this.glowEntity) engine.removeEntity(this.glowEntity)
+        if (this.interEffect) this.interEffect.Delete()
         engine.removeSystem(this)
     }
 
