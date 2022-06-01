@@ -84,8 +84,8 @@ export default class Game implements ISystem {
 
         const higherTower = new Entity()
         higherTower.addComponent(new Transform({
-            position: new Vector3(8, -.5, 24),
-            scale: new Vector3(2,1,2)
+            position: new Vector3(8, 0, 24),
+            scale: new Vector3(1,1,1)
         }))
         higherTower.addComponent(this.sceneAssets.higherTowerModel)
         const htAnimator = new Animator()
