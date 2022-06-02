@@ -1,7 +1,7 @@
 import {
-    FollowCurvedPathComponent,
+    FollowCurvedPathComponent, InterpolationType,
     Interval,
-    MoveTransformComponent,
+    MoveTransformComponent, ScaleTransformComponent,
     ToggleComponent,
     ToggleState
 } from "@dcl/ecs-scene-utils";
@@ -67,12 +67,57 @@ export default class Spawner implements ISystem {
     }
 
     public spawnBlock() {
-        log('spawn block')
-        const animation = this.spawnAnimation()
-        this.spawningBlock = new TowerBlock(this.TowerDuel, animation);
-        engine.addSystem(this.spawningBlock);
+        if (this.TowerDuel.blockCount >= this.TowerDuel.maxCount) {
+            log("-------------------------------------")
+            log('Max Count reached !!')
+            log("-------------------------------------")
 
-        this.TowerDuel.lift?.autoMove()
+            this.maxCountReachedAnimation()
+        } else {
+            log('spawn block')
+            const animation = this.spawnAnimation()
+            this.spawningBlock = new TowerBlock(this.TowerDuel, animation);
+            engine.addSystem(this.spawningBlock);
+
+            this.TowerDuel.lift?.autoMove()
+        }
+    }
+
+    maxCountReachedAnimation() {
+        const slice = 4
+        const blockTimeTravel = 0.2
+        const offsetRescale = 4
+
+        const remainingBlocks = this.TowerDuel.blocks.slice(-slice)
+        const blocksToRemove = this.TowerDuel.blocks.slice(0, -slice)
+        blocksToRemove.forEach((block, index) => {
+            if (index + 1 > offsetRescale) {
+                const startPos = block.entity.getComponent(Transform).position
+                const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * offsetRescale, startPos.z)
+                block.entity.addComponentOrReplace(new MoveTransformComponent(startPos, endPos, blockTimeTravel * (index - offsetRescale), () => {
+                    block.entity.addComponentOrReplace(new ScaleTransformComponent(block.entity.getComponent(Transform).scale, new Vector3(0.1, 0.1, 0.1), offsetRescale * blockTimeTravel, undefined, InterpolationType.EASEINQUAD))
+
+                    const startPos = block.entity.getComponent(Transform).position
+                    const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY - this.TowerDuel.blockScaleY, startPos.z)
+                    block.entity.addComponentOrReplace(new MoveTransformComponent(startPos, endPos, blockTimeTravel * offsetRescale, () => {
+                        block.Delete()
+
+                    }))
+                }))
+            } else {
+                block.entity.addComponentOrReplace(new ScaleTransformComponent(block.entity.getComponent(Transform).scale, new Vector3(0.1, 0.1, 0.1), blockTimeTravel * (index + 1), undefined, InterpolationType.EASEINQUAD))
+                const startPos = block.entity.getComponent(Transform).position
+                const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY - this.TowerDuel.blockScaleY, startPos.z)
+                block.entity.addComponentOrReplace(new MoveTransformComponent(startPos, endPos, (blockTimeTravel * 0.9) * (index + 1), () => {
+                    block.Delete()
+                }))
+            }
+        })
+        remainingBlocks.forEach((block, index) => {
+            const startPos = block.entity.getComponent(Transform).position
+            const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY + index * this.TowerDuel.blockScaleY, startPos.z)
+            block.entity.addComponent(new MoveTransformComponent(startPos, endPos, (this.TowerDuel.maxCount * blockTimeTravel) - (slice * blockTimeTravel)))
+        })
     }
 
     private spawnAnimation(): MoveTransformComponent {

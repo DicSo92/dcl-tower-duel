@@ -19,7 +19,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
     gameArea: Entity
     blockCount: number = 0
-    maxCount: number = 10
+    maxCount: number = 20
     blockScaleY: number = 0.4
     offsetY: number = 0.2
     lastScale: Vector3 = new Vector3(4, this.blockScaleY, 4)

@@ -99,7 +99,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             })
             this.entity.addComponent(transform)
 
-            this.interEffect = new InterEffect(this.TowerDuel, transform, true)
+            this.interEffect = new InterEffect(this.TowerDuel, this.entity, transform, true)
             engine.addSystem(this.interEffect)
 
             this.TowerDuel.spawner?.spawnBlock()
@@ -130,7 +130,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             this.fallingBlocks = new FallingBlocks(this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
             engine.addSystem(this.fallingBlocks);
 
-            this.interEffect = new InterEffect(this.TowerDuel, new Transform({
+            this.interEffect = new InterEffect(this.TowerDuel, this.entity, new Transform({
                 position: newPosition,
                 scale: newScale
             }), false)
