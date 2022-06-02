@@ -86,39 +86,36 @@ export default class Spawner implements ISystem {
     }
 
     maxCountReachedAnimation() {
-        const blockTimeTravel = 1
+        const blockTimeTravel = 0.2
         const slice = 3
-        const offsetRescale = 4
-
+        const offsetRescale = 5
         const remainingBlocks = this.TowerDuel.blocks.slice(-slice)
         const blocksToRemove = this.TowerDuel.blocks.slice(0, -slice)
+
+        remainingBlocks.forEach((block, index) => {
+            const startPos = block.entity.getComponent(Transform).position
+            const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY + index * this.TowerDuel.blockScaleY, startPos.z)
+            block.entity.addComponent(new MoveTransformComponent(startPos, endPos, (this.TowerDuel.maxCount * blockTimeTravel) - (slice * blockTimeTravel)))
+        })
         blocksToRemove.forEach((block, index) => {
             if (index + 1 > offsetRescale) {
                 const startPos = block.entity.getComponent(Transform).position
                 const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * offsetRescale, startPos.z)
                 block.entity.addComponentOrReplace(new MoveTransformComponent(startPos, endPos, blockTimeTravel * (index - offsetRescale), () => {
-                    block.entity.addComponentOrReplace(new ScaleTransformComponent(block.entity.getComponent(Transform).scale, new Vector3(0.1, 0.1, 0.1), offsetRescale * blockTimeTravel, undefined, InterpolationType.EASEINQUAD))
-
-                    const startPos = block.entity.getComponent(Transform).position
-                    const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY - this.TowerDuel.blockScaleY, startPos.z)
-                    block.entity.addComponentOrReplace(new MoveTransformComponent(startPos, endPos, blockTimeTravel * offsetRescale, () => {
+                    const endPos2 = new Vector3(endPos.x, this.TowerDuel.offsetY - this.TowerDuel.blockScaleY, endPos.z)
+                    block.entity.addComponentOrReplace(new MoveTransformComponent(endPos, endPos2, blockTimeTravel * offsetRescale, () => {
                         block.Delete()
-
                     }))
+                    block.entity.addComponentOrReplace(new ScaleTransformComponent(block.entity.getComponent(Transform).scale, new Vector3(0.1, 0.1, 0.1), offsetRescale * blockTimeTravel, undefined, InterpolationType.EASEINQUAD))
                 }))
             } else {
-                block.entity.addComponentOrReplace(new ScaleTransformComponent(block.entity.getComponent(Transform).scale, new Vector3(0.1, 0.1, 0.1), blockTimeTravel * (index + 1), undefined, InterpolationType.EASEINQUAD))
                 const startPos = block.entity.getComponent(Transform).position
                 const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY - this.TowerDuel.blockScaleY, startPos.z)
                 block.entity.addComponentOrReplace(new MoveTransformComponent(startPos, endPos, (blockTimeTravel * 0.9) * (index + 1), () => {
                     block.Delete()
                 }))
+                block.entity.addComponentOrReplace(new ScaleTransformComponent(block.entity.getComponent(Transform).scale, new Vector3(0.1, 0.1, 0.1), blockTimeTravel * (index + 1), undefined, InterpolationType.EASEINQUAD))
             }
-        })
-        remainingBlocks.forEach((block, index) => {
-            const startPos = block.entity.getComponent(Transform).position
-            const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY + index * this.TowerDuel.blockScaleY, startPos.z)
-            block.entity.addComponent(new MoveTransformComponent(startPos, endPos, (this.TowerDuel.maxCount * blockTimeTravel) - (slice * blockTimeTravel)))
         })
 
         if ( this.TowerDuel.lift) {
@@ -128,7 +125,6 @@ export default class Spawner implements ISystem {
                 currentLiftPosition,
                 new Vector3(currentLiftPosition.x, posY, currentLiftPosition.z),
                 (this.TowerDuel.maxCount - slice) * blockTimeTravel
-
             ))
         }
 
