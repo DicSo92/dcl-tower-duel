@@ -30,7 +30,6 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         this.isBase ? this.BuildBase() : this.SpawnBlock()
         engine.addEntity(this.entity)
         this.TowerDuel.blockCount += 1
-        this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blockCount)
         this.setMaterial()
         this.TowerDuel.blocks.push(this)
     };

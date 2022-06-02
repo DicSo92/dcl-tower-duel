@@ -67,6 +67,8 @@ export default class Spawner implements ISystem {
     }
 
     public spawnBlock() {
+        this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blockCount)
+
         if (this.TowerDuel.blockCount >= this.TowerDuel.maxCount) {
             log("-------------------------------------")
             log('Max Count reached !!')
@@ -84,8 +86,8 @@ export default class Spawner implements ISystem {
     }
 
     maxCountReachedAnimation() {
-        const slice = 4
-        const blockTimeTravel = 0.2
+        const blockTimeTravel = 1
+        const slice = 3
         const offsetRescale = 4
 
         const remainingBlocks = this.TowerDuel.blocks.slice(-slice)
@@ -118,6 +120,18 @@ export default class Spawner implements ISystem {
             const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY + index * this.TowerDuel.blockScaleY, startPos.z)
             block.entity.addComponent(new MoveTransformComponent(startPos, endPos, (this.TowerDuel.maxCount * blockTimeTravel) - (slice * blockTimeTravel)))
         })
+
+        if ( this.TowerDuel.lift) {
+            const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (slice + 1)
+            const currentLiftPosition = this.TowerDuel.lift.global.getComponent(Transform).position
+            this.TowerDuel.lift?.global.addComponentOrReplace(new MoveTransformComponent(
+                currentLiftPosition,
+                new Vector3(currentLiftPosition.x, posY, currentLiftPosition.z),
+                (this.TowerDuel.maxCount - slice) * blockTimeTravel
+
+            ))
+        }
+
     }
 
     private spawnAnimation(): MoveTransformComponent {
