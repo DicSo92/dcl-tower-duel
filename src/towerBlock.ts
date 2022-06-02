@@ -10,6 +10,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     isBase: Boolean
     animation?: MoveTransformComponent
     entity: Entity
+    blockPhysic?: CANNON.Body
     fallingBlocks?: FallingBlocks
     interEffect?: InterEffect
     marginError: number = 0.15
@@ -140,13 +141,13 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     }
 
     private addPhysicBlock(position: Vector3, scale: Vector3) {
-        const blockPhysic: CANNON.Body = new CANNON.Body({
+        this.blockPhysic = new CANNON.Body({
             mass: 0, // kg
             position: new CANNON.Vec3(position.x, position.y, position.z), // m
             shape: new CANNON.Box(new CANNON.Vec3(scale.x / 2, scale.y / 2, scale.z / 2))
         })
-        blockPhysic.material = this.TowerDuel.physicsMaterial
-        this.TowerDuel.world.addBody(blockPhysic)
+        this.blockPhysic.material = this.TowerDuel.physicsMaterial
+        this.TowerDuel.world.addBody(this.blockPhysic)
     }
 
     private setMaterial() {
@@ -156,8 +157,9 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     }
 
     public Delete() {
+        this.interEffect?.Delete()
+        if (this.blockPhysic) this.TowerDuel.world.remove(this.blockPhysic)
         engine.removeEntity(this.entity)
-        if (this.interEffect) this.interEffect.Delete()
         engine.removeSystem(this)
     }
 

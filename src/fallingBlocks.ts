@@ -32,7 +32,6 @@ export default class FallingBlocks implements ISystem {
         })
         const fallBlock = new FallingBlock(this.TowerDuel, transform)
         this.TowerDuel.fallingBlocks.push(fallBlock)
-        log(Math.abs(this.offsetX))
     }
     private BuildBlockZ() {
         const transform: Transform = new Transform({

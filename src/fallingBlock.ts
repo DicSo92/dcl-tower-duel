@@ -43,7 +43,9 @@ export class FallingBlock extends Entity {
 
         this.BuildEvents()
 
-        this.addComponent(new ExpireIn(4000))
+        this.addComponent(new ExpireIn(4000, () => {
+            this.world.remove(this.body)
+        }))
     }
 
     private BuildEvents() {
