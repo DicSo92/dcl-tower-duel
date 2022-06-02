@@ -99,6 +99,8 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             })
             this.entity.addComponent(transform)
 
+            this.addPhysicBlock(transform.position, transform.scale)
+
             this.interEffect = new InterEffect(this.TowerDuel, this.entity, transform, true)
             engine.addSystem(this.interEffect)
 
@@ -120,13 +122,8 @@ export default class TowerBlock implements ISystem, ITowerBlock {
                 position: newPosition,
                 scale: newScale
             }))
-            const blockPhysic: CANNON.Body = new CANNON.Body({
-                mass: 0, // kg
-                position: new CANNON.Vec3(newPosition.x, newPosition.y, newPosition.z), // m
-                shape: new CANNON.Box(new CANNON.Vec3(newScale.x / 2, newScale.y / 2, newScale.z / 2))
-            })
-            blockPhysic.material = this.TowerDuel.physicsMaterial
-            this.TowerDuel.world.addBody(blockPhysic)
+            this.addPhysicBlock(newPosition, newScale)
+
             this.fallingBlocks = new FallingBlocks(this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
             engine.addSystem(this.fallingBlocks);
 
@@ -140,6 +137,16 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
             this.messageBus.emit("addStamina_" + this.TowerDuel.towerDuelId, {})
         }
+    }
+
+    private addPhysicBlock(position: Vector3, scale: Vector3) {
+        const blockPhysic: CANNON.Body = new CANNON.Body({
+            mass: 0, // kg
+            position: new CANNON.Vec3(position.x, position.y, position.z), // m
+            shape: new CANNON.Box(new CANNON.Vec3(scale.x / 2, scale.y / 2, scale.z / 2))
+        })
+        blockPhysic.material = this.TowerDuel.physicsMaterial
+        this.TowerDuel.world.addBody(blockPhysic)
     }
 
     private setMaterial() {
