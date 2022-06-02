@@ -44,7 +44,7 @@ export default class Spawner implements ISystem {
 
         // Move entity infinitely
         this.entity.addComponent(new ToggleComponent(ToggleState.Off,(value: ToggleState) => {
-            const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.blockCount
+            const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length
 
             //Define the positions of the path for move animation
             let path = [
@@ -67,13 +67,10 @@ export default class Spawner implements ISystem {
     }
 
     public spawnBlock() {
-        this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blockCount)
+        this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blocks.length)
 
-        if (this.TowerDuel.blockCount >= this.TowerDuel.maxCount) {
-            log("-------------------------------------")
+        if (this.TowerDuel.currentBlocks.length >= this.TowerDuel.maxCount) {
             log('Max Count reached !!')
-            log("-------------------------------------")
-
             this.maxCountReachedAnimation()
         } else {
             log('spawn block')
@@ -89,8 +86,8 @@ export default class Spawner implements ISystem {
         const blockTimeTravel = 0.2
         const slice = 3
         const offsetRescale = 7
-        const remainingBlocks = this.TowerDuel.blocks.slice(-slice)
-        const blocksToRemove = this.TowerDuel.blocks.slice(0, -slice)
+        const remainingBlocks = this.TowerDuel.currentBlocks.slice(-slice)
+        const blocksToRemove = this.TowerDuel.currentBlocks.slice(0, -slice)
 
         remainingBlocks.forEach((block, index) => {
             const startPos = block.entity.getComponent(Transform).position
@@ -121,11 +118,13 @@ export default class Spawner implements ISystem {
         if ( this.TowerDuel.lift) {
             const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (slice + 1)
             const currentLiftPosition = this.TowerDuel.lift.global.getComponent(Transform).position
-            this.TowerDuel.lift?.global.addComponentOrReplace(new MoveTransformComponent(
-                currentLiftPosition,
-                new Vector3(currentLiftPosition.x, posY, currentLiftPosition.z),
-                (this.TowerDuel.maxCount - slice) * blockTimeTravel
-            ))
+            this.TowerDuel.lift?.global.addComponentOrReplace(
+                new MoveTransformComponent(currentLiftPosition, new Vector3(currentLiftPosition.x, posY, currentLiftPosition.z), (this.TowerDuel.maxCount - slice) * blockTimeTravel, () => {
+                    // Relaunch Spawn Blocks
+                    this.TowerDuel.currentBlocks = remainingBlocks
+                    this.spawnBlock()
+                })
+            )
         }
 
     }
@@ -176,7 +175,7 @@ export default class Spawner implements ISystem {
     // }
 
     private spawnAnimation(): MoveTransformComponent {
-        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.blockCount
+        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length
 
         // const startX = 32
         // const startZ = 9 // cant be same as block position (8)

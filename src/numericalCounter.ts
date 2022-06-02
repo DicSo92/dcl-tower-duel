@@ -13,7 +13,7 @@ export default class NumericalCounter implements ISystem {
             position: new Vector3(-1.5, 1, .5)
         }))
         this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -90, 0)
-        
+
         this.counter = new Entity()
         this.counter.addComponent(new Transform())
         this.counter.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 180, 0)
@@ -26,7 +26,7 @@ export default class NumericalCounter implements ISystem {
         })
         this.counter.addComponent(numCounterAnimator)
         this.counter.setParent(this.global)
-        this.text = new TextShape(this.towerDuel.blockCount.toString())
+        this.text = new TextShape(this.towerDuel.blocks.length.toString())
         this.text.fontSize = 5
         this.global.addComponent(this.text)
         this.global.setParent(lift.global)

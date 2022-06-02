@@ -34,24 +34,24 @@ export interface ITowerDuel {
     gameAssets: GameAssets
 
     towerDuelId: string
-
     gameArea: Entity
-    blockCount: number
+    spawner?: Spawner
+    lift?: ILift
+    playerInputsListener: Input
+    physicsSystem?: PhysicsSystem
+    isActive: Boolean
+
     maxCount: number
     blockScaleY: number
     offsetY: number
     lastScale: Vector3
     lastPosition: Vector3
-    isActive: Boolean
-    spawner?: Spawner
-    playerInputsListener: Input
-    towerBlock?: TowerBlock
+
+    blocks: TowerBlock[]
+    currentBlocks: TowerBlock[]
+    fallingBlocks: FallingBlock[]
     currentBlock?: TowerBlock
     prevBlock?: TowerBlock
-    lift?: ILift
-    blocks: TowerBlock[]
-    fallingBlocks: FallingBlock[]
-    physicsSystem?: PhysicsSystem;
 
     CleanEntities(): void
     StopBlock(): void

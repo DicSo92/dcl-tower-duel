@@ -29,9 +29,9 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     Init = () => {
         this.isBase ? this.BuildBase() : this.SpawnBlock()
         engine.addEntity(this.entity)
-        this.TowerDuel.blockCount += 1
-        this.setMaterial()
         this.TowerDuel.blocks.push(this)
+        this.TowerDuel.currentBlocks.push(this)
+        this.setMaterial()
     };
 
     private BuildBase = () => {
@@ -83,9 +83,10 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             const fallBlock = new FallingBlock(this.TowerDuel, currentBlockTransform)
             this.TowerDuel.fallingBlocks.push(fallBlock)
 
-            this.TowerDuel.blockCount -= 1
-            this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blockCount)
             this.TowerDuel.blocks.pop()
+            this.TowerDuel.currentBlocks.pop()
+
+            this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blocks.length)
 
             // this.messageBus.emit("looseHeart_"+this.TowerDuel.towerDuelId, {})
             this.TowerDuel.lift?.hearts.decremLife()
@@ -143,7 +144,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
     private setMaterial() {
         const countToChangeColor = 3
-        const step = (Math.ceil(this.TowerDuel.blockCount / countToChangeColor) - 1) % 10 // (% 10) get last digit of number (12 % 10 = 2)
+        const step = (Math.ceil(this.TowerDuel.blocks.length / countToChangeColor) - 1) % 10 // (% 10) get last digit of number (12 % 10 = 2)
         this.entity.addComponent(this.TowerDuel.gameAssets.blockMaterials[step])
     }
 

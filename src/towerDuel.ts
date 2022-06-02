@@ -16,24 +16,24 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     gameAssets: GameAssets
 
     towerDuelId: string
-
     gameArea: Entity
-    blockCount: number = 0
+    spawner?: Spawner
+    lift?: ILift
+    playerInputsListener: Input = Input.instance
+    physicsSystem?: PhysicsSystem
+    isActive: Boolean = true
+
     maxCount: number = 20
     blockScaleY: number = 0.4
     offsetY: number = 0.2
     lastScale: Vector3 = new Vector3(4, this.blockScaleY, 4)
     lastPosition: Vector3 = new Vector3(8, this.offsetY, 8)
-    isActive: Boolean = true
-    spawner?: Spawner
-    playerInputsListener: Input = Input.instance
-    towerBlock?: TowerBlock
+
+    blocks: TowerBlock[] = []
+    currentBlocks: TowerBlock[] = []
+    fallingBlocks: FallingBlock[] = []
     currentBlock?: TowerBlock
     prevBlock?: TowerBlock
-    lift?: ILift
-    blocks: TowerBlock[] = []
-    fallingBlocks: FallingBlock[] = []
-    physicsSystem?: PhysicsSystem;
 
     constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, mainGame: MainGame, pos: Vector3) {
         this.physicsMaterial = cannonMaterial
@@ -62,8 +62,8 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.spawner = new Spawner(this);
         // engine.addSystem(this.spawner);
 
-        this.towerBlock = new TowerBlock(this, undefined, true);
-        engine.addSystem(this.towerBlock);
+        const towerBlock = new TowerBlock(this, undefined, true);
+        engine.addSystem(towerBlock);
 
         this.physicsSystem = new PhysicsSystem(this.fallingBlocks, this.world)
         engine.addSystem(this.physicsSystem)
@@ -87,9 +87,6 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
     public CleanEntities() {
         engine.removeEntity(this.gameArea)
-        this.currentBlock?.Delete()
-        this.prevBlock?.Delete()
-        this.towerBlock?.Delete()
         if (this.blocks) {
             for (let block in this.blocks) {
                 this.blocks[block].Delete()
