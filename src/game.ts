@@ -94,16 +94,16 @@ export default class Game implements ISystem {
         this.rulesBtn.addComponent(rbtnAnimator)
         engine.addEntity(this.rulesBtn)
 
-        this.rulesBtn.addComponentOrReplace(new utils.Delay(1000, () => {
-            log("Play rulesBtn.rotationYBezier")
+        // this.rulesBtn.addComponentOrReplace(new utils.Delay(1000, () => {
+            // log("Play rulesBtn.rotationYBezier")
             // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
-            this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
+            // this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
             // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
             // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
-            log("Playing rulesBtn.rotationYBezier")
+            // log("Playing rulesBtn.rotationYBezier")
             // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
             // log("Stopping rulesBtn.rotationYBezier")
-        }))
+        // }))
         this.playBtn.addComponent(new Transform({
             position: new Vector3(16.75, 1, 17),
             scale: new Vector3(1, 1, 1)
@@ -135,13 +135,13 @@ export default class Game implements ISystem {
         engine.addEntity(this.playBtn)
 
         this.playBtn.addComponentOrReplace(new utils.Delay(1000, () => {
-            log("Play rulesBtn.rotationYBezier")
+            // log("Play rulesBtn.rotationYBezier")
             // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
-            this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
+            // this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
             this.rulesBtn.getComponent(Animator).getClip('rotXBezier').play()
             // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
             // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
-            log("Playing rulesBtn.rotationYBezier")
+            // log("Playing rulesBtn.rotationYBezier")
             // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
             // log("Stopping rulesBtn.rotationYBezier")
         }))
