@@ -19,10 +19,10 @@ export default class LiftToGame implements ISystem {
     constructor(parent: MainGame) {
         this.parent = parent
         if (this.parent.side === 'left') {
-            this.startPos = new Vector3(16 + 2.25, 0, 24)
+            this.startPos = new Vector3(8, 0, 24)
             this.endPos = new Vector3(30, 1, 2)
         } else {
-            this.startPos = new Vector3(16 - 2.25, 0, 24)
+            this.startPos = new Vector3(24, 0, 24)
             this.endPos = new Vector3(2, 1, 2)
         }
         this.lift = new Entity()

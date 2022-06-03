@@ -146,27 +146,27 @@ export default class Game implements ISystem {
             // log("Stopping rulesBtn.rotationYBezier")
         }))
 
-        const gameStarterPlot = new Entity()
-        gameStarterPlot.addComponent(new Transform({
-            position: new Vector3(16, 0, 24),
-            scale: new Vector3(1.5, 1.5, 1.5)
-        }))
-        gameStarterPlot.addComponent(this.sceneAssets.gameStarter)
-        const gspAnimator = new Animator()
-        this.sceneAssets.gameStarterAnimStates.forEach(item => {
-            gspAnimator.addClip(item)
-            item.reset()
-            item.play()
-        })
-        gameStarterPlot.addComponent(gspAnimator)
-        engine.addEntity(gameStarterPlot)
+        // const gameStarterPlot = new Entity()
+        // gameStarterPlot.addComponent(new Transform({
+        //     position: new Vector3(16, 0, 24),
+        //     scale: new Vector3(1.5, 1.5, 1.5)
+        // }))
+        // gameStarterPlot.addComponent(this.sceneAssets.gameStarter)
+        // const gspAnimator = new Animator()
+        // this.sceneAssets.gameStarterAnimStates.forEach(item => {
+        //     gspAnimator.addClip(item)
+        //     item.reset()
+        //     item.play()
+        // })
+        // gameStarterPlot.addComponent(gspAnimator)
+        // engine.addEntity(gameStarterPlot)
 
-        this.BuildMobius(gameStarterPlot, true)
-        this.BuildMobius(gameStarterPlot, false)
+        // this.BuildMobius(gameStarterPlot, true)
+        // this.BuildMobius(gameStarterPlot, false)
 
         const higherTower = new Entity()
         higherTower.addComponent(new Transform({
-            position: new Vector3(8, 0, 24),
+            position: new Vector3(16, 0, 24),
             scale: new Vector3(1, 1, 1)
         }))
         higherTower.addComponent(this.sceneAssets.higherTowerModel)
