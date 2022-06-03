@@ -193,6 +193,7 @@ export default class Spawner implements ISystem {
     }
 
     public Delete() {
+        engine.removeEntity(this.plane)
         engine.removeEntity(this.entity)
         engine.removeEntity(this.spawnInterval)
         this.spawningBlock?.Delete()
