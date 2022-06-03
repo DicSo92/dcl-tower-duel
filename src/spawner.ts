@@ -12,18 +12,25 @@ export default class Spawner implements ISystem {
     TowerDuel: ITowerDuel
     messageBus: MessageBus
 
+    plane: Entity
     entity: Entity
-    moveDuration: number = 10
     spawnInterval: Entity
     spawningBlock?: TowerBlock
     spawnSpeed: number = 3
+    moveDuration: number = 10
 
     constructor(towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
         this.messageBus = this.TowerDuel.messageBus
 
+        this.plane = new Entity();
+        this.plane.addComponent(new Transform({
+            scale: new Vector3(1, 1, 1)
+        }))
+        this.plane.setParent(this.TowerDuel.gameArea)
+
         this.entity = new Entity();
-        this.entity.setParent(this.TowerDuel.gameArea)
+        this.entity.setParent(this.plane)
         this.spawnInterval = new Entity()
 
         this.Init();
@@ -34,6 +41,8 @@ export default class Spawner implements ISystem {
         this.entity.getComponent(ToggleComponent).toggle()
         engine.addSystem(this)
         this.BuildEvents()
+
+        this.upSpawner()
     };
 
     private BuildSpawner() {
@@ -44,26 +53,27 @@ export default class Spawner implements ISystem {
 
         // Move entity infinitely
         this.entity.addComponent(new ToggleComponent(ToggleState.Off,(value: ToggleState) => {
-            const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length
-
             //Define the positions of the path for move animation
-            let path = [
-                new Vector3(13, posY, 1),
-                new Vector3(15, posY, 3),
-                new Vector3(15, posY, 13),
-                new Vector3(13, posY, 15),
-                new Vector3(3, posY, 15),
-                new Vector3(1, posY, 13),
-                new Vector3(1, posY, 3),
-                new Vector3(3, posY, 1),
+            const path = [
+                new Vector3(13, 0, 1),
+                new Vector3(15, 0, 3),
+                new Vector3(15, 0, 13),
+                new Vector3(13, 0, 15),
+                new Vector3(3, 0, 15),
+                new Vector3(1, 0, 13),
+                new Vector3(1, 0, 3),
+                new Vector3(3, 0, 1),
             ]
-            this.entity.addComponentOrReplace(
-                this.entity.addComponent(new FollowCurvedPathComponent(path, this.moveDuration, 25, true, true, () => {
-                    log('curve finished')
-                    this.entity.getComponent(ToggleComponent).toggle()
-                }))
-            )})
-        )
+            this.entity.addComponentOrReplace(new FollowCurvedPathComponent(path, this.moveDuration, 25, true, true, () => {
+                log('curve finished')
+                this.entity.getComponent(ToggleComponent).toggle()
+            }))
+        }))
+    }
+
+    private upSpawner() {
+        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length - this.TowerDuel.blockScaleY
+        this.plane.addComponentOrReplace(new MoveTransformComponent(this.plane.getComponent(Transform).position, new Vector3(0, posY, 0), 0.25))
     }
 
     public spawnBlock() {
@@ -80,6 +90,7 @@ export default class Spawner implements ISystem {
 
             this.TowerDuel.lift?.autoMove()
         }
+        this.upSpawner()
     }
 
     maxCountReachedAnimation() {
