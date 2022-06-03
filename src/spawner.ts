@@ -138,8 +138,9 @@ export default class Spawner implements ISystem {
         const startX = spawnerPosition.x
         const startZ = spawnerPosition.z // cant be same as block position (8)
 
-
-        let endZ = startZ >= this.TowerDuel.lastPosition.z ? 0 : 16
+        const breakpointMin = 2
+        const breakpointMax = 14
+        let endZ = startZ >= this.TowerDuel.lastPosition.z ? breakpointMin : breakpointMax
 
         const adjacent = Math.abs(this.TowerDuel.lastPosition.z - startZ)
         const opposite = Math.abs(this.TowerDuel.lastPosition.x - startX)
@@ -152,30 +153,21 @@ export default class Spawner implements ISystem {
 
         let endX = startX + (startX >= this.TowerDuel.lastPosition.x ? -1 : 1) * mainOpposite
 
-        // Prevent move animation to go outside the game scene
+        // Prevent move animation to go outside the game scene on X
         const setEndPosWithBreakpoint = (breakpoint: number) => {
             const oppositeAngle = Math.asin(mainAdjacent / mainHypotenuse)
             const outsideAdjacent = Math.abs(breakpoint - endX)
             const outsideHypotenuse = outsideAdjacent / Math.cos(oppositeAngle)
             const outsideOpposite = Math.sqrt(Math.pow(outsideHypotenuse, 2) - Math.pow(outsideAdjacent , 2))
 
-            endZ = Math.abs(endZ - outsideOpposite)
+            endZ = Math.abs(endZ + (startZ >= this.TowerDuel.lastPosition.z ? 1 : -1) * outsideOpposite)
             endX = breakpoint
         }
-        if (endX < 2 ) {
-            setEndPosWithBreakpoint(2)
-        } else if (endX > 14) {
-            setEndPosWithBreakpoint(14)
+        if (endX < breakpointMin) {
+            setEndPosWithBreakpoint(breakpointMin)
+        } else if (endX > breakpointMax) {
+            setEndPosWithBreakpoint(breakpointMax)
         }
-
-        log("adjacent", adjacent)
-        log("opposite", opposite)
-        log("hypotenuse", hypotenuse)
-        log("angle", angle)
-        log("mainAdjacent", mainAdjacent)
-        log("mainHypotenuse", mainHypotenuse)
-        log("mainOpposite", mainOpposite)
-        log("endX", endX)
 
         let StartPos = new Vector3(startX, posY, startZ)
         let EndPos = new Vector3(endX, posY, endZ)
