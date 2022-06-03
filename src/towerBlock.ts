@@ -10,8 +10,10 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     isBase: Boolean
     animation?: MoveTransformComponent
     entity: Entity
+    blockPhysic?: CANNON.Body
     fallingBlocks?: FallingBlocks
     interEffect?: InterEffect
+    marginError: number = 0.15
 
     constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
@@ -28,10 +30,9 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     Init = () => {
         this.isBase ? this.BuildBase() : this.SpawnBlock()
         engine.addEntity(this.entity)
-        this.TowerDuel.blockCount += 1
-        this.TowerDuel.lift.numericalCounter.setScore(this.TowerDuel.blockCount)
-        this.setMaterial()
         this.TowerDuel.blocks.push(this)
+        this.TowerDuel.currentBlocks.push(this)
+        this.setMaterial()
     };
 
     private BuildBase = () => {
@@ -83,14 +84,15 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             const fallBlock = new FallingBlock(this.TowerDuel, currentBlockTransform)
             this.TowerDuel.fallingBlocks.push(fallBlock)
 
-            this.TowerDuel.blockCount -= 1
-            this.TowerDuel.lift.numericalCounter.setScore(this.TowerDuel.blockCount)
             this.TowerDuel.blocks.pop()
+            this.TowerDuel.currentBlocks.pop()
+
+            this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blocks.length)
 
             // this.messageBus.emit("looseHeart_"+this.TowerDuel.towerDuelId, {})
             this.TowerDuel.lift?.hearts.decremLife()
         }
-        else if (Math.abs(offsetX) <= 0.2 && Math.abs(offsetZ) <= 0.2) { // perfect placement (with error margin)
+        else if (Math.abs(offsetX) <= this.marginError && Math.abs(offsetZ) <= this.marginError) { // perfect placement (with error margin)
             this.entity.addComponent(new BoxShape())
             const transform = new Transform({
                 position: new Vector3(prevBlockTransform.position.x, currentBlockTransform.position.y, prevBlockTransform.position.z),
@@ -98,7 +100,9 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             })
             this.entity.addComponent(transform)
 
-            this.interEffect = new InterEffect(this.TowerDuel, transform, true)
+            this.addPhysicBlock(transform.position, transform.scale)
+
+            this.interEffect = new InterEffect(this.TowerDuel, this.entity, transform, true)
             engine.addSystem(this.interEffect)
 
             this.TowerDuel.spawner?.spawnBlock()
@@ -119,17 +123,12 @@ export default class TowerBlock implements ISystem, ITowerBlock {
                 position: newPosition,
                 scale: newScale
             }))
-            const blockPhysic: CANNON.Body = new CANNON.Body({
-                mass: 0, // kg
-                position: new CANNON.Vec3(newPosition.x, newPosition.y, newPosition.z), // m
-                shape: new CANNON.Box(new CANNON.Vec3(newScale.x / 2, newScale.y / 2, newScale.z / 2))
-            })
-            blockPhysic.material = this.TowerDuel.physicsMaterial
-            this.TowerDuel.world.addBody(blockPhysic)
+            this.addPhysicBlock(newPosition, newScale)
+
             this.fallingBlocks = new FallingBlocks(this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
             engine.addSystem(this.fallingBlocks);
 
-            this.interEffect = new InterEffect(this.TowerDuel, new Transform({
+            this.interEffect = new InterEffect(this.TowerDuel, this.entity, new Transform({
                 position: newPosition,
                 scale: newScale
             }), false)
@@ -141,15 +140,26 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         }
     }
 
+    private addPhysicBlock(position: Vector3, scale: Vector3) {
+        this.blockPhysic = new CANNON.Body({
+            mass: 0, // kg
+            position: new CANNON.Vec3(position.x, position.y, position.z), // m
+            shape: new CANNON.Box(new CANNON.Vec3(scale.x / 2, scale.y / 2, scale.z / 2))
+        })
+        this.blockPhysic.material = this.TowerDuel.physicsMaterial
+        this.TowerDuel.world.addBody(this.blockPhysic)
+    }
+
     private setMaterial() {
         const countToChangeColor = 3
-        const step = (Math.ceil(this.TowerDuel.blockCount / countToChangeColor) - 1) % 10 // (% 10) get last digit of number (12 % 10 = 2)
+        const step = (Math.ceil(this.TowerDuel.blocks.length / countToChangeColor) - 1) % 10 // (% 10) get last digit of number (12 % 10 = 2)
         this.entity.addComponent(this.TowerDuel.gameAssets.blockMaterials[step])
     }
 
     public Delete() {
+        this.interEffect?.Delete()
+        if (this.blockPhysic) this.TowerDuel.world.remove(this.blockPhysic)
         engine.removeEntity(this.entity)
-        if (this.interEffect) this.interEffect.Delete()
         engine.removeSystem(this)
     }
 

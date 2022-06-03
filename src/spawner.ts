@@ -1,7 +1,7 @@
 import {
-    FollowCurvedPathComponent,
-    Interval,
-    MoveTransformComponent,
+    Delay,
+    FollowCurvedPathComponent, InterpolationType,
+    MoveTransformComponent, ScaleTransformComponent,
     ToggleComponent,
     ToggleState
 } from "@dcl/ecs-scene-utils";
@@ -44,7 +44,7 @@ export default class Spawner implements ISystem {
 
         // Move entity infinitely
         this.entity.addComponent(new ToggleComponent(ToggleState.Off,(value: ToggleState) => {
-            const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
+            const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length
 
             //Define the positions of the path for move animation
             let path = [
@@ -67,16 +67,70 @@ export default class Spawner implements ISystem {
     }
 
     public spawnBlock() {
-        log('spawn block')
-        const animation = this.spawnAnimation()
-        this.spawningBlock = new TowerBlock(this.TowerDuel, animation);
-        engine.addSystem(this.spawningBlock);
+        this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blocks.length)
 
-        this.TowerDuel.lift?.autoMove()
+        if (this.TowerDuel.currentBlocks.length >= this.TowerDuel.maxCount) {
+            log('Max Count reached !!')
+            this.maxCountReachedAnimation()
+        } else {
+            log('spawn block')
+            const animation = this.spawnAnimation()
+            this.spawningBlock = new TowerBlock(this.TowerDuel, animation);
+            engine.addSystem(this.spawningBlock);
+
+            this.TowerDuel.lift?.autoMove()
+        }
+    }
+
+    maxCountReachedAnimation() {
+        const blockTimeTravel = 0.2
+        const slice = 3
+        const offsetRescale = 7
+        const remainingBlocks = this.TowerDuel.currentBlocks.slice(-slice)
+        const blocksToRemove = this.TowerDuel.currentBlocks.slice(0, -slice)
+
+        remainingBlocks.forEach((block, index) => {
+            const startPos = block.entity.getComponent(Transform).position
+            const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY + index * this.TowerDuel.blockScaleY, startPos.z)
+            block.entity.addComponent(new MoveTransformComponent(startPos, endPos, (this.TowerDuel.maxCount * blockTimeTravel) - (slice * blockTimeTravel)))
+        })
+        blocksToRemove.forEach((block, index) => {
+            if (index + 1 > offsetRescale) {
+                const startPos = block.entity.getComponent(Transform).position
+                const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY - this.TowerDuel.blockScaleY, startPos.z)
+
+                block.entity.addComponent(new Delay(blockTimeTravel * ((index + 1) - offsetRescale) * 1000, () => {
+                    block.entity.addComponentOrReplace(new ScaleTransformComponent(block.entity.getComponent(Transform).scale, new Vector3(0.1, 0.1, 0.1), offsetRescale * blockTimeTravel, undefined, InterpolationType.EASEINQUAD))
+                }))
+                block.entity.addComponentOrReplace(new MoveTransformComponent(startPos, endPos, blockTimeTravel * (index + 1), () => {
+                    block.Delete()
+                }))
+            } else {
+                block.entity.addComponentOrReplace(new ScaleTransformComponent(block.entity.getComponent(Transform).scale, new Vector3(0.1, 0.1, 0.1), blockTimeTravel * (index + 1), undefined, InterpolationType.EASEINQUAD))
+                const startPos = block.entity.getComponent(Transform).position
+                const endPos = new Vector3(startPos.x, this.TowerDuel.offsetY - this.TowerDuel.blockScaleY, startPos.z)
+                block.entity.addComponentOrReplace(new MoveTransformComponent(startPos, endPos, blockTimeTravel * (index + 1), () => {
+                    block.Delete()
+                }))
+            }
+        })
+
+        if ( this.TowerDuel.lift) {
+            const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (slice + 1)
+            const currentLiftPosition = this.TowerDuel.lift.global.getComponent(Transform).position
+            this.TowerDuel.lift?.global.addComponentOrReplace(
+                new MoveTransformComponent(currentLiftPosition, new Vector3(currentLiftPosition.x, posY, currentLiftPosition.z), (this.TowerDuel.maxCount - slice) * blockTimeTravel, () => {
+                    // Relaunch Spawn Blocks
+                    this.TowerDuel.currentBlocks = remainingBlocks
+                    this.spawnBlock()
+                })
+            )
+        }
+
     }
 
     private spawnAnimation(): MoveTransformComponent {
-        const posY = this.TowerDuel.offsetY + 0.4 * this.TowerDuel.blockCount
+        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length
 
         // const startX = 32
         // const startZ = 9 // cant be same as block position (8)
@@ -84,8 +138,9 @@ export default class Spawner implements ISystem {
         const startX = spawnerPosition.x
         const startZ = spawnerPosition.z // cant be same as block position (8)
 
-
-        let endZ = startZ >= this.TowerDuel.lastPosition.z ? 0 : 16
+        const breakpointMin = 2
+        const breakpointMax = 14
+        let endZ = startZ >= this.TowerDuel.lastPosition.z ? breakpointMin : breakpointMax
 
         const adjacent = Math.abs(this.TowerDuel.lastPosition.z - startZ)
         const opposite = Math.abs(this.TowerDuel.lastPosition.x - startX)
@@ -98,30 +153,21 @@ export default class Spawner implements ISystem {
 
         let endX = startX + (startX >= this.TowerDuel.lastPosition.x ? -1 : 1) * mainOpposite
 
-        // Prevent move animation to go outside the game scene
+        // Prevent move animation to go outside the game scene on X
         const setEndPosWithBreakpoint = (breakpoint: number) => {
             const oppositeAngle = Math.asin(mainAdjacent / mainHypotenuse)
             const outsideAdjacent = Math.abs(breakpoint - endX)
             const outsideHypotenuse = outsideAdjacent / Math.cos(oppositeAngle)
             const outsideOpposite = Math.sqrt(Math.pow(outsideHypotenuse, 2) - Math.pow(outsideAdjacent , 2))
 
-            endZ = Math.abs(endZ - outsideOpposite)
+            endZ = Math.abs(endZ + (startZ >= this.TowerDuel.lastPosition.z ? 1 : -1) * outsideOpposite)
             endX = breakpoint
         }
-        if (endX < 2 ) {
-            setEndPosWithBreakpoint(2)
-        } else if (endX > 14) {
-            setEndPosWithBreakpoint(14)
+        if (endX < breakpointMin) {
+            setEndPosWithBreakpoint(breakpointMin)
+        } else if (endX > breakpointMax) {
+            setEndPosWithBreakpoint(breakpointMax)
         }
-
-        log("adjacent", adjacent)
-        log("opposite", opposite)
-        log("hypotenuse", hypotenuse)
-        log("angle", angle)
-        log("mainAdjacent", mainAdjacent)
-        log("mainHypotenuse", mainHypotenuse)
-        log("mainOpposite", mainOpposite)
-        log("endX", endX)
 
         let StartPos = new Vector3(startX, posY, startZ)
         let EndPos = new Vector3(endX, posY, endZ)
