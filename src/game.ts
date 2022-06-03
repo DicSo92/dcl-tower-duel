@@ -21,6 +21,8 @@ export default class Game implements ISystem {
     mainGame1?: IMainGame
     usersInGame: Array<String> = []
     userId?: string
+    rulesBtn: Entity = new Entity()
+    playBtn: Entity = new Entity()
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
@@ -67,6 +69,83 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
+        this.rulesBtn.addComponent(new Transform({
+            position: new Vector3(15.25, 1, 17),
+            scale: new Vector3(1, 1, 1)
+        }))
+        this.rulesBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.rulesBtn.addComponent(this.sceneAssets.rulesBtn)
+        const rbtnAnimator = new Animator()
+        this.sceneAssets.rulesBtnAnimStates.forEach(item => {
+            if (item.clip === 'stopped') {
+                log("Play rulesBtn.stopped", item)
+                item.looping = true
+                // item.play()
+                item.stop()
+            }
+            else {
+                log("Play !rulesBtn.stopped", item)
+                item.looping = true
+                item.stop()
+                // item.reset()
+            }
+            rbtnAnimator.addClip(item)
+        })
+        this.rulesBtn.addComponent(rbtnAnimator)
+        engine.addEntity(this.rulesBtn)
+
+        this.rulesBtn.addComponentOrReplace(new utils.Delay(1000, () => {
+            log("Play rulesBtn.rotationYBezier")
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
+            this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
+            // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
+            log("Playing rulesBtn.rotationYBezier")
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
+            // log("Stopping rulesBtn.rotationYBezier")
+        }))
+        this.playBtn.addComponent(new Transform({
+            position: new Vector3(16.75, 1, 17),
+            scale: new Vector3(1, 1, 1)
+        }))
+        this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.playBtn.addComponent(this.sceneAssets.playBtn)
+        const pbtnAnimator = new Animator()
+        this.sceneAssets.rulesBtnAnimStates.forEach(item => {
+            if (item.clip === 'stopped') {
+                log("Play rulesBtn.stopped", item)
+                item.looping = true
+                // item.play()
+                item.stop()
+            } else if (item.clip === 'rotX') {
+                log("Play rulesBtn.stopped", item)
+                item.looping = true
+                // item.play()
+                item.stop()
+            }
+            else {
+                log("Play !rulesBtn.stopped", item)
+                item.looping = true
+                item.stop()
+                // item.reset()
+            }
+            pbtnAnimator.addClip(item)
+        })
+        this.playBtn.addComponent(pbtnAnimator)
+        engine.addEntity(this.playBtn)
+
+        this.playBtn.addComponentOrReplace(new utils.Delay(1000, () => {
+            log("Play rulesBtn.rotationYBezier")
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
+            this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
+            this.rulesBtn.getComponent(Animator).getClip('rotXBezier').play()
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
+            // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
+            log("Playing rulesBtn.rotationYBezier")
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
+            // log("Stopping rulesBtn.rotationYBezier")
+        }))
+
         const gameStarterPlot = new Entity()
         gameStarterPlot.addComponent(new Transform({
             position: new Vector3(16, 0, 24),
@@ -88,7 +167,7 @@ export default class Game implements ISystem {
         const higherTower = new Entity()
         higherTower.addComponent(new Transform({
             position: new Vector3(8, 0, 24),
-            scale: new Vector3(1,1,1)
+            scale: new Vector3(1, 1, 1)
         }))
         higherTower.addComponent(this.sceneAssets.higherTowerModel)
         const htAnimator = new Animator()
@@ -151,7 +230,7 @@ export default class Game implements ISystem {
             mobiusLeft.getComponent(Transform).rotation.eulerAngles.y + addedAngle.y,
             mobiusLeft.getComponent(Transform).rotation.eulerAngles.z + addedAngle.z
         )
-        
+
         mobiusLeft.addComponentOrReplace(new utils.RotateTransformComponent(start, end, 2, () => {
             this.MobiusRotation(mobiusLeft, type)
         }))

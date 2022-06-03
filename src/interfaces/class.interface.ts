@@ -142,4 +142,7 @@ export interface ISceneAssets {
     povFloor: GLTFShape
     mobius: GLTFShape
     mobiusAnimStates: AnimationState[]
+    rulesBtn: GLTFShape
+    rulesBtnAnimStates: AnimationState[]
+    playBtn: GLTFShape
 }
