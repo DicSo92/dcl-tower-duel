@@ -19,6 +19,8 @@ export default class LobbyScreen implements ISystem {
 
     animationDuration: number = 0.6
     titleOffsetTop: number = 0.55
+    queueTitle: string = "---- QUEUE ----"
+    rulesTitle: string = "---- RULES ----"
     queueScale: Vector3 = new Vector3(2.75, 3, 0.05)
     rulesScale: Vector3 = new Vector3(5, 3.2, 0.05)
 
@@ -31,6 +33,7 @@ export default class LobbyScreen implements ISystem {
 
         this.screen = new Entity()
         this.title = new Entity()
+        this.title.setParent(this.container)
         this.borderModel = new GLTFShape('models/glassAngles.glb')
 
         this.Init()
@@ -38,9 +41,9 @@ export default class LobbyScreen implements ISystem {
     Init = () => {
         this.BuildScreen()
         this.BuildBorders()
-        this.BuildTexts()
         this.BuildButtons()
         this.BuildToggleEvent()
+        this.setTitleText(this.queueScale, this.queueTitle)
     }
     // -----------------------------------------------------------------------------------------------------------------
     private BuildToggleEvent = () => {
@@ -50,7 +53,9 @@ export default class LobbyScreen implements ISystem {
             this.title.getComponent(TextShape).opacity = 0
 
             this.screen.addComponentOrReplace(new ScaleTransformComponent(this.screen.getComponent(Transform).scale, newScale, this.animationDuration, () => {
-                const titleText = new TextShape(value ? "---- QUEUE ----" : "---- RULES ----")
+                this.setTitleText(newScale, value ? this.queueTitle : this.rulesTitle)
+
+                const titleText = new TextShape(value ? this.queueTitle : this.rulesTitle)
                 titleText.fontSize = 2
                 this.title.addComponentOrReplace(titleText)
                 this.title.getComponent(Transform).position = this.titlePosition(newScale)
@@ -96,6 +101,16 @@ export default class LobbyScreen implements ISystem {
         return new Vector3(0, screenScale.y - this.titleOffsetTop, 0.05)
     }
     // -----------------------------------------------------------------------------------------------------------------
+    private setTitleText (screenScale: Vector3, text: string) {
+        const titleText = new TextShape(text)
+        titleText.fontSize = 2
+        this.title.addComponentOrReplace(titleText)
+        this.title.addComponentOrReplace(new Transform({
+            position: this.titlePosition(screenScale)
+        }))
+        this.title.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 180, 0)
+    }
+    // -----------------------------------------------------------------------------------------------------------------
     BuildScreen = () => {
         this.screen.addComponentOrReplace(new BoxShape())
         this.screen.addComponentOrReplace(new Transform({
@@ -108,18 +123,6 @@ export default class LobbyScreen implements ISystem {
         screenMaterial.roughness = 0.1
         this.screen.addComponentOrReplace(screenMaterial)
         this.screen.setParent(this.container)
-    }
-    // -----------------------------------------------------------------------------------------------------------------
-    BuildTexts = () => {
-        const titleText = new TextShape("---- QUEUE ----")
-        titleText.fontSize = 2
-        this.title.addComponent(titleText)
-        this.title.addComponent(new Transform({
-            position: this.titlePosition(this.queueScale)
-        }))
-        this.title.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 180, 0)
-
-        this.title.setParent(this.container)
     }
     // -----------------------------------------------------------------------------------------------------------------
     BuildBorders = () => {
