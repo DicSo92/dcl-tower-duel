@@ -146,4 +146,5 @@ export interface ISceneAssets {
     rulesBtn: GLTFShape
     rulesBtnAnimStates: AnimationState[]
     playBtn: GLTFShape
+    playBtnAnimStates: AnimationState[]
 }

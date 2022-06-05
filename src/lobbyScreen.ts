@@ -4,9 +4,11 @@ import {
     ToggleComponent,
     ToggleState
 } from "@dcl/ecs-scene-utils";
+import Game from "./game";
+import * as utils from "@dcl/ecs-scene-utils"
 
 export default class LobbyScreen implements ISystem {
-    messageBus: MessageBus
+    parent: Game
 
     container: Entity
     screen: Entity
@@ -23,9 +25,11 @@ export default class LobbyScreen implements ISystem {
     rulesTitle: string = "---- RULES ----"
     queueScale: Vector3 = new Vector3(2.75, 3, 0.05)
     rulesScale: Vector3 = new Vector3(5, 3.2, 0.05)
+    playBtn: Entity = new Entity();
+    rulesBtn: Entity = new Entity();
 
-    constructor(messageBus: MessageBus, position: Vector3) {
-        this.messageBus = messageBus
+    constructor(parent: Game, position: Vector3) {
+        this.parent = parent
 
         this.container = new Entity()
         this.container.addComponent(new Transform({ position: position }))
@@ -160,39 +164,130 @@ export default class LobbyScreen implements ISystem {
     }
     // -----------------------------------------------------------------------------------------------------------------
     BuildButtons = () => {
-        const playBtn = new Entity()
-        playBtn.addComponent(new BoxShape())
-        playBtn.addComponent(new Transform({
-            scale: new Vector3(0.5, 0.15, 0.3),
-            position: new Vector3(0.4, 0, 1),
+        this.rulesBtn.addComponent(new Transform({
+            position: new Vector3(-0.6, 0, 1),
+            scale: new Vector3(1, 1, 1)
         }))
-        playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(40, 0, 0)
-        playBtn.addComponent(new OnPointerDown(() => {
-            log('play click')
-        }, {
-            button: ActionButton.POINTER,
-            showFeedback: true,
-            hoverText: "Play",
-        }))
-        playBtn.setParent(this.container)
-        // -------------------------------------------------
-        // -------------------------------------------------
-        const infosBtn = new Entity()
-        infosBtn.addComponent(new BoxShape())
-        infosBtn.addComponent(new Transform({
-            scale: new Vector3(0.5, 0.15, 0.3),
-            position: new Vector3(-0.4, 0, 1),
-        }))
-        infosBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(40, 0, 0)
-        infosBtn.addComponent(new OnPointerDown(() => {
+        this.rulesBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.rulesBtn.addComponent(this.parent.sceneAssets.rulesBtn)
+        const rbtnAnimator = new Animator()
+        this.parent.sceneAssets.rulesBtnAnimStates.forEach(item => {
+            if (item.clip === 'rotationZBezier') {
+                item.looping = true
+            }
+            else {
+                item.looping = false
+            }
+            item.stop()
+            rbtnAnimator.addClip(item)
+        })
+        this.rulesBtn.addComponent(rbtnAnimator)
+        // this.rulesBtn.getComponent(Animator).getClip('rotXBezier').play()
+        this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
+        this.rulesBtn.addComponent(new OnPointerDown(() => {
             log('rules click')
+            this.rulesBtn.getComponent(Animator).getClip('viberBorderXLinear').play()
             this.container.getComponent(ToggleComponent).toggle()
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
             hoverText: "Rules",
         }))
-        infosBtn.setParent(this.container)
+        this.rulesBtn.setParent(this.container)
+
+        // this.rulesBtn.addComponentOrReplace(new utils.Delay(1000, () => {
+        // log("Play rulesBtn.rotationYBezier")
+        // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
+        // this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
+        // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
+        // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
+        // log("Playing rulesBtn.rotationYBezier")
+        // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
+        // log("Stopping rulesBtn.rotationYBezier")
+        // }))
+        this.playBtn.addComponent(new Transform({
+            position: new Vector3(0.6, 0, 1),
+            scale: new Vector3(1, 1, 1)
+        }))
+        this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.playBtn.addComponent(this.parent.sceneAssets.playBtn)
+        const pbtnAnimator = new Animator()
+        this.parent.sceneAssets.playBtnAnimStates.forEach(item => {
+            if (item.clip === 'stopped') {
+                log("Play playBtn.stopped", item)
+                item.looping = true
+                // item.play()
+                item.stop()
+            } else if (item.clip === 'rotX') {
+                log("Play playBtn.stopped", item)
+                item.looping = true
+                // item.play()
+                item.stop()
+            }
+            else {
+                log("Play !playBtn.stopped", item)
+                item.looping = true
+                item.stop()
+                // item.reset()
+            }
+            pbtnAnimator.addClip(item)
+        })
+        this.playBtn.addComponent(pbtnAnimator)
+        this.playBtn.addComponent(new OnPointerDown(() => {
+            log('play click')
+        }, {
+            button: ActionButton.POINTER,
+            showFeedback: true,
+            hoverText: "Play",
+        }))
+        this.playBtn.setParent(this.container)
+
+        // this.playBtn.addComponentOrReplace(new utils.Delay(1000, () => {
+            // log("Play playBtn.rotationYBezier")
+            // this.playBtn.getComponent(Animator).getClip('rotationYBezier').play()
+            // this.playBtn.getComponent(Animator).getClip('rotationZBezier').play()
+            // this.playBtn.getComponent(Animator).getClip('rotXBezier').play()
+            // this.playBtn.getComponent(Animator).getClip('rotationYLinear').play()
+            // this.playBtn.getComponent(Animator).getClip('stopping').play()
+            // log("Playing playBtn.rotationYBezier")
+            // this.playBtn.getComponent(Animator).getClip('rotationYBezier').stop()
+            // log("Stopping playBtn.rotationYBezier")
+        // }))
+        // -------------------------------------------------
+        // -------------------------------------------------
+        // const playBtn = new Entity()
+        // playBtn.addComponent(new BoxShape())
+        // playBtn.addComponent(new Transform({
+        //     scale: new Vector3(0.5, 0.15, 0.3),
+        //     position: new Vector3(0.4, 0, 1),
+        // }))
+        // playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(40, 0, 0)
+        // playBtn.addComponent(new OnPointerDown(() => {
+        //     log('play click')
+        // }, {
+        //     button: ActionButton.POINTER,
+        //     showFeedback: true,
+        //     hoverText: "Play",
+        // }))
+        // playBtn.setParent(this.container)
+        // -------------------------------------------------
+        // -------------------------------------------------
+        // const infosBtn = new Entity()
+        // infosBtn.addComponent(new BoxShape())
+        // infosBtn.addComponent(new Transform({
+        //     scale: new Vector3(0.5, 0.15, 0.3),
+        //     position: new Vector3(-0.4, 0, 1),
+        // }))
+        // infosBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(40, 0, 0)
+        // infosBtn.addComponent(new OnPointerDown(() => {
+        //     log('rules click')
+        //     this.container.getComponent(ToggleComponent).toggle()
+        // }, {
+        //     button: ActionButton.POINTER,
+        //     showFeedback: true,
+        //     hoverText: "Rules",
+        // }))
+        // infosBtn.setParent(this.container)
     }
 
     update(dt: number) {

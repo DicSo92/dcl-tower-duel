@@ -70,7 +70,7 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
-        const lobbyScreen = new LobbyScreen(this.messageBus, new Vector3(16, 1, 16))
+        const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 16))
         engine.addSystem(lobbyScreen)
 
         // const gameStarterPlot = new Entity()
@@ -79,82 +79,7 @@ export default class Game implements ISystem {
         //     scale: new Vector3(1.5, 1.5, 1.5)
         // }))
         
-        this.rulesBtn.addComponent(new Transform({
-            position: new Vector3(15.25, 1, 17),
-            scale: new Vector3(1, 1, 1)
-        }))
-        this.rulesBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        this.rulesBtn.addComponent(this.sceneAssets.rulesBtn)
-        const rbtnAnimator = new Animator()
-        this.sceneAssets.rulesBtnAnimStates.forEach(item => {
-            if (item.clip === 'stopped') {
-                log("Play rulesBtn.stopped", item)
-                item.looping = true
-                // item.play()
-                item.stop()
-            }
-            else {
-                log("Play !rulesBtn.stopped", item)
-                item.looping = true
-                item.stop()
-                // item.reset()
-            }
-            rbtnAnimator.addClip(item)
-        })
-        this.rulesBtn.addComponent(rbtnAnimator)
-        engine.addEntity(this.rulesBtn)
-
-        // this.rulesBtn.addComponentOrReplace(new utils.Delay(1000, () => {
-            // log("Play rulesBtn.rotationYBezier")
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
-            // this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
-            // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
-            // log("Playing rulesBtn.rotationYBezier")
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
-            // log("Stopping rulesBtn.rotationYBezier")
-        // }))
-        this.playBtn.addComponent(new Transform({
-            position: new Vector3(16.75, 1, 17),
-            scale: new Vector3(1, 1, 1)
-        }))
-        this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        this.playBtn.addComponent(this.sceneAssets.playBtn)
-        const pbtnAnimator = new Animator()
-        this.sceneAssets.rulesBtnAnimStates.forEach(item => {
-            if (item.clip === 'stopped') {
-                log("Play rulesBtn.stopped", item)
-                item.looping = true
-                // item.play()
-                item.stop()
-            } else if (item.clip === 'rotX') {
-                log("Play rulesBtn.stopped", item)
-                item.looping = true
-                // item.play()
-                item.stop()
-            }
-            else {
-                log("Play !rulesBtn.stopped", item)
-                item.looping = true
-                item.stop()
-                // item.reset()
-            }
-            pbtnAnimator.addClip(item)
-        })
-        this.playBtn.addComponent(pbtnAnimator)
-        engine.addEntity(this.playBtn)
-
-        this.playBtn.addComponentOrReplace(new utils.Delay(1000, () => {
-            // log("Play rulesBtn.rotationYBezier")
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
-            // this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
-            this.rulesBtn.getComponent(Animator).getClip('rotXBezier').play()
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
-            // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
-            // log("Playing rulesBtn.rotationYBezier")
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
-            // log("Stopping rulesBtn.rotationYBezier")
-        }))
+        
 
         // const gameStarterPlot = new Entity()
         // gameStarterPlot.addComponent(new Transform({
