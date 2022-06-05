@@ -22,6 +22,8 @@ export default class Game implements ISystem {
     mainGame1?: IMainGame
     usersInGame: Array<String> = []
     userId?: string
+    rulesBtn: Entity = new Entity()
+    playBtn: Entity = new Entity()
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
@@ -71,28 +73,111 @@ export default class Game implements ISystem {
         const lobbyScreen = new LobbyScreen(this.messageBus, new Vector3(16, 1, 16))
         engine.addSystem(lobbyScreen)
 
-        const gameStarterPlot = new Entity()
-        gameStarterPlot.addComponent(new Transform({
-            position: new Vector3(16, 0, 24),
-            scale: new Vector3(1.5, 1.5, 1.5)
+        // const gameStarterPlot = new Entity()
+        // gameStarterPlot.addComponent(new Transform({
+        //     position: new Vector3(16, 0, 24),
+        //     scale: new Vector3(1.5, 1.5, 1.5)
+        // }))
+        
+        this.rulesBtn.addComponent(new Transform({
+            position: new Vector3(15.25, 1, 17),
+            scale: new Vector3(1, 1, 1)
         }))
-        gameStarterPlot.addComponent(this.sceneAssets.gameStarter)
-        const gspAnimator = new Animator()
-        this.sceneAssets.gameStarterAnimStates.forEach(item => {
-            gspAnimator.addClip(item)
-            item.reset()
-            item.play()
+        this.rulesBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.rulesBtn.addComponent(this.sceneAssets.rulesBtn)
+        const rbtnAnimator = new Animator()
+        this.sceneAssets.rulesBtnAnimStates.forEach(item => {
+            if (item.clip === 'stopped') {
+                log("Play rulesBtn.stopped", item)
+                item.looping = true
+                // item.play()
+                item.stop()
+            }
+            else {
+                log("Play !rulesBtn.stopped", item)
+                item.looping = true
+                item.stop()
+                // item.reset()
+            }
+            rbtnAnimator.addClip(item)
         })
-        gameStarterPlot.addComponent(gspAnimator)
-        engine.addEntity(gameStarterPlot)
+        this.rulesBtn.addComponent(rbtnAnimator)
+        engine.addEntity(this.rulesBtn)
 
-        this.BuildMobius(gameStarterPlot, true)
-        this.BuildMobius(gameStarterPlot, false)
+        // this.rulesBtn.addComponentOrReplace(new utils.Delay(1000, () => {
+            // log("Play rulesBtn.rotationYBezier")
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
+            // this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
+            // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
+            // log("Playing rulesBtn.rotationYBezier")
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
+            // log("Stopping rulesBtn.rotationYBezier")
+        // }))
+        this.playBtn.addComponent(new Transform({
+            position: new Vector3(16.75, 1, 17),
+            scale: new Vector3(1, 1, 1)
+        }))
+        this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.playBtn.addComponent(this.sceneAssets.playBtn)
+        const pbtnAnimator = new Animator()
+        this.sceneAssets.rulesBtnAnimStates.forEach(item => {
+            if (item.clip === 'stopped') {
+                log("Play rulesBtn.stopped", item)
+                item.looping = true
+                // item.play()
+                item.stop()
+            } else if (item.clip === 'rotX') {
+                log("Play rulesBtn.stopped", item)
+                item.looping = true
+                // item.play()
+                item.stop()
+            }
+            else {
+                log("Play !rulesBtn.stopped", item)
+                item.looping = true
+                item.stop()
+                // item.reset()
+            }
+            pbtnAnimator.addClip(item)
+        })
+        this.playBtn.addComponent(pbtnAnimator)
+        engine.addEntity(this.playBtn)
+
+        this.playBtn.addComponentOrReplace(new utils.Delay(1000, () => {
+            // log("Play rulesBtn.rotationYBezier")
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
+            // this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
+            this.rulesBtn.getComponent(Animator).getClip('rotXBezier').play()
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
+            // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
+            // log("Playing rulesBtn.rotationYBezier")
+            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
+            // log("Stopping rulesBtn.rotationYBezier")
+        }))
+
+        // const gameStarterPlot = new Entity()
+        // gameStarterPlot.addComponent(new Transform({
+        //     position: new Vector3(16, 0, 24),
+        //     scale: new Vector3(1.5, 1.5, 1.5)
+        // }))
+        // gameStarterPlot.addComponent(this.sceneAssets.gameStarter)
+        // const gspAnimator = new Animator()
+        // this.sceneAssets.gameStarterAnimStates.forEach(item => {
+        //     gspAnimator.addClip(item)
+        //     item.reset()
+        //     item.play()
+        // })
+        // gameStarterPlot.addComponent(gspAnimator)
+        // engine.addEntity(gameStarterPlot)
+
+        // this.BuildMobius(gameStarterPlot, true)
+        // this.BuildMobius(gameStarterPlot, false)
 
         const higherTower = new Entity()
         higherTower.addComponent(new Transform({
-            position: new Vector3(8, 0, 24),
-            scale: new Vector3(1,1,1)
+            position: new Vector3(16, 0, 24),
+            scale: new Vector3(1, 1, 1)
         }))
         higherTower.addComponent(this.sceneAssets.higherTowerModel)
         const htAnimator = new Animator()

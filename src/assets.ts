@@ -71,6 +71,9 @@ export class SceneAssets {
     povFloor: GLTFShape
     mobius: GLTFShape
     mobiusAnimStates: AnimationState[]
+    rulesBtn: GLTFShape
+    rulesBtnAnimStates: AnimationState[]
+    playBtn: GLTFShape
 
     constructor() {
         this.gameStarter = new GLTFShape('models/liftToGameBase.glb')
@@ -92,6 +95,16 @@ export class SceneAssets {
             new AnimationState('mobius_anim_0', { layer: 0 }),
             new AnimationState('mobius_anim_1', { layer: 1 }),
         ]
+        
+        this.rulesBtn = new GLTFShape('models/rules.glb')
+        this.rulesBtnAnimStates = [
+            new AnimationState('stopped', { layer: 0 }),
+            new AnimationState('rotationYBezier', { layer: 1 }),
+            new AnimationState('rotationZBezier', { layer: 2 }),
+            new AnimationState('rotationYLinear', { layer: 3 }),
+            new AnimationState('rotXBezier', { layer: 4 }),
+        ]
+        this.playBtn = new GLTFShape('models/play.glb')
     }
 }
 
