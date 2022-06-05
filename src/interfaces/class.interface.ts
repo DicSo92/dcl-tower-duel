@@ -29,26 +29,27 @@ export interface IGame {
 export interface ITowerDuel {
     physicsMaterial: CANNON.Material
     world: CANNON.World
-    mainGame: MainGame;
+    mainGame: MainGame
     messageBus: MessageBus
     gameAssets: GameAssets
 
     towerDuelId: string
-
     gameArea: Entity
-    blockCount: number
+    spawner?: Spawner
+    lift?: ILift
+    playerInputsListener: Input
+    physicsSystem?: PhysicsSystem
+    isActive: Boolean
+
     maxCount: number
-    blocks: TowerBlock[]
+    blockScaleY: number
     offsetY: number
     lastScale: Vector3
     lastPosition: Vector3
+
+    blocks: TowerBlock[]
+    currentBlocks: TowerBlock[]
     fallingBlocks: FallingBlock[]
-    spawner?: Spawner
-    towerBlock?: TowerBlock
-    lift: ILift
-    playerInputsListener: Input
-    isActive: Boolean
-    physicsSystem?: PhysicsSystem;
     currentBlock?: TowerBlock
     prevBlock?: TowerBlock
 

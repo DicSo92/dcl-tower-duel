@@ -4,6 +4,7 @@ import MainGame from "@/mainGame";
 import { getUserData } from "@decentraland/Identity"
 import { GameAssets, SceneAssets } from "@/assets";
 import * as utils from "@dcl/ecs-scene-utils";
+import LobbyScreen from "@/lobbyScreen";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -69,6 +70,15 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
+        const lobbyScreen = new LobbyScreen(this.messageBus, new Vector3(16, 1, 16))
+        engine.addSystem(lobbyScreen)
+
+        // const gameStarterPlot = new Entity()
+        // gameStarterPlot.addComponent(new Transform({
+        //     position: new Vector3(16, 0, 24),
+        //     scale: new Vector3(1.5, 1.5, 1.5)
+        // }))
+        
         this.rulesBtn.addComponent(new Transform({
             position: new Vector3(15.25, 1, 17),
             scale: new Vector3(1, 1, 1)

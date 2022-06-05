@@ -34,7 +34,7 @@ export default class LiftToGame implements ISystem {
         // const animator = new Animator()
         // animator.addClip(new AnimationState('active', { layer: 0 }))
         // this.lift.addComponent(animator)
-        
+
         this.startPath = [
             this.startPos,
             new Vector3(this.startPos.x, 6, this.startPos.z),
@@ -83,7 +83,8 @@ export default class LiftToGame implements ISystem {
 
     goToPlay() {
         this.isActive = true
-        this.entity.addComponent(this.parent.parent.gameAssets.liftClose)
+        this.entity.addComponent(this.parent.parent.gameAssets.liftOpen)
+        // this.entity.addComponent(this.parent.parent.gameAssets.liftClose)
         this.entity.getComponent(GLTFShape).withCollisions = true
         this.entity.addComponent(new utils.Delay(2000, () => {
             this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.startPath, this.pathLength, () => {

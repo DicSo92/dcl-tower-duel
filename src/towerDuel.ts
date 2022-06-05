@@ -16,23 +16,24 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     gameAssets: GameAssets
 
     towerDuelId: string
-
     gameArea: Entity
-    blockCount: number
-    maxCount: number
-    offsetY: number
-    lastScale: Vector3
-    lastPosition: Vector3
-    isActive: Boolean = false
     spawner?: Spawner
-    playerInputsListener: Input
-    towerBlock?: TowerBlock
+    lift?: ILift
+    playerInputsListener: Input = Input.instance
+    physicsSystem?: PhysicsSystem
+    isActive: Boolean = true
+
+    maxCount: number = 20
+    blockScaleY: number = 0.4
+    offsetY: number = 0.2
+    lastScale: Vector3 = new Vector3(4, this.blockScaleY, 4)
+    lastPosition: Vector3 = new Vector3(8, this.offsetY, 8)
+
+    blocks: TowerBlock[] = []
+    currentBlocks: TowerBlock[] = []
+    fallingBlocks: FallingBlock[] = []
     currentBlock?: TowerBlock
     prevBlock?: TowerBlock
-    lift: ILift
-    blocks: TowerBlock[]
-    fallingBlocks: FallingBlock[]
-    physicsSystem?: PhysicsSystem;
 
     constructor(cannonMaterial: CANNON.Material, cannonWorld: CANNON.World, mainGame: MainGame, pos: Vector3) {
         this.physicsMaterial = cannonMaterial
@@ -50,28 +51,19 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         }))
         engine.addEntity(this.gameArea)
 
-        this.blockCount = 0
-        this.maxCount = 10
-        this.blocks = []
-        this.offsetY = 0.2
-        this.lastScale = new Vector3(4, 0.4, 4)
-        this.lastPosition = new Vector3(8, this.offsetY, 8)
-        this.fallingBlocks = []
-        this.playerInputsListener = Input.instance
-        this.isActive = true
-        this.lift = new Lift(this.playerInputsListener, this)
-
         this.Init();
     }
 
     private Init = () => {
         this.BuildEvents()
 
+        this.lift = new Lift(this.playerInputsListener, this)
+
+        const towerBlock = new TowerBlock(this, undefined, true);
+        engine.addSystem(towerBlock);
+
         this.spawner = new Spawner(this);
         // engine.addSystem(this.spawner);
-
-        this.towerBlock = new TowerBlock(this, undefined, true);
-        engine.addSystem(this.towerBlock);
 
         this.physicsSystem = new PhysicsSystem(this.fallingBlocks, this.world)
         engine.addSystem(this.physicsSystem)
@@ -95,9 +87,6 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
     public CleanEntities() {
         engine.removeEntity(this.gameArea)
-        this.currentBlock?.Delete()
-        this.prevBlock?.Delete()
-        this.towerBlock?.Delete()
         if (this.blocks) {
             for (let block in this.blocks) {
                 this.blocks[block].Delete()
