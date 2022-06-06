@@ -4,6 +4,7 @@ import {
     ToggleComponent,
     ToggleState
 } from "@dcl/ecs-scene-utils";
+import { getUserData } from "@decentraland/Identity";
 
 export default class LobbyScreen implements ISystem {
     messageBus: MessageBus
@@ -83,6 +84,16 @@ export default class LobbyScreen implements ISystem {
                 this.animationDuration
             ))
         }))
+    }
+    async getUser() {
+        try {
+            let data = await getUserData()
+            log('zzzzzzzzzzzzzzzzzzzzzzz')
+            log(data)
+            log('zzzzzzzzzzzzzzzzzzzzzzz')
+        } catch {
+            log("Failed to get user")
+        }
     }
     // -----------------------------------------------------------------------------------------------------------------
     private positionTopLeft(screenScale: Vector3): Vector3 {
@@ -167,8 +178,9 @@ export default class LobbyScreen implements ISystem {
             position: new Vector3(0.4, 0, 1),
         }))
         playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(40, 0, 0)
-        playBtn.addComponent(new OnPointerDown(() => {
+        playBtn.addComponent(new OnPointerDown(async () => {
             log('play click')
+            await this.getUser()
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,

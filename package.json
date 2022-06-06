@@ -23,13 +23,8 @@
     "cannon": "github:schteppe/cannon.js",
     "socket.io": "^4.4.0"
   },
-  "bundledDependencies": [
-    "@dcl/ecs-scene-utils",
-    "dclconnect"
-  ],
   "bundleDependencies": [
     "@dcl/ecs-scene-utils",
-    "@dcl/ui-scene-utils",
-    "dclconnect"
+    "@dcl/ui-scene-utils"
   ]
 }
