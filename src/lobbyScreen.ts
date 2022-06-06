@@ -27,6 +27,8 @@ export default class LobbyScreen implements ISystem {
     rulesScale: Vector3 = new Vector3(5, 3.2, 0.05)
     playBtn: Entity = new Entity();
     rulesBtn: Entity = new Entity();
+    usersInGame: Array<String> = []
+    usersInWaiting: Array<{ id: string, name: string }> = []
 
     constructor(parent: Game, position: Vector3) {
         this.parent = parent
@@ -43,11 +45,46 @@ export default class LobbyScreen implements ISystem {
         this.Init()
     }
     Init = () => {
+        this.BuildEvents()
         this.BuildScreen()
         this.BuildBorders()
         this.BuildButtons()
         this.BuildToggleEvent()
         this.setTitleText(this.queueScale, this.queueTitle)
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    private BuildEvents() {
+        this.parent.messageBus.emit('getUsersInGame', {})
+        this.parent.messageBus.on('getUsersInGame', () => {
+            if (this.usersInGame.length) {
+                this.parent.messageBus.emit('setUsersInGame', { users: this.usersInGame })
+            }
+        })
+        this.parent.messageBus.on('setUsersInGame', (users) => {
+            if (users) {
+                this.usersInGame = [...users]
+            }
+            log('usersInGame', this.usersInGame)
+        })
+        this.parent.messageBus.on('addUserInGame', (data) => {
+            if (data) {
+                this.usersInGame.push(data.user)
+            }
+            log('usersInGame', this.usersInGame)
+        })
+        this.parent.messageBus.on('removeUserInGame', (data) => {
+            if (data) {
+                this.usersInGame = this.usersInGame.filter((item: String) => item !== data.user)
+            }
+            log('usersInGame', this.usersInGame)
+        })
+        this.parent.messageBus.on('newPlayer', (user) => {
+            if (user) {
+                log(user.id, user.name)
+                this.usersInWaiting.push(user.id, user.name)
+            }
+        })
     }
     // -----------------------------------------------------------------------------------------------------------------
     private BuildToggleEvent = () => {
@@ -168,11 +205,11 @@ export default class LobbyScreen implements ISystem {
             position: new Vector3(-0.6, 0, 1),
             scale: new Vector3(1, 1, 1)
         }))
-        this.rulesBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.rulesBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, -40)
         this.rulesBtn.addComponent(this.parent.sceneAssets.rulesBtn)
         const rbtnAnimator = new Animator()
         this.parent.sceneAssets.rulesBtnAnimStates.forEach(item => {
-            if (item.clip === 'rotationZBezier') {
+            if (item.clip === 'viberZBezier') {
                 item.looping = true
             }
             else {
@@ -182,11 +219,13 @@ export default class LobbyScreen implements ISystem {
             rbtnAnimator.addClip(item)
         })
         this.rulesBtn.addComponent(rbtnAnimator)
-        // this.rulesBtn.getComponent(Animator).getClip('rotXBezier').play()
-        this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
+        this.rulesBtn.getComponent(Animator).getClip('viberZBezier').play()
+
         this.rulesBtn.addComponent(new OnPointerDown(() => {
             log('rules click')
             this.rulesBtn.getComponent(Animator).getClip('viberBorderXLinear').play()
+            this.rulesBtn.getComponent(Animator).getClip('viberZBezier').reset()
+            this.rulesBtn.getComponent(Animator).getClip('viberZBezier').play()
             this.container.getComponent(ToggleComponent).toggle()
         }, {
             button: ActionButton.POINTER,
@@ -195,46 +234,33 @@ export default class LobbyScreen implements ISystem {
         }))
         this.rulesBtn.setParent(this.container)
 
-        // this.rulesBtn.addComponentOrReplace(new utils.Delay(1000, () => {
-        // log("Play rulesBtn.rotationYBezier")
-        // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
-        // this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
-        // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
-        // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
-        // log("Playing rulesBtn.rotationYBezier")
-        // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
-        // log("Stopping rulesBtn.rotationYBezier")
-        // }))
+        // --------------------------------------------------------------------------
         this.playBtn.addComponent(new Transform({
             position: new Vector3(0.6, 0, 1),
             scale: new Vector3(1, 1, 1)
         }))
-        this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, -40)
         this.playBtn.addComponent(this.parent.sceneAssets.playBtn)
         const pbtnAnimator = new Animator()
         this.parent.sceneAssets.playBtnAnimStates.forEach(item => {
-            if (item.clip === 'stopped') {
-                log("Play playBtn.stopped", item)
+            if (item.clip === 'viberZBezier') {
                 item.looping = true
-                // item.play()
-                item.stop()
-            } else if (item.clip === 'rotX') {
-                log("Play playBtn.stopped", item)
-                item.looping = true
-                // item.play()
-                item.stop()
             }
             else {
-                log("Play !playBtn.stopped", item)
-                item.looping = true
-                item.stop()
-                // item.reset()
+                item.looping = false
             }
+            item.stop()
             pbtnAnimator.addClip(item)
         })
         this.playBtn.addComponent(pbtnAnimator)
+        this.rulesBtn.getComponent(Animator).getClip('viberZBezier').play()
+        
         this.playBtn.addComponent(new OnPointerDown(() => {
             log('play click')
+            this.playBtn.getComponent(Animator).getClip('viberBorderXLinear').play()
+            this.playBtn.getComponent(Animator).getClip('viberZBezier').reset()
+            this.playBtn.getComponent(Animator).getClip('viberZBezier').play()
+            this.parent.messageBus.emit('newPlayer', { user: { id: this.parent.userId, name: this.parent.userName } })
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,

@@ -140,7 +140,7 @@ export interface ISceneAssets {
     gameStarterAnimStates: AnimationState[]
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
-    povFloor: GLTFShape
+    globalScene: GLTFShape
     mobius: GLTFShape
     mobiusAnimStates: AnimationState[]
     rulesBtn: GLTFShape

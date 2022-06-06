@@ -5,6 +5,7 @@ import { getUserData } from "@decentraland/Identity"
 import { GameAssets, SceneAssets } from "@/assets";
 import * as utils from "@dcl/ecs-scene-utils";
 import LobbyScreen from "@/lobbyScreen";
+import HigherTower from "./higherTower";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -20,8 +21,8 @@ export default class Game implements ISystem {
     sceneAssets: ISceneAssets
     mainGame0?: IMainGame
     mainGame1?: IMainGame
-    usersInGame: Array<String> = []
     userId?: string
+    userName?: string
     rulesBtn: Entity = new Entity()
     playBtn: Entity = new Entity()
 
@@ -33,21 +34,22 @@ export default class Game implements ISystem {
         this.sceneAssets = new SceneAssets()
         log("sceneAssets", this.sceneAssets.higherTowerModel)
 
+        executeTask(async () => {
+            let data = await getUserData()
+            log('USER DATA', data)
+            this.userId = data?.userId
+            this.userName = data?.displayName
+        })
+
         this.SetupWorldConfig()
         this.buildScene()
         this.BuildEvents()
-
 
         this.mainGame0 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'left')
         engine.addSystem(this.mainGame0)
         this.mainGame1 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'right')
         engine.addSystem(this.mainGame1)
 
-        executeTask(async () => {
-            let data = await getUserData()
-            log(data)
-            this.userId = data?.userId
-        })
     }
 
     private SetupWorldConfig() {
@@ -73,55 +75,16 @@ export default class Game implements ISystem {
         const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 16))
         engine.addSystem(lobbyScreen)
 
-        // const gameStarterPlot = new Entity()
-        // gameStarterPlot.addComponent(new Transform({
-        //     position: new Vector3(16, 0, 24),
-        //     scale: new Vector3(1.5, 1.5, 1.5)
-        // }))
-        
-        
+        const higherTower = new HigherTower(this)
+        engine.addSystem(higherTower)
 
-        // const gameStarterPlot = new Entity()
-        // gameStarterPlot.addComponent(new Transform({
-        //     position: new Vector3(16, 0, 24),
-        //     scale: new Vector3(1.5, 1.5, 1.5)
-        // }))
-        // gameStarterPlot.addComponent(this.sceneAssets.gameStarter)
-        // const gspAnimator = new Animator()
-        // this.sceneAssets.gameStarterAnimStates.forEach(item => {
-        //     gspAnimator.addClip(item)
-        //     item.reset()
-        //     item.play()
-        // })
-        // gameStarterPlot.addComponent(gspAnimator)
-        // engine.addEntity(gameStarterPlot)
-
-        // this.BuildMobius(gameStarterPlot, true)
-        // this.BuildMobius(gameStarterPlot, false)
-
-        const higherTower = new Entity()
-        higherTower.addComponent(new Transform({
+        const globalScene = new Entity()
+        globalScene.addComponent(new Transform({
             position: new Vector3(16, 0, 24),
-            scale: new Vector3(1, 1, 1)
         }))
-        higherTower.addComponent(this.sceneAssets.higherTowerModel)
-        const htAnimator = new Animator()
-        this.sceneAssets.higherTowerAnimStates.forEach(item => {
-            htAnimator.addClip(item)
-            item.reset()
-            item.play()
-        })
-        higherTower.addComponent(htAnimator)
-        engine.addEntity(higherTower)
-
-        const povFloor = new Entity()
-        povFloor.addComponent(new Transform({
-            position: new Vector3(16, 0, 24),
-            scale: new Vector3(1, 1, 1)
-        }))
-        povFloor.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        povFloor.addComponent(this.sceneAssets.povFloor)
-        engine.addEntity(povFloor)
+        globalScene.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        globalScene.addComponent(this.sceneAssets.globalScene)
+        engine.addEntity(globalScene)
     }
 
     private BuildMobius(parent: Entity, left: boolean) {
@@ -172,30 +135,6 @@ export default class Game implements ISystem {
     }
 
     private BuildEvents() {
-        this.messageBus.emit('getUsersInGame', {})
-        this.messageBus.on('getUsersInGame', () => {
-            if (this.usersInGame.length) {
-                this.messageBus.emit('setUsersInGame', { users: this.usersInGame })
-            }
-        })
-        this.messageBus.on('setUsersInGame', (users) => {
-            if (users) {
-                this.usersInGame = [...users]
-            }
-            log('usersInGame', this.usersInGame)
-        })
-        this.messageBus.on('addUserInGame', (data) => {
-            if (data) {
-                this.usersInGame.push(data.user)
-            }
-            log('usersInGame', this.usersInGame)
-        })
-        this.messageBus.on('removeUserInGame', (data) => {
-            if (data) {
-                this.usersInGame = this.usersInGame.filter((item: String) => item !== data.user)
-            }
-            log('usersInGame', this.usersInGame)
-        })
     }
 
     update(dt: number): void {

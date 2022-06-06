@@ -33,11 +33,11 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
     onStart(): void {
         this.prompt.show()
     }
-    
+
     update(dt: number): void { }
-    
+
     onFinish(): void {
-        log(`this.prompt.hide()`,this.prompt.alive)
-        if(this.prompt && this.prompt.alive) this.prompt.hide()
+        log(`this.prompt.hide()`, this.prompt.alive)
+        if (this.prompt && this.prompt.alive) this.prompt.hide()
     }
 }
