@@ -1,7 +1,6 @@
 import { loadColliders } from "@/colliderSetup";
 import { IGameAssets, ISceneAssets, IMainGame } from "@/interfaces/class.interface";
 import MainGame from "@/mainGame";
-import { getUserData } from "@decentraland/Identity"
 import { GameAssets, SceneAssets } from "@/assets";
 import * as utils from "@dcl/ecs-scene-utils";
 import LobbyScreen from "@/lobbyScreen";
@@ -34,13 +33,6 @@ export default class Game implements ISystem {
         this.sceneAssets = new SceneAssets()
         log("sceneAssets", this.sceneAssets.higherTowerModel)
 
-        executeTask(async () => {
-            let data = await getUserData()
-            log('USER DATA', data)
-            this.userId = data?.userId
-            this.userName = data?.displayName
-        })
-
         this.SetupWorldConfig()
         this.buildScene()
         this.BuildEvents()
@@ -70,7 +62,7 @@ export default class Game implements ISystem {
         this.world.addBody(groundBody)
 
     }
-
+    
     private buildScene() {
         const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 16))
         engine.addSystem(lobbyScreen)

@@ -5,7 +5,7 @@ import {
     ToggleState
 } from "@dcl/ecs-scene-utils";
 import Game from "./game";
-import * as utils from "@dcl/ecs-scene-utils"
+import { getUserData } from "@decentraland/Identity"
 
 export default class LobbyScreen implements ISystem {
     parent: Game
@@ -81,6 +81,7 @@ export default class LobbyScreen implements ISystem {
         })
         this.parent.messageBus.on('newPlayer', (user) => {
             if (user) {
+                log(user)
                 log(user.id, user.name)
                 this.usersInWaiting.push(user.id, user.name)
             }
@@ -124,6 +125,16 @@ export default class LobbyScreen implements ISystem {
                 this.animationDuration
             ))
         }))
+    }
+    async getUser() {
+        try {
+            let data = await getUserData()
+            log('USER DATA', data)
+            this.parent.userId = data?.userId
+            this.parent.userName = data?.displayName
+        } catch {
+            log("Failed to get user")
+        }
     }
     // -----------------------------------------------------------------------------------------------------------------
     private positionTopLeft(screenScale: Vector3): Vector3 {
@@ -253,67 +264,21 @@ export default class LobbyScreen implements ISystem {
             pbtnAnimator.addClip(item)
         })
         this.playBtn.addComponent(pbtnAnimator)
-        this.rulesBtn.getComponent(Animator).getClip('viberZBezier').play()
+        this.playBtn.getComponent(Animator).getClip('viberZBezier').play()
         
-        this.playBtn.addComponent(new OnPointerDown(() => {
+        this.playBtn.addComponent(new OnPointerDown(async () => {
             log('play click')
             this.playBtn.getComponent(Animator).getClip('viberBorderXLinear').play()
             this.playBtn.getComponent(Animator).getClip('viberZBezier').reset()
             this.playBtn.getComponent(Animator).getClip('viberZBezier').play()
-            this.parent.messageBus.emit('newPlayer', { user: { id: this.parent.userId, name: this.parent.userName } })
+            await this.getUser()
+            this.parent.messageBus.emit('newPlayer', { id: this.parent.userId, name: this.parent.userName })
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
             hoverText: "Play",
         }))
         this.playBtn.setParent(this.container)
-
-        // this.playBtn.addComponentOrReplace(new utils.Delay(1000, () => {
-            // log("Play playBtn.rotationYBezier")
-            // this.playBtn.getComponent(Animator).getClip('rotationYBezier').play()
-            // this.playBtn.getComponent(Animator).getClip('rotationZBezier').play()
-            // this.playBtn.getComponent(Animator).getClip('rotXBezier').play()
-            // this.playBtn.getComponent(Animator).getClip('rotationYLinear').play()
-            // this.playBtn.getComponent(Animator).getClip('stopping').play()
-            // log("Playing playBtn.rotationYBezier")
-            // this.playBtn.getComponent(Animator).getClip('rotationYBezier').stop()
-            // log("Stopping playBtn.rotationYBezier")
-        // }))
-        // -------------------------------------------------
-        // -------------------------------------------------
-        // const playBtn = new Entity()
-        // playBtn.addComponent(new BoxShape())
-        // playBtn.addComponent(new Transform({
-        //     scale: new Vector3(0.5, 0.15, 0.3),
-        //     position: new Vector3(0.4, 0, 1),
-        // }))
-        // playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(40, 0, 0)
-        // playBtn.addComponent(new OnPointerDown(() => {
-        //     log('play click')
-        // }, {
-        //     button: ActionButton.POINTER,
-        //     showFeedback: true,
-        //     hoverText: "Play",
-        // }))
-        // playBtn.setParent(this.container)
-        // -------------------------------------------------
-        // -------------------------------------------------
-        // const infosBtn = new Entity()
-        // infosBtn.addComponent(new BoxShape())
-        // infosBtn.addComponent(new Transform({
-        //     scale: new Vector3(0.5, 0.15, 0.3),
-        //     position: new Vector3(-0.4, 0, 1),
-        // }))
-        // infosBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(40, 0, 0)
-        // infosBtn.addComponent(new OnPointerDown(() => {
-        //     log('rules click')
-        //     this.container.getComponent(ToggleComponent).toggle()
-        // }, {
-        //     button: ActionButton.POINTER,
-        //     showFeedback: true,
-        //     hoverText: "Rules",
-        // }))
-        // infosBtn.setParent(this.container)
     }
 
     update(dt: number) {
