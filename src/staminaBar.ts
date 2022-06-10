@@ -18,6 +18,7 @@ export default class StaminaBar implements ISystem {
         this.messageBus = towerDuel.messageBus
 
         this.entity = new Entity()
+        this.entity.addComponent(this.TowerDuel.mainGame.parent.sceneAssets.soundSpell)
         this.entity.addComponent(new Transform({
             position: new Vector3(0.25, 1.3, -1.3),
             scale: new Vector3(1, 1, 1)

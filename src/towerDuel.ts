@@ -45,6 +45,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.towerDuelId = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 
         this.gameArea = new Entity()
+        this.gameArea.addComponent(this.mainGame.parent.sceneAssets.soundStartGame)
         this.gameArea.addComponent(new Transform({
             position: pos,
             scale: new Vector3(1, 1, 1)

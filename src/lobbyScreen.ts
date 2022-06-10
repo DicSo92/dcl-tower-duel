@@ -215,6 +215,7 @@ export default class LobbyScreen implements ISystem {
     }
     // -----------------------------------------------------------------------------------------------------------------
     BuildButtons = () => {
+        this.rulesBtn.addComponent(this.parent.sceneAssets.soundValide)
         this.rulesBtn.addComponent(new Transform({
             position: new Vector3(-0.6, 0, 1),
             scale: new Vector3(1, 1, 1)
@@ -241,6 +242,7 @@ export default class LobbyScreen implements ISystem {
             this.rulesBtn.getComponent(Animator).getClip('viberZBezier').reset()
             this.rulesBtn.getComponent(Animator).getClip('viberZBezier').play()
             this.container.getComponent(ToggleComponent).toggle()
+            this.rulesBtn.getComponent(AudioSource).playOnce()
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
@@ -249,6 +251,8 @@ export default class LobbyScreen implements ISystem {
         this.rulesBtn.setParent(this.container)
 
         // --------------------------------------------------------------------------
+        this.playBtn.addComponent(this.parent.sceneAssets.soundClick)
+
         this.playBtn.addComponent(new Transform({
             position: new Vector3(0.6, 0, 1),
             scale: new Vector3(1, 1, 1)
@@ -263,7 +267,7 @@ export default class LobbyScreen implements ISystem {
             else {
                 item.looping = false
             }
-            item.stop()
+            this.playBtn.getComponent(AudioSource).playOnce()
             pbtnAnimator.addClip(item)
         })
         this.playBtn.addComponent(pbtnAnimator)
@@ -274,6 +278,7 @@ export default class LobbyScreen implements ISystem {
             this.playBtn.getComponent(Animator).getClip('viberBorderXLinear').play()
             this.playBtn.getComponent(Animator).getClip('viberZBezier').reset()
             this.playBtn.getComponent(Animator).getClip('viberZBezier').play()
+            this.playBtn.getComponent(AudioSource).playOnce()
             await this.getUser()
             this.parent.messageBus.emit('newPlayer', { id: this.parent.userId, name: this.parent.userName })
         }, {

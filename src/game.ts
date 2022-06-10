@@ -42,6 +42,8 @@ export default class Game implements ISystem {
     userName?: string
     rulesBtn: Entity = new Entity()
     playBtn: Entity = new Entity()
+    globalScene: Entity = new Entity()
+    higherTower?: HigherTower;
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
@@ -85,16 +87,16 @@ export default class Game implements ISystem {
         const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 16))
         engine.addSystem(lobbyScreen)
 
-        const higherTower = new HigherTower(this)
-        engine.addSystem(higherTower)
+        this.higherTower = new HigherTower(this)
+        engine.addSystem(this.higherTower)
 
-        const globalScene = new Entity()
-        globalScene.addComponent(new Transform({
+        this.globalScene = new Entity()
+        this.globalScene.addComponent(new Transform({
             position: new Vector3(16, 0, 24),
         }))
-        globalScene.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        globalScene.addComponent(this.sceneAssets.globalScene)
-        engine.addEntity(globalScene)
+        this.globalScene.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.globalScene.addComponent(this.sceneAssets.globalScene)
+        engine.addEntity(this.globalScene)
     }
 
     private BuildMobius(parent: Entity, left: boolean) {

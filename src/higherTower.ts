@@ -9,6 +9,7 @@ export default class HigherTower implements ISystem {
         this.parent = parent
 
         this.higherTower = new Entity()
+        this.higherTower.addComponent(this.parent.sceneAssets.soundLooseGame)
         this.higherTower.addComponent(new Transform({
             position: new Vector3(16, 0, 24),
             scale: new Vector3(1, 1, 1)

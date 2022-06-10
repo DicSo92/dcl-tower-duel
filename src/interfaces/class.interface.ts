@@ -147,4 +147,14 @@ export interface ISceneAssets {
     rulesBtnAnimStates: AnimationState[]
     playBtn: GLTFShape
     playBtnAnimStates: AnimationState[]
+    soundClick: AudioSource
+    soundValide: AudioSource
+    soundTeleport: AudioSource
+    soundLiftMove: AudioSource
+    soundStartGame: AudioSource
+    soundStopBlock: AudioSource
+    soundStopBlockPerfect: AudioSource
+    soundLooseLife: AudioSource
+    soundLooseGame: AudioSource
+    soundSpell: AudioSource
 }

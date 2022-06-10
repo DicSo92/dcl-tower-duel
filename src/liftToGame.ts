@@ -26,6 +26,7 @@ export default class LiftToGame implements ISystem {
             this.endPos = new Vector3(2, 1, 2)
         }
         this.lift = new Entity()
+        this.lift.addComponent(this.parent.parent.sceneAssets.soundLiftMove)
         this.lift.addComponent(new Transform({
             position: new Vector3(0, 0.1, 0),
             scale: new Vector3(this.radius, 1, this.radius)
@@ -52,6 +53,7 @@ export default class LiftToGame implements ISystem {
         this.pathLength = this.startPath.length
 
         this.entity = new Entity()
+        this.entity.addComponent(this.parent.parent.sceneAssets.soundTeleport)
         this.entity.addComponent(new LiftToGameFlag())
         this.entity.addComponent(new Transform({
             position: this.startPos,

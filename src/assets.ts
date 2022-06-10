@@ -75,6 +75,16 @@ export class SceneAssets {
     rulesBtnAnimStates: AnimationState[]
     playBtn: GLTFShape
     playBtnAnimStates: AnimationState[]
+    soundClick: AudioSource
+    soundValide: AudioSource
+    soundTeleport: AudioSource
+    soundLiftMove: AudioSource
+    soundStartGame: AudioSource
+    soundStopBlock: AudioSource
+    soundStopBlockPerfect: AudioSource
+    soundLooseLife: AudioSource
+    soundLooseGame: AudioSource
+    soundSpell: AudioSource
 
     constructor() {
         this.gameStarter = new GLTFShape('models/liftToGameBase.glb')
@@ -153,6 +163,17 @@ export class SceneAssets {
             new AnimationState('viberBorderYLinear', { layer: 22, speed: 5 }),
             new AnimationState('viberBorderZLinear', { layer: 23, speed: 5 }),
         ]
+
+        this.soundClick = new AudioSource(new AudioClip("sounds/click.wav"))
+        this.soundValide = new AudioSource(new AudioClip("sounds/valide.wav"))
+        this.soundTeleport = new AudioSource(new AudioClip("sounds/liftTeleport.wav"))
+        this.soundLiftMove = new AudioSource(new AudioClip("sounds/liftMove.wav"))
+        this.soundStartGame = new AudioSource(new AudioClip("sounds/start.wav"))
+        this.soundStopBlock = new AudioSource(new AudioClip("sounds/stopBlock.wav"))
+        this.soundStopBlockPerfect = new AudioSource(new AudioClip("sounds/stopBlockPerfect.wav"))
+        this.soundLooseLife = new AudioSource(new AudioClip("sounds/looseLife.wav"))
+        this.soundLooseGame = new AudioSource(new AudioClip("sounds/looseGame.wav"))
+        this.soundSpell = new AudioSource(new AudioClip("sounds/spell.wav"))
     }
 }
 
