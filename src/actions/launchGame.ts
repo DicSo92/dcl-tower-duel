@@ -22,7 +22,6 @@ export class LaunchSoloGameAction implements utils.ActionsSequenceSystem.IAction
         })
         if (this.parent.side === 'left') {
             this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0)))
-            // this.parent.TowerDuel[1] = new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(0, 0, 0))
         } else {
             this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(0, 0, 0)))
         }

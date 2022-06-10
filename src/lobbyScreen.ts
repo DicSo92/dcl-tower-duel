@@ -14,6 +14,7 @@ export default class LobbyScreen implements ISystem {
     screen: Entity
     borderModel : GLTFShape
     title: Entity
+    content: Entity
     borderTopLeft?: Entity
     borderTopRight?: Entity
     borderBotLeft?: Entity
@@ -40,6 +41,8 @@ export default class LobbyScreen implements ISystem {
         this.screen = new Entity()
         this.title = new Entity()
         this.title.setParent(this.container)
+        this.content = new Entity()
+        this.content.setParent(this.container)
         this.borderModel = new GLTFShape('models/glassAngles.glb')
 
         this.Init()

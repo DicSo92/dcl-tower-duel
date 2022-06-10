@@ -10,6 +10,24 @@ onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
     const game = new Game()
     engine.addSystem(game);
+    // const socket = new WebSocket(`wss://159.65.22.12.nip.io`)
+    // const socket = new WebSocket(`ws://localhost:8080`)
+    // socket.onopen = () => socket.send("getPlayersInGame")
+    // socket.send(
+    //     JSON.stringify({
+    //         event: 'message',
+    //         data: 'test'
+    //     })
+    // )
+    // socket.onmessage = function (event) {
+    //     try {
+    //         const parsed = JSON.parse(event.data)
+    //         log(parsed)
+    //         // DO SOMETHING WITH INPUT
+    //     } catch (error) {
+    //         log(error)
+    //     }
+    // }
 });
 
 export default class Game implements ISystem {
