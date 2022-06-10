@@ -6,6 +6,7 @@ import {
 } from "@dcl/ecs-scene-utils";
 import Game from "./game";
 import { getUserData } from "@decentraland/Identity"
+import { movePlayerTo } from "@decentraland/RestrictedActions";
 
 export default class LobbyScreen implements ISystem {
     parent: Game
@@ -84,9 +85,12 @@ export default class LobbyScreen implements ISystem {
         })
         this.parent.messageBus.on('newPlayer', (user) => {
             if (user) {
-                log(user)
-                log(user.id, user.name)
-                this.usersInWaiting.push(user.id, user.name)
+                // log(user)
+                // log(user.id, user.name)
+                // this.usersInWaiting.push(user.id, user.name)
+                movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8))
+                this.parent.mainGame0?.gameApprovalSolo('gameApprovalSolo')
+                this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
             }
         })
     }
