@@ -13,11 +13,13 @@ export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     onStart(): void {
         log('BackToLobbyAction')
         this.hasFinished = false
+        this.liftToGame.lift.getComponent(AudioSource).playing = true
         this.liftToGame.goToLobby()
     }
 
     update(dt: number): void {
         if (!this.liftToGame.isActive) {
+            this.liftToGame.lift.getComponent(AudioSource).playing = false
             this.hasFinished = true
         }
     }

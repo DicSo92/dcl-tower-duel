@@ -91,6 +91,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
             // this.messageBus.emit("looseHeart_"+this.TowerDuel.towerDuelId, {})
             this.TowerDuel.lift?.hearts.decremLife()
+            this.TowerDuel.lift?.hearts.entity.getComponent(AudioSource).playOnce()
         }
         else if (Math.abs(offsetX) <= this.marginError && Math.abs(offsetZ) <= this.marginError) { // perfect placement (with error margin)
             this.entity.addComponent(new BoxShape())
@@ -105,6 +106,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             this.interEffect = new InterEffect(this.TowerDuel, this.entity, transform, true)
             engine.addSystem(this.interEffect)
 
+            this.TowerDuel.spawner?.entity.getComponent(AudioSource).playOnce()
             this.TowerDuel.spawner?.spawnBlock()
         }
         else {
@@ -136,6 +138,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
             this.TowerDuel.spawner?.spawnBlock()
 
+            this.TowerDuel.spawner?.plane.getComponent(AudioSource).playOnce()
             this.messageBus.emit("addStamina_" + this.TowerDuel.towerDuelId, {})
         }
     }

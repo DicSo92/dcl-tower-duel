@@ -16,6 +16,7 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
             () => {
                 log(`picked option Solo`)
                 this.parent.gameApprovalSolo('gameApprovalSolo')
+                this.parent.liftToGame.entity.getComponent(AudioSource).playOnce()
                 this.hasFinished = true
             },
             () => {

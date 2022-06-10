@@ -52,6 +52,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         }))
         engine.addEntity(this.gameArea)
 
+        this.gameArea.getComponent(AudioSource).playOnce()
         this.Init();
     }
 
@@ -83,6 +84,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
         this.isActive = false
         this.spawner?.Delete()
         if(this.spawner) engine.removeSystem(this.spawner)
+        this.mainGame.parent.higherTower?.higherTower.getComponent(AudioSource).playOnce()
         this.mainGame.afterTowerDuel()
     }
 

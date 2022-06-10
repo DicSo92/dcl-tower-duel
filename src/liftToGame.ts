@@ -27,6 +27,7 @@ export default class LiftToGame implements ISystem {
         }
         this.lift = new Entity()
         this.lift.addComponent(this.parent.parent.sceneAssets.soundLiftMove)
+        this.lift.getComponent(AudioSource).audioClip.loop = true
         this.lift.addComponent(new Transform({
             position: new Vector3(0, 0.1, 0),
             scale: new Vector3(this.radius, 1, this.radius)
