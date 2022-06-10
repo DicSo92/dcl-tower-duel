@@ -126,7 +126,8 @@ export default class LiftToGame implements ISystem {
             if (Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10) {
                 log('Player isnt on liftToGame')
                 if ((this.state === 1 && Camera.instance.position !== this.endPos || (this.state === -1 && Camera.instance.position !== this.startPos))) {
-                    movePlayerTo(this.state === 1 ? this.endPos : this.startPos, this.state === 1 ? this.startPos : this.endPos)}
+                    const nextPos = new Vector3(this.endPos.x, this.endPos.y + 2, this.endPos.z)
+                    movePlayerTo(this.state === 1 ? nextPos : this.startPos, this.state === 1 ? nextPos : this.endPos)}
                 // movePlayerTo(this.entity.getComponent(Transform).position, Camera.instance.rotation.eulerAngles)
             }
         }
