@@ -108,6 +108,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
             this.TowerDuel.spawner?.entity.getComponent(AudioSource).playOnce()
             this.TowerDuel.spawner?.spawnBlock()
+            this.messageBus.emit("addStamina_" + this.TowerDuel.towerDuelId, {})
         }
         else {
             const newScale: Vector3 = this.TowerDuel.lastScale.clone()
@@ -139,7 +140,6 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             this.TowerDuel.spawner?.spawnBlock()
 
             this.TowerDuel.spawner?.plane.getComponent(AudioSource).playOnce()
-            this.messageBus.emit("addStamina_" + this.TowerDuel.towerDuelId, {})
         }
     }
 

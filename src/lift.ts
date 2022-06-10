@@ -22,6 +22,9 @@ export default class Lift implements ISystem {
     hearts: LifeHearts
     staminaBar: StaminaBar
     numericalCounter: NumericalCounter
+    spell1cost: number = 3
+    spell2cost: number = 3
+    spell3cost: number = 3
 
     constructor(inputs: Input, towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
@@ -73,19 +76,29 @@ export default class Lift implements ISystem {
         // button Spell 1
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_3, false, (e) => {
             log("Key 1 : Speed down spawn")
-            this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
-            if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
+            if (this.staminaBar.staminaCount - this.spell1cost >= 0) {
+                this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
+                if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
+                this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, {cost: this.spell1cost})
+            }
         })
         // button Spell 2
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_4, false, (e) => {
             log("Key 2 : Speed up spawn")
-            this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
-            if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed -= .5
+            if (this.staminaBar.staminaCount - this.spell2cost >= 0) {
+                this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
+                // if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
+                this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell2cost })
+            }
         })
         // button Spell 3
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_5, false, (e) => {
-            this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
             log("Key 3")
+            if (this.staminaBar.staminaCount - this.spell3cost >= 0) {
+                this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
+                // if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
+                this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell3cost })
+            }
         })
         // button Spell 4
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_6, false, (e) => {
