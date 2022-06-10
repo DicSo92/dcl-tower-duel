@@ -18,6 +18,7 @@ export default class LiftToGame implements ISystem {
     liftMoveDuration: number = 8
     isActive: boolean = false
     radius: number = 1.5
+    outOfLift: boolean = false
 
     constructor(parent: MainGame) {
         this.parent = parent
@@ -124,8 +125,8 @@ export default class LiftToGame implements ISystem {
             log('liftToGame isActive')
             if (Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10) {
                 log('Player isnt on liftToGame')
-                if ((this.state === 1 && Camera.instance.position !== this.endPos || (this.state === -1 && Camera.instance.position !== this.startPos))){}
-                movePlayerTo(this.state === 1 ? this.endPos : this.startPos, this.state === 1 ? this.startPos : this.endPos)
+                if ((this.state === 1 && Camera.instance.position !== this.endPos || (this.state === -1 && Camera.instance.position !== this.startPos))) {
+                    movePlayerTo(this.state === 1 ? this.endPos : this.startPos, this.state === 1 ? this.startPos : this.endPos)}
                 // movePlayerTo(this.entity.getComponent(Transform).position, Camera.instance.rotation.eulerAngles)
             }
         }

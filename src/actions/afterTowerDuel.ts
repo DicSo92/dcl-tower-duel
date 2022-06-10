@@ -45,6 +45,7 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
             })
         }
         utils.setTimeout(1000, () => {
+            if (this.parent.parent.streamSource) this.parent.parent.streamSource.getComponent(AudioStream).playing = true
             this.hasFinished = true
         })
     }
