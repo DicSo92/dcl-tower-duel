@@ -73,9 +73,9 @@ export interface ILiftToGame {
     parent: MainGame
     startPos: Vector3
     endPos: Vector3
+    liftMaxHeight: number
     startPath: Vector3[]
     endPath: Vector3[]
-    pathLength: number
     isActive: boolean
     radius: number
 

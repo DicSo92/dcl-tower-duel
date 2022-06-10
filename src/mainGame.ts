@@ -27,6 +27,7 @@ export default class MainGame implements ISystem, IMainGame {
         this.messageBus = messageBus
         this.side = side
         this.liftToGame = new LiftToGame(this)
+        engine.addSystem(this.liftToGame)
 
         // Actions
         this.modeSelectionAction = new SelectModeAction(this)

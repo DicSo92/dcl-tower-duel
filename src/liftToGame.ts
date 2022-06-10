@@ -1,4 +1,5 @@
 import * as utils from "@dcl/ecs-scene-utils";
+import { movePlayerTo } from "@decentraland/RestrictedActions";
 import MainGame from "./mainGame";
 
 @Component("liftToGame")
@@ -12,7 +13,8 @@ export default class LiftToGame implements ISystem {
     endPos: Vector3
     startPath: Vector3[]
     endPath: Vector3[]
-    pathLength: number
+    liftMaxHeight: number = 40
+    liftMoveDuration: number = 8
     isActive: boolean = false
     radius: number = 1.5
 
@@ -39,19 +41,18 @@ export default class LiftToGame implements ISystem {
 
         this.startPath = [
             this.startPos,
-            new Vector3(this.startPos.x, 6, this.startPos.z),
-            new Vector3(22, 6, 19),
-            new Vector3(this.endPos.x, 6, this.endPos.z),
+            new Vector3(this.startPos.x, this.liftMaxHeight, this.startPos.z),
+            new Vector3(22, this.liftMaxHeight, 19),
+            new Vector3(this.endPos.x, this.liftMaxHeight, this.endPos.z),
             this.endPos
         ]
         this.endPath = [
             new Vector3(this.endPos.x, this.lift.getComponent(Transform).position.y, this.endPos.z),
-            new Vector3(this.endPos.x, 6, this.endPos.z),
-            new Vector3(22, 6, 19),
-            new Vector3(this.startPos.x, 6, this.startPos.z),
+            new Vector3(this.endPos.x, this.liftMaxHeight, this.endPos.z),
+            new Vector3(22, this.liftMaxHeight, 19),
+            new Vector3(this.startPos.x, this.liftMaxHeight, this.startPos.z),
             this.startPos,
         ]
-        this.pathLength = this.startPath.length
 
         this.entity = new Entity()
         this.entity.addComponent(this.parent.parent.sceneAssets.soundTeleport)
@@ -62,21 +63,21 @@ export default class LiftToGame implements ISystem {
         }))
         this.lift.setParent(this.entity)
 
-        let triggerSphere = new utils.TriggerSphereShape(2.5)
-        this.entity.addComponent(new utils.TriggerComponent(triggerSphere, {
-            onCameraEnter: () => {
-                // log("enter trigger modeSelection")
-                if (!this.parent.isActive && !this.isActive) {
-                    this.parent.modeSelection('in')
-                }
-            },
-            onCameraExit: () => {
-                // log("exit trigger modeSelection")
-                if (!this.parent.isActive && !this.isActive) {
-                    this.parent.modeSelection('out')
-                }
-            }
-        }))
+        // let triggerSphere = new utils.TriggerSphereShape(2.5)
+        // this.entity.addComponent(new utils.TriggerComponent(triggerSphere, {
+        //     onCameraEnter: () => {
+        //         // log("enter trigger modeSelection")
+        //         if (!this.parent.isActive && !this.isActive) {
+        //             this.parent.modeSelection('in')
+        //         }
+        //     },
+        //     onCameraExit: () => {
+        //         // log("exit trigger modeSelection")
+        //         if (!this.parent.isActive && !this.isActive) {
+        //             this.parent.modeSelection('out')
+        //         }
+        //     }
+        // }))
 
         engine.addEntity(this.entity)
 
@@ -87,14 +88,12 @@ export default class LiftToGame implements ISystem {
     goToPlay() {
         this.isActive = true
         this.entity.addComponent(this.parent.parent.gameAssets.liftOpen)
-        // this.entity.addComponent(this.parent.parent.gameAssets.liftClose)
         this.entity.getComponent(GLTFShape).withCollisions = true
         this.entity.addComponent(new utils.Delay(2000, () => {
-            this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.startPath, this.pathLength, () => {
+            this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.startPath, this.liftMoveDuration, () => {
                 if (this.lift.getComponent(GLTFShape).visible !== false) {
                     this.lift.getComponent(GLTFShape).visible = false
                     this.entity.getComponent(GLTFShape).visible = false
-                    // this.entity.removeComponent(this.parent.parent.gameAssets.liftClose)
                 }
                 this.isActive = false
             }))
@@ -103,15 +102,21 @@ export default class LiftToGame implements ISystem {
 
     goToLobby() {
         this.isActive = true
-        // this.entity.addComponent(this.parent.parent.gameAssets.liftClose)
         this.lift.getComponent(GLTFShape).visible = true
-        this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.endPath, this.pathLength, () => {
+        this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.endPath, this.liftMoveDuration, () => {
             this.isActive = false
             this.entity.removeComponent(GLTFShape)
         }))
     }
 
-    update() {
-
+    update(dt: number) {
+        log('liftToGame update')
+        if (this.isActive) {
+            log('liftToGame isActive')
+            if (Camera.instance.feetPosition.y < this.entity.getComponent(Transform).position.y || Camera.instance.feetPosition.y > this.entity.getComponent(Transform).position.y + 3) {
+                log('Player isnt on liftToGame')
+                movePlayerTo(this.entity.getComponent(Transform).position, Camera.instance.rotation.eulerAngles)
+            }
+        }
     }
 }
