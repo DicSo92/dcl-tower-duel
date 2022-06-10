@@ -5,6 +5,7 @@ import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
 import RedButton from "@/redButton";
+import * as utils from "@dcl/ecs-scene-utils";
 
 //  @class Lift
 //      @param:
@@ -78,8 +79,8 @@ export default class Lift implements ISystem {
             log("Key 1 : Speed down spawn")
             if (this.staminaBar.staminaCount - this.spell1cost >= 0) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
-                if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
-                this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, {cost: this.spell1cost})
+                // if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
+                this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell1cost })
             }
         })
         // button Spell 2
@@ -87,7 +88,11 @@ export default class Lift implements ISystem {
             log("Key 2 : Speed up spawn")
             if (this.staminaBar.staminaCount - this.spell2cost >= 0) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
-                // if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
+                const oldSpeed = this.TowerDuel.spawner?.spawnSpeed ? this.TowerDuel.spawner?.spawnSpeed : 3
+                if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += 1
+                this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(3000, () => {
+                    if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed = oldSpeed
+                }))
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell2cost })
             }
         })
@@ -100,47 +105,47 @@ export default class Lift implements ISystem {
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell3cost })
             }
         })
-        // button Spell 4
-        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_6, false, (e) => {
-            this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
-            log("Key 4")
-        })
+// button Spell 4
+this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_6, false, (e) => {
+    this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
+    log("Key 4")
+})
     }
 
     public autoMove() {
-        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (this.TowerDuel.currentBlocks.length + 1)
-        const currentLiftPosition = this.global.getComponent(Transform).position
-        this.global.addComponentOrReplace(new MoveTransformComponent(
-            currentLiftPosition,
-            new Vector3(currentLiftPosition.x, posY, currentLiftPosition.z),
-            2.5)
-        )
-    }
+    const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (this.TowerDuel.currentBlocks.length + 1)
+    const currentLiftPosition = this.global.getComponent(Transform).position
+    this.global.addComponentOrReplace(new MoveTransformComponent(
+        currentLiftPosition,
+        new Vector3(currentLiftPosition.x, posY, currentLiftPosition.z),
+        2.5)
+    )
+}
 
-    reset() {
-        this.global.addComponentOrReplace(new MoveTransformComponent(this.global.getComponent(Transform).position, this.startPos, 1, () => { this.state = false }))
-    }
+reset() {
+    this.global.addComponentOrReplace(new MoveTransformComponent(this.global.getComponent(Transform).position, this.startPos, 1, () => { this.state = false }))
+}
 
-    moveUp() {
-        let StartPos = new Vector3(this.global.getComponent(Transform).position.x, this.startPos.y, this.global.getComponent(Transform).position.z)
-        let EndPos = new Vector3(this.global.getComponent(Transform).position.x, this.endPosY, this.global.getComponent(Transform).position.z)
-        this.global.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
-    }
+moveUp() {
+    let StartPos = new Vector3(this.global.getComponent(Transform).position.x, this.startPos.y, this.global.getComponent(Transform).position.z)
+    let EndPos = new Vector3(this.global.getComponent(Transform).position.x, this.endPosY, this.global.getComponent(Transform).position.z)
+    this.global.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
+}
 
-    moveDown() {
-        let StartPos = new Vector3(this.global.getComponent(Transform).position.x, this.endPosY, this.global.getComponent(Transform).position.z)
-        let EndPos = new Vector3(this.global.getComponent(Transform).position.x, this.startPos.y, this.global.getComponent(Transform).position.z)
-        this.global.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
-    }
+moveDown() {
+    let StartPos = new Vector3(this.global.getComponent(Transform).position.x, this.endPosY, this.global.getComponent(Transform).position.z)
+    let EndPos = new Vector3(this.global.getComponent(Transform).position.x, this.startPos.y, this.global.getComponent(Transform).position.z)
+    this.global.addComponent(new MoveTransformComponent(StartPos, EndPos, 3, () => { this.state = false }))
+}
 
     public Delete() {
-        engine.removeSystem(this.hearts)
-        engine.removeEntity(this.global)
-        engine.removeEntity(this.lift)
-        engine.removeSystem(this)
-    }
+    engine.removeSystem(this.hearts)
+    engine.removeEntity(this.global)
+    engine.removeEntity(this.lift)
+    engine.removeSystem(this)
+}
 
-    update(dt: number) {
+update(dt: number) {
 
-    }
+}
 }
