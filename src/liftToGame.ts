@@ -13,6 +13,7 @@ export default class LiftToGame implements ISystem {
     endPos: Vector3
     startPath: Vector3[]
     endPath: Vector3[]
+    state: number = 0 // 0: !isActive; 1: goToPlay; -1: goToLobby
     liftMaxHeight: number = 40
     liftMoveDuration: number = 8
     isActive: boolean = false
@@ -21,10 +22,10 @@ export default class LiftToGame implements ISystem {
     constructor(parent: MainGame) {
         this.parent = parent
         if (this.parent.side === 'left') {
-            this.startPos = new Vector3(24, 0.1, 24)
+            this.startPos = new Vector3(24, .1, 24)
             this.endPos = new Vector3(30, 1, 2)
         } else {
-            this.startPos = new Vector3(8, 0.1, 24)
+            this.startPos = new Vector3(8, 1, 24)
             this.endPos = new Vector3(2, 1, 2)
         }
         this.lift = new Entity()
@@ -86,7 +87,9 @@ export default class LiftToGame implements ISystem {
     }
 
     goToPlay() {
+        engine.addSystem(this)
         this.isActive = true
+        this.state = 1
         this.entity.addComponent(this.parent.parent.gameAssets.liftOpen)
         this.entity.getComponent(GLTFShape).withCollisions = true
         this.entity.addComponent(new utils.Delay(2000, () => {
@@ -95,27 +98,35 @@ export default class LiftToGame implements ISystem {
                     this.lift.getComponent(GLTFShape).visible = false
                     this.entity.getComponent(GLTFShape).visible = false
                 }
+                this.state = 0
                 this.isActive = false
+                engine.removeSystem(this)
             }))
         }))
     }
 
     goToLobby() {
+        engine.addSystem(this)
         this.isActive = true
+        this.state = -1
         this.lift.getComponent(GLTFShape).visible = true
         this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.endPath, this.liftMoveDuration, () => {
             this.isActive = false
+            this.state = 0
             this.entity.removeComponent(GLTFShape)
+            engine.removeSystem(this)
         }))
     }
 
     update(dt: number) {
-        log('liftToGame update')
-        if (this.isActive) {
+        // log('liftToGame update')
+        if (this.isActive && this.state !== 0) {
             log('liftToGame isActive')
-            if (Camera.instance.feetPosition.y < this.entity.getComponent(Transform).position.y || Camera.instance.feetPosition.y > this.entity.getComponent(Transform).position.y + 3) {
+            if (Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10) {
                 log('Player isnt on liftToGame')
-                movePlayerTo(this.entity.getComponent(Transform).position, Camera.instance.rotation.eulerAngles)
+                if ((this.state === 1 && Camera.instance.position !== this.endPos || (this.state === -1 && Camera.instance.position !== this.startPos))){}
+                movePlayerTo(this.state === 1 ? this.endPos : this.startPos, this.state === 1 ? this.startPos : this.endPos)
+                // movePlayerTo(this.entity.getComponent(Transform).position, Camera.instance.rotation.eulerAngles)
             }
         }
     }
