@@ -23,8 +23,18 @@ export default class LobbyScreen implements ISystem {
 
     animationDuration: number = 0.6
     titleOffsetTop: number = 0.55
-    queueTitle: string = "---- QUEUE ----"
-    rulesTitle: string = "---- RULES ----"
+    queueTitle: string = `---- QUEUE ----`
+    rulesTitle: string = `---- RULES ----\n
+        Click on play button\n
+        Wait to be in game\n
+        Click on the green button to start the game\n
+        Click on red button to stop the block\n
+        Try to stop the block as much as possible in line with the previous block and build the higher tower\n
+        Cast spells\n
+            key 1/ Remove last 3 blocks\n
+            key 2/ Decrease speed for x secondes\n
+            key 3/ Increase margin error for x secondes\n
+            \n` //key 4/
     queueScale: Vector3 = new Vector3(2.75, 3, 0.05)
     rulesScale: Vector3 = new Vector3(5, 3.2, 0.05)
     playBtn: Entity = new Entity();
@@ -105,7 +115,7 @@ export default class LobbyScreen implements ISystem {
                 this.setTitleText(newScale, value ? this.queueTitle : this.rulesTitle)
 
                 const titleText = new TextShape(value ? this.queueTitle : this.rulesTitle)
-                titleText.fontSize = 2
+                titleText.fontSize = newScale === this.queueScale ? 2 : 1
                 this.title.addComponentOrReplace(titleText)
                 this.title.getComponent(Transform).position = this.titlePosition(newScale)
             }))
@@ -157,12 +167,12 @@ export default class LobbyScreen implements ISystem {
         return new Vector3(-(screenScale.x / 2), 0, 0)
     }
     private titlePosition(screenScale: Vector3) : Vector3{
-        return new Vector3(0, screenScale.y - this.titleOffsetTop, 0.05)
+        return new Vector3(0, (screenScale === this.queueScale ? (screenScale.y - this.titleOffsetTop) : (screenScale.y - this.titleOffsetTop) / 2), 0.05)
     }
     // -----------------------------------------------------------------------------------------------------------------
     private setTitleText (screenScale: Vector3, text: string) {
         const titleText = new TextShape(text)
-        titleText.fontSize = 2
+        titleText.fontSize = screenScale === this.queueScale ? 2 : 1
         this.title.addComponentOrReplace(titleText)
         this.title.addComponentOrReplace(new Transform({
             position: this.titlePosition(screenScale)
