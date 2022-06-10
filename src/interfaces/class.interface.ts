@@ -20,6 +20,7 @@ export interface IGame {
     mainGame1?: IMainGame
     usersInGame: Array<String>
     userId?: string
+    streamSource?: Entity
 
     SetupWorldConfig(): void
     buildScene(): void

@@ -293,6 +293,7 @@ export default class LobbyScreen implements ISystem {
             this.playBtn.getComponent(Animator).getClip('viberZBezier').reset()
             this.playBtn.getComponent(Animator).getClip('viberZBezier').play()
             this.playBtn.getComponent(AudioSource).playOnce()
+            if (this.parent.streamSource) this.parent.streamSource.getComponent(AudioStream).playing = false
             await this.getUser()
             this.parent.messageBus.emit('newPlayer', { id: this.parent.userId, name: this.parent.userName })
         }, {

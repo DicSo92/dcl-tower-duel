@@ -44,6 +44,7 @@ export default class Game implements ISystem {
     playBtn: Entity = new Entity()
     globalScene: Entity = new Entity()
     higherTower?: HigherTower;
+    streamSource?: Entity;
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
@@ -97,6 +98,17 @@ export default class Game implements ISystem {
         this.globalScene.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
         this.globalScene.addComponent(this.sceneAssets.globalScene)
         engine.addEntity(this.globalScene)
+
+        this.streamSource = new Entity()
+        this.streamSource.addComponent(
+            new AudioStream(
+                "http://frequence3.net-radio.fr/frequence3world.mp3" // http://direct.fipradio.fr/live/fip-webradio6.mp3; http://direct.fipradio.fr/live/fip-lofi.mp3;
+            )
+        )
+        this.streamSource.getComponent(AudioStream).volume = 0.05
+        engine.addEntity(this.streamSource)
+
+        this.streamSource.getComponent(AudioStream).playing = true
     }
 
     private BuildMobius(parent: Entity, left: boolean) {
