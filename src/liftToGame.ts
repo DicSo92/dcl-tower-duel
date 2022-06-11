@@ -122,7 +122,7 @@ export default class LiftToGame implements ISystem {
     update(dt: number) {
         // log('liftToGame update')
         if (this.isActive && this.state !== 0) {
-            log('liftToGame isActive')
+            // log('liftToGame isActive')
             if (Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10) {
                 log('Player isnt on liftToGame')
                 if ((this.state === 1 && Camera.instance.position !== this.endPos || (this.state === -1 && Camera.instance.position !== this.startPos))) {

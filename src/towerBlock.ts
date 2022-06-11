@@ -13,7 +13,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     blockPhysic?: CANNON.Body
     fallingBlocks?: FallingBlocks
     interEffect?: InterEffect
-    marginError: number = 0.15
+    marginError: number = 0.15 // 1
 
     constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
