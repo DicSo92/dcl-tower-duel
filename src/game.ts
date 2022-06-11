@@ -52,7 +52,6 @@ export default class Game implements ISystem {
         this.messageBus = new MessageBus()
         this.gameAssets = new GameAssets()
         this.sceneAssets = new SceneAssets()
-        log("sceneAssets", this.sceneAssets.higherTowerModel)
 
         this.SetupWorldConfig()
         this.buildScene()

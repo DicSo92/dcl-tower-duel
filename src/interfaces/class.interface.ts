@@ -9,6 +9,9 @@ import PhysicsSystem from "@/physicsSystem";
 import LifeHearts from "@/lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "@/numericalCounter";
+import HigherTower from "@/higherTower";
+import FallingBlocks from "@/fallingBlocks";
+import InterEffect from "@/interEffect";
 
 export interface IGame {
     physicsMaterial: CANNON.Material
@@ -20,6 +23,10 @@ export interface IGame {
     mainGame1?: IMainGame
     usersInGame: Array<String>
     userId?: string
+    rulesBtn: Entity
+    playBtn: Entity
+    globalScene: Entity
+    higherTower?: HigherTower
     streamSource?: Entity
 
     SetupWorldConfig(): void
@@ -61,10 +68,14 @@ export interface ITowerDuel {
 }
 export interface ITowerBlock {
     TowerDuel: ITowerDuel
-    // messageBus: MessageBus
+    messageBus: MessageBus
     isBase: Boolean
     animation?: MoveTransformComponent
     entity: Entity
+    blockPhysic?: CANNON.Body
+    fallingBlocks?: FallingBlocks
+    interEffect?: InterEffect
+    marginError: number
 
     update?(dt: number): void
 }
@@ -75,10 +86,12 @@ export interface ILiftToGame {
     startPos: Vector3
     endPos: Vector3
     liftMaxHeight: number
+    liftMoveDuration: number
     startPath: Vector3[]
     endPath: Vector3[]
     isActive: boolean
     radius: number
+    outOfLift: boolean
 
     goToPlay(): void
     goToLobby(): void

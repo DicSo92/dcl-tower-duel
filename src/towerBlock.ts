@@ -27,7 +27,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         this.Init();
     }
 
-    Init = () => {
+    private Init = () => {
         this.isBase ? this.BuildBase() : this.SpawnBlock()
         engine.addEntity(this.entity)
         this.TowerDuel.blocks.push(this)
