@@ -88,8 +88,10 @@ export default class Lift implements ISystem {
             log("Key 2 : Speed up spawn")
             if (this.staminaBar.staminaCount - this.spell2cost >= 0) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
+
                 const oldSpeed = this.TowerDuel.spawner?.spawnSpeed ? this.TowerDuel.spawner?.spawnSpeed : 3
                 if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += 1
+
                 this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(3000, () => {
                     if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed = oldSpeed
                 }))
@@ -98,10 +100,16 @@ export default class Lift implements ISystem {
         })
         // button Spell 3
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_5, false, (e) => {
-            log("Key 3")
+            log("Key 3 : Increase margin error")
             if (this.staminaBar.staminaCount - this.spell3cost >= 0) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
-                // if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
+
+                const oldMargin = this.TowerDuel.spawner?.spawningBlock?.marginError ? this.TowerDuel.spawner?.spawningBlock?.marginError : .15
+                if (this.TowerDuel.spawner?.spawningBlock) { this.TowerDuel.spawner.spawningBlock.marginError += .25 }
+
+                this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(3000, () => {
+                    if (this.TowerDuel.spawner?.spawningBlock) { this.TowerDuel.spawner.spawningBlock.marginError = oldMargin }
+                }))
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell3cost })
             }
         })
