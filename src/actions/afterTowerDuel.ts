@@ -34,7 +34,7 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     constructor(parent: MainGame) {
         this.parent = parent
     }
-    
+
     onStart(): void {
         log('FinaliseTowerDuelAction')
         this.parent.isActive = false
@@ -44,13 +44,16 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
                 user: this.parent.parent.userId
             })
         }
+        // this.setScore(score)
         utils.setTimeout(1000, () => {
             if (this.parent.parent.streamSource) this.parent.parent.streamSource.getComponent(AudioStream).playing = true
             this.hasFinished = true
         })
     }
+
+    // setScore(data: any) { }
     
     update(dt: number): void { }
-    
+
     onFinish(): void { }
 }
