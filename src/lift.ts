@@ -24,8 +24,11 @@ export default class Lift implements ISystem {
     staminaBar: StaminaBar
     numericalCounter: NumericalCounter
     spell1cost: number = 3
+    // spell1EffectDuration: number = 5000 // millisec
     spell2cost: number = 3
+    spell2EffectDuration: number = 5000 // millisec
     spell3cost: number = 3
+    spell3EffectDuration: number = 5000 // millisec
 
     constructor(inputs: Input, towerDuel: ITowerDuel) {
         this.TowerDuel = towerDuel
@@ -92,7 +95,7 @@ export default class Lift implements ISystem {
                 const oldSpeed = this.TowerDuel.spawner?.spawnSpeed ? this.TowerDuel.spawner?.spawnSpeed : 3
                 if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += 1
 
-                this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(3000, () => {
+                this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(this.spell2EffectDuration, () => {
                     if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed = oldSpeed
                 }))
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell2cost })
@@ -107,7 +110,7 @@ export default class Lift implements ISystem {
                 const oldMargin = this.TowerDuel.spawner?.spawningBlock?.marginError ? this.TowerDuel.spawner?.spawningBlock?.marginError : .15
                 if (this.TowerDuel.spawner?.spawningBlock) { this.TowerDuel.spawner.spawningBlock.marginError += .25 }
 
-                this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(3000, () => {
+                this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(this.spell3EffectDuration, () => {
                     if (this.TowerDuel.spawner?.spawningBlock) { this.TowerDuel.spawner.spawningBlock.marginError = oldMargin }
                 }))
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell3cost })
