@@ -48,6 +48,21 @@ export default class Game implements ISystem {
             log(data)
             this.userId = data?.userId
         })
+
+        const arena = new Entity()
+        arena.addComponent(new GLTFShape('models/globalScene.glb'))
+        arena.addComponent(new Transform({
+            position: new Vector3(16, 0, 16)
+        }))
+        arena.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        engine.addEntity(arena)
+
+
+        // const liftContainer = new Entity()
+        // liftContainer.addComponent(new Transform({
+        //     position: new Vector3(25, 0.2, 16)
+        // }))
+        // engine.addEntity(liftContainer)
     }
 
     private SetupWorldConfig() {
@@ -70,7 +85,7 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
-        const lobbyScreen = new LobbyScreen(this.messageBus, new Vector3(16, 1, 16))
+        const lobbyScreen = new LobbyScreen(this.messageBus, new Vector3(16, 1, 17))
         engine.addSystem(lobbyScreen)
 
         // const gameStarterPlot = new Entity()
@@ -78,7 +93,7 @@ export default class Game implements ISystem {
         //     position: new Vector3(16, 0, 24),
         //     scale: new Vector3(1.5, 1.5, 1.5)
         // }))
-        
+
         this.rulesBtn.addComponent(new Transform({
             position: new Vector3(15.25, 1, 17),
             scale: new Vector3(1, 1, 1)
@@ -188,15 +203,6 @@ export default class Game implements ISystem {
         })
         higherTower.addComponent(htAnimator)
         engine.addEntity(higherTower)
-
-        const povFloor = new Entity()
-        povFloor.addComponent(new Transform({
-            position: new Vector3(16, 0, 24),
-            scale: new Vector3(1, 1, 1)
-        }))
-        povFloor.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        povFloor.addComponent(this.sceneAssets.povFloor)
-        engine.addEntity(povFloor)
     }
 
     private BuildMobius(parent: Entity, left: boolean) {

@@ -6,19 +6,22 @@ import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
 import RedButton from "@/redButton";
 
-//  @class Lift
-//      @param:
-//          global: Parent entity for phisicals group (lift and buttons)
-//          lift: Real lift PlaneShape Entity
 export default class Lift implements ISystem {
     TowerDuel: ITowerDuel
-    global: Entity = new Entity()
-    lift: Entity
     playerInputs: Input
+
+    global: Entity
+    lift: Entity
+    screen: Entity
+    miniScreenLeft: Entity
+    miniScreenRight: Entity
+
     step: number = 0
     state: boolean = false
     startPos: Vector3
+    rotation: Vector3
     endPosY: number = 4
+
     hearts: LifeHearts
     staminaBar: StaminaBar
     numericalCounter: NumericalCounter
@@ -27,30 +30,57 @@ export default class Lift implements ISystem {
         this.TowerDuel = towerDuel
         if (this.TowerDuel.mainGame.side === 'left') {
             this.startPos = new Vector3(14, 1, 2)
+            this.rotation = new Vector3(0, 90, 0)
         } else {
             this.startPos = new Vector3(2, 1, 2)
+            this.rotation = new Vector3(0, 180, 0)
         }
         // Global def
+        this.global = new Entity()
         this.global.setParent(this.TowerDuel.gameArea)
-        this.global.addComponent(new Transform({
-            position: this.startPos,
-            scale: new Vector3(1, 1, 1)
-        }))
-        if (this.TowerDuel.mainGame.side === 'left') {
-            this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        } else {
-            this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 180, 0)
-        }
+        this.global.addComponent(new Transform({ position: this.startPos }))
+        this.global.getComponent(Transform).rotation.eulerAngles = this.rotation
 
         // Lift
         this.lift = new Entity()
+        this.lift.addComponent(new GLTFShape('models/gameLift.glb'))
         this.lift.addComponent(new Transform({
-            position: new Vector3(0, 0, 0),
-            scale: new Vector3(2, 0.02, 2),
+            position: new Vector3(0, 0, 0)
         }))
-        this.lift.addComponent(new GLTFShape('models/openedLiftToGame.glb'))
-        // this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.lift.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 225, 0)
+        this.lift.addComponent(new Animator())
+        const diamondAnimation = new AnimationState("DiamondAction", { layer: 0 })
+        const ringAnimation = new AnimationState("RingAction", { layer: 1 })
+        this.lift.getComponent(Animator).addClip(diamondAnimation)
+        this.lift.getComponent(Animator).addClip(ringAnimation)
+        diamondAnimation.play()
+        ringAnimation.play()
         this.lift.setParent(this.global)
+
+        this.screen = new Entity()
+        this.screen.addComponent(new GLTFShape('models/LiftScreen.glb'))
+        this.screen.addComponent(new Transform({
+            position: new Vector3(-0.75, 0, 0.75)
+        }))
+        this.screen.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 225, 45)
+        this.screen.setParent(this.global)
+
+        this.miniScreenLeft = new Entity()
+        this.miniScreenLeft.addComponent(new GLTFShape('models/MiniScreenLift.glb'))
+        this.miniScreenLeft.addComponent(new Transform({
+            position: new Vector3(-1.5, 0, -0.5)
+        }))
+        this.miniScreenLeft.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 180, 45)
+        this.miniScreenLeft.setParent(this.global)
+
+        this.miniScreenRight = new Entity()
+        this.miniScreenRight.addComponent(new GLTFShape('models/MiniScreenLift.glb'))
+        this.miniScreenRight.addComponent(new Transform({
+            position: new Vector3(0.5, 0, 1.5)
+        }))
+        this.miniScreenRight.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 270, 45)
+        this.miniScreenRight.setParent(this.global)
+
 
         // // User Interface
         this.hearts = new LifeHearts(this.TowerDuel, this)

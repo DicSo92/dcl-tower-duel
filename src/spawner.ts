@@ -46,10 +46,18 @@ export default class Spawner implements ISystem {
     };
 
     private BuildSpawner() {
-        let box = new BoxShape()
-        box.withCollisions = false
-        this.entity.addComponent(box)
-        this.entity.addComponent(new Transform({ scale: new Vector3(1, 0.5, 1) }))
+        let spawner = new GLTFShape('models/spawner.glb')
+        spawner.withCollisions = false
+        this.entity.addComponent(spawner)
+        this.entity.addComponent(new Transform())
+
+        this.entity.addComponent(new Animator())
+        const diamondAnimation = new AnimationState("DiamondAction", { layer: 0 })
+        const ringAnimation = new AnimationState("RingAction", { layer: 1 })
+        this.entity.getComponent(Animator).addClip(diamondAnimation)
+        this.entity.getComponent(Animator).addClip(ringAnimation)
+        diamondAnimation.play()
+        ringAnimation.play()
 
         // Move entity infinitely
         this.entity.addComponent(new ToggleComponent(ToggleState.Off,(value: ToggleState) => {
@@ -72,7 +80,7 @@ export default class Spawner implements ISystem {
     }
 
     private upSpawner() {
-        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length - this.TowerDuel.blockScaleY
+        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length
         this.plane.addComponentOrReplace(new MoveTransformComponent(this.plane.getComponent(Transform).position, new Vector3(0, posY, 0), 0.25))
     }
 
