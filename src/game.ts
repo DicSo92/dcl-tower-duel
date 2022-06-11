@@ -108,7 +108,7 @@ export default class Game implements ISystem {
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
-            hoverText: "MetaGameHub",
+            hoverText: "Decentraland",
         }))
         engine.addEntity(dclLogo)
 
@@ -122,7 +122,7 @@ export default class Game implements ISystem {
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
-            hoverText: "Decentraland",
+            hoverText: "MetaGameHub",
         }))
         engine.addEntity(mghLogo)
 
