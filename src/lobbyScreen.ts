@@ -7,13 +7,14 @@ import {
 import Game from "./game";
 import { getUserData } from "@decentraland/Identity"
 import { movePlayerTo } from "@decentraland/RestrictedActions";
+import { IUser } from "./interfaces/class.interface";
 
 export default class LobbyScreen implements ISystem {
     parent: Game
 
     container: Entity
     screen: Entity
-    borderModel : GLTFShape
+    borderModel: GLTFShape
     title: Entity
     content: Entity
     borderTopLeft?: Entity
@@ -24,6 +25,7 @@ export default class LobbyScreen implements ISystem {
     animationDuration: number = 0.6
     titleOffsetTop: number = 0.55
     queueTitle: string = `---- QUEUE ----`
+    usersInQueue: Array<IUser> = []
     rulesTitle: string = `---- RULES ----\n
         Click on play button\n
         Wait to be in game\n
@@ -39,8 +41,7 @@ export default class LobbyScreen implements ISystem {
     rulesScale: Vector3 = new Vector3(5, 3.2, 0.05)
     playBtn: Entity = new Entity();
     rulesBtn: Entity = new Entity();
-    usersInGame: Array<String> = []
-    usersInWaiting: Array<{ id: string, name: string }> = []
+    usersInGame: Array<IUser> = []
 
     constructor(parent: Game, position: Vector3) {
         this.parent = parent
@@ -89,9 +90,17 @@ export default class LobbyScreen implements ISystem {
         })
         this.parent.messageBus.on('removeUserInGame', (data) => {
             if (data) {
-                this.usersInGame = this.usersInGame.filter((item: String) => item !== data.user)
+                this.usersInGame = this.usersInGame.filter((item: IUser) => item !== data.user)
             }
             log('usersInGame', this.usersInGame)
+        })
+        this.parent.messageBus.on('addPlayerInQueue', (user: IUser) => {
+            if (user) {
+                // log(user)
+                // log(user.id, user.name)
+                this.addUserInQueue(user)
+                this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
+            }
         })
         this.parent.messageBus.on('newPlayer', (user) => {
             if (user) {
@@ -106,7 +115,7 @@ export default class LobbyScreen implements ISystem {
     }
     // -----------------------------------------------------------------------------------------------------------------
     private BuildToggleEvent = () => {
-        this.container.addComponent(new ToggleComponent(ToggleState.On,(value: ToggleState) => {
+        this.container.addComponent(new ToggleComponent(ToggleState.On, (value: ToggleState) => {
             const newScale = value ? this.queueScale : this.rulesScale
 
             this.title.getComponent(TextShape).opacity = 0
@@ -166,11 +175,11 @@ export default class LobbyScreen implements ISystem {
     private positionBotRight(screenScale: Vector3): Vector3 {
         return new Vector3(-(screenScale.x / 2), 0, 0)
     }
-    private titlePosition(screenScale: Vector3) : Vector3{
+    private titlePosition(screenScale: Vector3): Vector3 {
         return new Vector3(0, (screenScale === this.queueScale ? (screenScale.y - this.titleOffsetTop) : (screenScale.y - this.titleOffsetTop) / 2), 0.05)
     }
     // -----------------------------------------------------------------------------------------------------------------
-    private setTitleText (screenScale: Vector3, text: string) {
+    private setTitleText(screenScale: Vector3, text: string) {
         const titleText = new TextShape(text)
         titleText.fontSize = screenScale === this.queueScale ? 2 : 1
         this.title.addComponentOrReplace(titleText)
@@ -286,7 +295,7 @@ export default class LobbyScreen implements ISystem {
         })
         this.playBtn.addComponent(pbtnAnimator)
         this.playBtn.getComponent(Animator).getClip('viberZBezier').play()
-        
+
         this.playBtn.addComponent(new OnPointerDown(async () => {
             log('play click')
             this.playBtn.getComponent(Animator).getClip('viberBorderXLinear').play()
@@ -295,13 +304,47 @@ export default class LobbyScreen implements ISystem {
             this.playBtn.getComponent(AudioSource).playOnce()
             if (this.parent.streamSource) this.parent.streamSource.getComponent(AudioStream).playing = false
             await this.getUser()
-            this.parent.messageBus.emit('newPlayer', { id: this.parent.userId, name: this.parent.userName })
+            log("result getUserData", { id: this.parent.userId, name: this.parent.userName })
+            this.parent.messageBus.emit('addPlayerInQueue', { id: this.parent.userId, name: this.parent.userName })
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
             hoverText: "Play",
         }))
         this.playBtn.setParent(this.container)
+    }
+
+    addUserInQueue(user: IUser) {
+        log("this.addUserInQueue", user)
+        const userInQueue = this.usersInQueue.filter(item => item.id === user.id)
+        log("userInQueue", userInQueue)
+        if (userInQueue.length === 0) {
+            this.usersInQueue.push(user)
+            this.updateQueueScreen()
+        } else {
+            log('Already in Queue !')
+        }
+    }
+
+    removeUserInQueue(user: IUser) {
+        const condition = (item: IUser) => { return item.id === user.id && item.name === user.name }
+        this.usersInQueue.forEach(element => {
+            if (condition(element)) {
+                this.usersInQueue.splice(this.usersInQueue.indexOf(element), 1)
+            }
+        })
+        this.updateQueueScreen()
+    }
+
+    updateQueueScreen() {
+        log(this.usersInQueue)
+        let usersNames: string[] = []
+        this.usersInQueue.forEach(element => {
+            usersNames.push(element.name)
+        });
+        log("usersNames.join('\n')", usersNames.join('\n'))
+        this.queueTitle = `---- QUEUE ----\n${usersNames.join('\n')}`
+        this.setTitleText(this.queueScale, this.queueTitle)
     }
 
     update(dt: number) {

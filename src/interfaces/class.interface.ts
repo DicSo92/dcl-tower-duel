@@ -172,3 +172,8 @@ export interface ISceneAssets {
     soundLooseGame: AudioSource
     soundSpell: AudioSource
 }
+
+export interface IUser {
+    id: string,
+    name: string
+}
