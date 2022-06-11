@@ -26,7 +26,7 @@ export default class LiftToGame implements ISystem {
             this.startPos = new Vector3(24, .1, 24)
             this.endPos = new Vector3(30, 1, 2)
         } else {
-            this.startPos = new Vector3(8, 1, 24)
+            this.startPos = new Vector3(8, .1, 24)
             this.endPos = new Vector3(2, 1, 2)
         }
         this.lift = new Entity()

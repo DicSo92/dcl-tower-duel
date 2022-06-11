@@ -82,7 +82,7 @@ export default class Game implements ISystem {
         this.world.addBody(groundBody)
 
     }
-    
+
     private buildScene() {
         const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 16))
         engine.addSystem(lobbyScreen)
@@ -97,6 +97,34 @@ export default class Game implements ISystem {
         this.globalScene.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
         this.globalScene.addComponent(this.sceneAssets.globalScene)
         engine.addEntity(this.globalScene)
+        
+        const dclLogo = new Entity()
+        dclLogo.addComponent(new GLTFShape('models/dcl_logo.glb'))
+        dclLogo.addComponent(new Transform({
+            position: new Vector3(12, 3, 24),
+        }))
+        dclLogo.addComponent(new OnPointerDown(() => {
+            openExternalURL('https://decentraland.org/')
+        }, {
+            button: ActionButton.POINTER,
+            showFeedback: true,
+            hoverText: "MetaGameHub",
+        }))
+        engine.addEntity(dclLogo)
+
+        const mghLogo = new Entity()
+        mghLogo.addComponent(new GLTFShape('models/mgh_logo.glb'))
+        mghLogo.addComponent(new Transform({
+            position: new Vector3(20, 3, 24),
+        }))
+        mghLogo.addComponent(new OnPointerDown(() => {
+            openExternalURL('https://www.metagamehub.io/')
+        }, {
+            button: ActionButton.POINTER,
+            showFeedback: true,
+            hoverText: "Decentraland",
+        }))
+        engine.addEntity(mghLogo)
 
         this.streamSource = new Entity()
         this.streamSource.addComponent(
