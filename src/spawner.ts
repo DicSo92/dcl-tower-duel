@@ -24,12 +24,14 @@ export default class Spawner implements ISystem {
         this.messageBus = this.TowerDuel.messageBus
 
         this.plane = new Entity();
+        this.plane.addComponent(this.TowerDuel.mainGame.parent.sceneAssets.soundStopBlock)
         this.plane.addComponent(new Transform({
             scale: new Vector3(1, 1, 1)
         }))
         this.plane.setParent(this.TowerDuel.gameArea)
 
         this.entity = new Entity();
+        this.entity.addComponent(this.TowerDuel.mainGame.parent.sceneAssets.soundStopBlockPerfect)
         this.entity.setParent(this.plane)
         this.spawnInterval = new Entity()
 
@@ -82,6 +84,7 @@ export default class Spawner implements ISystem {
     private upSpawner() {
         const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length
         this.plane.addComponentOrReplace(new MoveTransformComponent(this.plane.getComponent(Transform).position, new Vector3(0, posY, 0), 0.25))
+        this.spawnSpeed -= 0.05
     }
 
     public spawnBlock() {

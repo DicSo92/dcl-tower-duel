@@ -1,10 +1,11 @@
 import { loadColliders } from "@/colliderSetup";
-import { IGameAssets, ISceneAssets, IMainGame } from "@/interfaces/class.interface";
+import { IGameAssets, ISceneAssets, IMainGame, IUser } from "@/interfaces/class.interface";
 import MainGame from "@/mainGame";
-import { getUserData } from "@decentraland/Identity"
 import { GameAssets, SceneAssets } from "@/assets";
 import * as utils from "@dcl/ecs-scene-utils";
 import LobbyScreen from "@/lobbyScreen";
+import HigherTower from "./higherTower";
+import { LeaderBoard } from "./LeaderBoard";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -20,10 +21,13 @@ export default class Game implements ISystem {
     sceneAssets: ISceneAssets
     mainGame0?: IMainGame
     mainGame1?: IMainGame
-    usersInGame: Array<String> = []
-    userId?: string
+    user: IUser = { public_address: '', name: '' }
     rulesBtn: Entity = new Entity()
     playBtn: Entity = new Entity()
+    globalScene: Entity = new Entity()
+    higherTower?: HigherTower;
+    streamSource?: Entity;
+    leaderBoard?: LeaderBoard;
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
@@ -31,23 +35,15 @@ export default class Game implements ISystem {
         this.messageBus = new MessageBus()
         this.gameAssets = new GameAssets()
         this.sceneAssets = new SceneAssets()
-        log("sceneAssets", this.sceneAssets.higherTowerModel)
 
         this.SetupWorldConfig()
         this.buildScene()
         this.BuildEvents()
 
-
         this.mainGame0 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'left')
         engine.addSystem(this.mainGame0)
         this.mainGame1 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'right')
         engine.addSystem(this.mainGame1)
-
-        executeTask(async () => {
-            let data = await getUserData()
-            log(data)
-            this.userId = data?.userId
-        })
 
         const arena = new Entity()
         arena.addComponent(new GLTFShape('models/globalScene.glb'))
@@ -85,124 +81,51 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
-        const lobbyScreen = new LobbyScreen(this.messageBus, new Vector3(16, 1, 17))
+        const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 17))
         engine.addSystem(lobbyScreen)
 
-        // const gameStarterPlot = new Entity()
-        // gameStarterPlot.addComponent(new Transform({
-        //     position: new Vector3(16, 0, 24),
-        //     scale: new Vector3(1.5, 1.5, 1.5)
-        // }))
-
-        this.rulesBtn.addComponent(new Transform({
-            position: new Vector3(15.25, 1, 17),
-            scale: new Vector3(1, 1, 1)
+        this.higherTower = new HigherTower(this)
+        engine.addSystem(this.higherTower)
+        const dclLogo = new Entity()
+        dclLogo.addComponent(new GLTFShape('models/dcl_logo.glb'))
+        dclLogo.addComponent(new Transform({
+            position: new Vector3(12, 3, 24),
         }))
-        this.rulesBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        this.rulesBtn.addComponent(this.sceneAssets.rulesBtn)
-        const rbtnAnimator = new Animator()
-        this.sceneAssets.rulesBtnAnimStates.forEach(item => {
-            if (item.clip === 'stopped') {
-                log("Play rulesBtn.stopped", item)
-                item.looping = true
-                // item.play()
-                item.stop()
-            }
-            else {
-                log("Play !rulesBtn.stopped", item)
-                item.looping = true
-                item.stop()
-                // item.reset()
-            }
-            rbtnAnimator.addClip(item)
-        })
-        this.rulesBtn.addComponent(rbtnAnimator)
-        engine.addEntity(this.rulesBtn)
-
-        // this.rulesBtn.addComponentOrReplace(new utils.Delay(1000, () => {
-            // log("Play rulesBtn.rotationYBezier")
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
-            // this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
-            // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
-            // log("Playing rulesBtn.rotationYBezier")
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
-            // log("Stopping rulesBtn.rotationYBezier")
-        // }))
-        this.playBtn.addComponent(new Transform({
-            position: new Vector3(16.75, 1, 17),
-            scale: new Vector3(1, 1, 1)
+        dclLogo.addComponent(new OnPointerDown(() => {
+            openExternalURL('https://decentraland.org/')
+        }, {
+            button: ActionButton.POINTER,
+            showFeedback: true,
+            hoverText: "Decentraland",
         }))
-        this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        this.playBtn.addComponent(this.sceneAssets.playBtn)
-        const pbtnAnimator = new Animator()
-        this.sceneAssets.rulesBtnAnimStates.forEach(item => {
-            if (item.clip === 'stopped') {
-                log("Play rulesBtn.stopped", item)
-                item.looping = true
-                // item.play()
-                item.stop()
-            } else if (item.clip === 'rotX') {
-                log("Play rulesBtn.stopped", item)
-                item.looping = true
-                // item.play()
-                item.stop()
-            }
-            else {
-                log("Play !rulesBtn.stopped", item)
-                item.looping = true
-                item.stop()
-                // item.reset()
-            }
-            pbtnAnimator.addClip(item)
-        })
-        this.playBtn.addComponent(pbtnAnimator)
-        engine.addEntity(this.playBtn)
+        engine.addEntity(dclLogo)
 
-        this.playBtn.addComponentOrReplace(new utils.Delay(1000, () => {
-            // log("Play rulesBtn.rotationYBezier")
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').play()
-            // this.rulesBtn.getComponent(Animator).getClip('rotationZBezier').play()
-            this.rulesBtn.getComponent(Animator).getClip('rotXBezier').play()
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYLinear').play()
-            // this.rulesBtn.getComponent(Animator).getClip('stopping').play()
-            // log("Playing rulesBtn.rotationYBezier")
-            // this.rulesBtn.getComponent(Animator).getClip('rotationYBezier').stop()
-            // log("Stopping rulesBtn.rotationYBezier")
+        const mghLogo = new Entity()
+        mghLogo.addComponent(new GLTFShape('models/mgh_logo.glb'))
+        mghLogo.addComponent(new Transform({
+            position: new Vector3(20, 3, 24),
         }))
-
-        // const gameStarterPlot = new Entity()
-        // gameStarterPlot.addComponent(new Transform({
-        //     position: new Vector3(16, 0, 24),
-        //     scale: new Vector3(1.5, 1.5, 1.5)
-        // }))
-        // gameStarterPlot.addComponent(this.sceneAssets.gameStarter)
-        // const gspAnimator = new Animator()
-        // this.sceneAssets.gameStarterAnimStates.forEach(item => {
-        //     gspAnimator.addClip(item)
-        //     item.reset()
-        //     item.play()
-        // })
-        // gameStarterPlot.addComponent(gspAnimator)
-        // engine.addEntity(gameStarterPlot)
-
-        // this.BuildMobius(gameStarterPlot, true)
-        // this.BuildMobius(gameStarterPlot, false)
-
-        const higherTower = new Entity()
-        higherTower.addComponent(new Transform({
-            position: new Vector3(16, 0, 24),
-            scale: new Vector3(1, 1, 1)
+        mghLogo.addComponent(new OnPointerDown(() => {
+            openExternalURL('https://www.metagamehub.io/')
+        }, {
+            button: ActionButton.POINTER,
+            showFeedback: true,
+            hoverText: "MetaGameHub",
         }))
-        higherTower.addComponent(this.sceneAssets.higherTowerModel)
-        const htAnimator = new Animator()
-        this.sceneAssets.higherTowerAnimStates.forEach(item => {
-            htAnimator.addClip(item)
-            item.reset()
-            item.play()
-        })
-        higherTower.addComponent(htAnimator)
-        engine.addEntity(higherTower)
+        engine.addEntity(mghLogo)
+
+        this.streamSource = new Entity()
+        this.streamSource.addComponent(
+            new AudioStream(
+                "http://frequence3.net-radio.fr/frequence3world.mp3" // http://direct.fipradio.fr/live/fip-webradio6.mp3; http://direct.fipradio.fr/live/fip-lofi.mp3;
+            )
+        )
+        this.streamSource.getComponent(AudioStream).volume = 0.05
+        engine.addEntity(this.streamSource)
+
+        this.streamSource.getComponent(AudioStream).playing = true
+
+        this.leaderBoard = new LeaderBoard()
     }
 
     private BuildMobius(parent: Entity, left: boolean) {
@@ -253,30 +176,6 @@ export default class Game implements ISystem {
     }
 
     private BuildEvents() {
-        this.messageBus.emit('getUsersInGame', {})
-        this.messageBus.on('getUsersInGame', () => {
-            if (this.usersInGame.length) {
-                this.messageBus.emit('setUsersInGame', { users: this.usersInGame })
-            }
-        })
-        this.messageBus.on('setUsersInGame', (users) => {
-            if (users) {
-                this.usersInGame = [...users]
-            }
-            log('usersInGame', this.usersInGame)
-        })
-        this.messageBus.on('addUserInGame', (data) => {
-            if (data) {
-                this.usersInGame.push(data.user)
-            }
-            log('usersInGame', this.usersInGame)
-        })
-        this.messageBus.on('removeUserInGame', (data) => {
-            if (data) {
-                this.usersInGame = this.usersInGame.filter((item: String) => item !== data.user)
-            }
-            log('usersInGame', this.usersInGame)
-        })
     }
 
     update(dt: number): void {

@@ -13,7 +13,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     blockPhysic?: CANNON.Body
     fallingBlocks?: FallingBlocks
     interEffect?: InterEffect
-    marginError: number = 0.15
+    marginError: number = 0.15 // 1
 
     constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
@@ -27,7 +27,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         this.Init();
     }
 
-    Init = () => {
+    private Init = () => {
         this.isBase ? this.BuildBase() : this.SpawnBlock()
         engine.addEntity(this.entity)
         this.TowerDuel.blocks.push(this)
@@ -91,6 +91,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
             // this.messageBus.emit("looseHeart_"+this.TowerDuel.towerDuelId, {})
             this.TowerDuel.lift?.hearts.decremLife()
+            this.TowerDuel.lift?.hearts.entity.getComponent(AudioSource).playOnce()
         }
         else if (Math.abs(offsetX) <= this.marginError && Math.abs(offsetZ) <= this.marginError) { // perfect placement (with error margin)
             this.entity.addComponent(new BoxShape())
@@ -105,7 +106,9 @@ export default class TowerBlock implements ISystem, ITowerBlock {
             this.interEffect = new InterEffect(this.TowerDuel, this.entity, transform, true)
             engine.addSystem(this.interEffect)
 
+            this.TowerDuel.spawner?.entity.getComponent(AudioSource).playOnce()
             this.TowerDuel.spawner?.spawnBlock()
+            this.messageBus.emit("addStamina_" + this.TowerDuel.towerDuelId, {})
         }
         else {
             const newScale: Vector3 = this.TowerDuel.lastScale.clone()
@@ -136,7 +139,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
 
             this.TowerDuel.spawner?.spawnBlock()
 
-            this.messageBus.emit("addStamina_" + this.TowerDuel.towerDuelId, {})
+            this.TowerDuel.spawner?.plane.getComponent(AudioSource).playOnce()
         }
     }
 

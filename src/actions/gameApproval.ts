@@ -48,9 +48,12 @@ export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
     //Method when action starts
     onStart(): void {
         this.hasFinished = false
+        this.liftToGame.lift.getComponent(AudioSource).audioClip.loop = true
+        this.liftToGame.lift.getComponent(AudioSource).playing = true
         this.liftToGame.goToPlay()
 
         utils.setTimeout(100, () => {
+            this.liftToGame.lift.getComponent(AudioSource).playing = false
             this.hasFinished = true
         })
     }

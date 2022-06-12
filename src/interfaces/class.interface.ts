@@ -9,6 +9,10 @@ import PhysicsSystem from "@/physicsSystem";
 import LifeHearts from "@/lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "@/numericalCounter";
+import HigherTower from "@/higherTower";
+import FallingBlocks from "@/fallingBlocks";
+import InterEffect from "@/interEffect";
+import { LeaderBoard } from "@/LeaderBoard";
 
 export interface IGame {
     physicsMaterial: CANNON.Material
@@ -20,6 +24,12 @@ export interface IGame {
     mainGame1?: IMainGame
     usersInGame: Array<String>
     userId?: string
+    rulesBtn: Entity
+    playBtn: Entity
+    globalScene: Entity
+    higherTower?: HigherTower
+    streamSource?: Entity
+    leaderBoard?: LeaderBoard
 
     SetupWorldConfig(): void
     buildScene(): void
@@ -60,10 +70,14 @@ export interface ITowerDuel {
 }
 export interface ITowerBlock {
     TowerDuel: ITowerDuel
-    // messageBus: MessageBus
+    messageBus: MessageBus
     isBase: Boolean
     animation?: MoveTransformComponent
     entity: Entity
+    blockPhysic?: CANNON.Body
+    fallingBlocks?: FallingBlocks
+    interEffect?: InterEffect
+    marginError: number
 
     update?(dt: number): void
 }
@@ -73,11 +87,13 @@ export interface ILiftToGame {
     parent: MainGame
     startPos: Vector3
     endPos: Vector3
+    liftMaxHeight: number
+    liftMoveDuration: number
     startPath: Vector3[]
     endPath: Vector3[]
-    pathLength: number
     isActive: boolean
     radius: number
+    outOfLift: boolean
 
     goToPlay(): void
     goToLobby(): void
@@ -138,10 +154,26 @@ export interface ISceneAssets {
     gameStarterAnimStates: AnimationState[]
     higherTowerModel: GLTFShape
     higherTowerAnimStates: AnimationState[]
-    povFloor: GLTFShape
+    globalScene: GLTFShape
     mobius: GLTFShape
     mobiusAnimStates: AnimationState[]
     rulesBtn: GLTFShape
     rulesBtnAnimStates: AnimationState[]
     playBtn: GLTFShape
+    playBtnAnimStates: AnimationState[]
+    soundClick: AudioSource
+    soundValide: AudioSource
+    soundTeleport: AudioSource
+    soundLiftMove: AudioSource
+    soundStartGame: AudioSource
+    soundStopBlock: AudioSource
+    soundStopBlockPerfect: AudioSource
+    soundLooseLife: AudioSource
+    soundLooseGame: AudioSource
+    soundSpell: AudioSource
+}
+
+export interface IUser {
+    public_address: string,
+    name: string
 }

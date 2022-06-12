@@ -14,6 +14,7 @@ export default class LifeHearts implements ISystem {
         this.TowerDuel = towerDuel
         this.messageBus = towerDuel.messageBus
         this.entity = new Entity()
+        this.entity.addComponent(this.TowerDuel.mainGame.parent.sceneAssets.soundLooseLife)
         this.entity.setParent(lift.global)
         this.entity.addComponent(new Transform({
             position: new Vector3(-.75, 1.5, -1.5),

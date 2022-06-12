@@ -8,6 +8,7 @@ export default class StaminaBar implements ISystem {
     staminaOn: Entity
     staminaOff: Entity
     maxStamina: number = 10
+    minStamina: number = 0
     staminaCount: number = 0
 
     cellSize: number = 0.1015 // 0.203 for 0.5 barScale
@@ -18,6 +19,7 @@ export default class StaminaBar implements ISystem {
         this.messageBus = towerDuel.messageBus
 
         this.entity = new Entity()
+        this.entity.addComponent(this.TowerDuel.mainGame.parent.sceneAssets.soundSpell)
         this.entity.addComponent(new Transform({
             position: new Vector3(0.25, 1.3, -1.3),
             scale: new Vector3(1, 1, 1)
@@ -60,25 +62,38 @@ export default class StaminaBar implements ISystem {
         this.setStamina(this.staminaCount)
     }
 
-    setStamina(stamina: number) {
+    private setStamina(stamina: number) {
+        log("setStamina", stamina)
         this.staminaCount = stamina
 
         const scaleXOn = this.cellSize * stamina
         this.staminaOn.addComponentOrReplace(new Transform({
-            position: new Vector3(-(this.cellSize * 5) + scaleXOn/2, 0, 0),
+            position: new Vector3(-(this.cellSize * 5) + scaleXOn / 2, 0, 0),
             scale: new Vector3(scaleXOn, 0.01, 0.07)
         }))
 
         const scaleXOff = this.cellSize * (this.maxStamina - stamina)
         this.staminaOff.addComponentOrReplace(new Transform({
-            position: new Vector3(-(this.cellSize * 5) + scaleXOn + scaleXOff/2, 0, 0),
+            position: new Vector3(-(this.cellSize * 5) + scaleXOn + scaleXOff / 2, 0, 0),
             scale: new Vector3(scaleXOff, 0.005, 0.07)
         }))
     }
 
-    buildEvents = () => {
+    private buildEvents = () => {
         this.messageBus.on("addStamina_" + this.TowerDuel.towerDuelId, () => {
+            log("addStamina_", this.staminaCount)
             if (this.staminaCount < this.maxStamina) this.setStamina(this.staminaCount + 1)
+            log("addStamina_", this.staminaCount)
+        })
+
+        this.messageBus.on("removeStamina_" + this.TowerDuel.towerDuelId, (data: { cost: number }) => {
+            log("removeStamina_", this.staminaCount, "cost", data.cost, "result", (this.staminaCount - data.cost).toString)
+            if (this.staminaCount >= this.minStamina && (this.staminaCount - data.cost) >= 0) {
+                log("valide removing", this.staminaCount)
+                this.setStamina(this.staminaCount - data.cost)
+                log("removedStamina", this.staminaCount)
+            }
+            log("removeStamina_", this.staminaCount)
         })
 
     }

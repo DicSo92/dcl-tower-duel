@@ -16,6 +16,7 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
             () => {
                 log(`picked option Solo`)
                 this.parent.gameApprovalSolo('gameApprovalSolo')
+                this.parent.liftToGame.entity.getComponent(AudioSource).playOnce()
                 this.hasFinished = true
             },
             () => {
@@ -33,11 +34,11 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
     onStart(): void {
         this.prompt.show()
     }
-    
+
     update(dt: number): void { }
-    
+
     onFinish(): void {
-        log(`this.prompt.hide()`,this.prompt.alive)
-        if(this.prompt && this.prompt.alive) this.prompt.hide()
+        log(`this.prompt.hide()`, this.prompt.alive)
+        if (this.prompt && this.prompt.alive) this.prompt.hide()
     }
 }
