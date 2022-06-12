@@ -14,7 +14,7 @@ export default class LiftToGame implements ISystem {
     startPath: Vector3[]
     endPath: Vector3[]
     state: number = 0 // 0: !isActive; 1: goToPlay; -1: goToLobby
-    liftMaxHeight: number = 40
+    liftMaxHeight: number = 25
     liftMoveDuration: number = 8
     isActive: boolean = false
     radius: number = 1.5
@@ -125,9 +125,9 @@ export default class LiftToGame implements ISystem {
             // log('liftToGame isActive')
             if (Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10) {
                 log('Player isnt on liftToGame')
-                if ((this.state === 1 && Camera.instance.position !== this.endPos || (this.state === -1 && Camera.instance.position !== this.startPos))) {
-                    const nextPos = new Vector3(this.endPos.x, this.endPos.y + 2, this.endPos.z)
-                    movePlayerTo(this.state === 1 ? nextPos : this.startPos, this.state === 1 ? nextPos : this.endPos)}
+                if ((this.state === 1 && (Camera.instance.position.x !== this.endPos.x && Camera.instance.position.z !== this.endPos.z) || (this.state === -1 && (Camera.instance.position.x !== this.endPos.x && Camera.instance.position.z !== this.endPos.z)))) {
+                    const nextPos = new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z)
+                    movePlayerTo(this.state === 1 ? nextPos : this.startPos, this.state === 1 ? new Vector3(8, 0, 24) : nextPos)}
                 // movePlayerTo(this.entity.getComponent(Transform).position, Camera.instance.rotation.eulerAngles)
             }
         }

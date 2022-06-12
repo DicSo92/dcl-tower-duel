@@ -24,6 +24,7 @@ export default class LobbyScreen implements ISystem {
 
     animationDuration: number = 0.6
     titleOffsetTop: number = 0.55
+    queueLastUpdate: number = Date.now()
     queueTitle: string = `---- QUEUE ----`
     usersInQueue: Array<IUser> = []
     rulesTitle: string = `---- RULES ----\n
@@ -70,17 +71,17 @@ export default class LobbyScreen implements ISystem {
 
     // -----------------------------------------------------------------------------------------------------------------
     private BuildEvents() {
-        this.parent.messageBus.emit('getUsersInGame', {})
-        this.parent.messageBus.on('getUsersInGame', () => {
-            if (this.usersInGame.length) {
-                this.parent.messageBus.emit('setUsersInGame', { users: this.usersInGame })
+        this.parent.messageBus.emit('getUsersInQueue', { data: { users: this.usersInQueue, lastUpdate: this.queueLastUpdate } })
+        this.parent.messageBus.on('getUsersInQueue', (data: { users: IUser[], lastUpdate: number }) => {
+            if (this.usersInGame !== data.users && data.lastUpdate > this.queueLastUpdate) {
+                this.parent.messageBus.emit('addUsersInQueue', { users: data.users, lastUpdate: this.queueLastUpdate })
             }
         })
-        this.parent.messageBus.on('setUsersInGame', (users) => {
-            if (users) {
-                this.usersInGame = [...users]
+        this.parent.messageBus.emit('getUsersInGame', { users: this.usersInGame })
+        this.parent.messageBus.on('getUsersInGame', (users: IUser[]) => {
+            if (this.usersInGame !== users) {
+                this.parent.messageBus.emit('addUsersInGame', { users: users })
             }
-            log('usersInGame', this.usersInGame)
         })
         this.parent.messageBus.on('addUserInGame', (data) => {
             if (data) {
@@ -94,19 +95,25 @@ export default class LobbyScreen implements ISystem {
             }
             log('usersInGame', this.usersInGame)
         })
-        this.parent.messageBus.on('addPlayerInQueue', (user: IUser) => {
+        this.parent.messageBus.on('addUserInQueue', (user: IUser) => {
             if (user) {
                 // log(user)
-                // log(user.id, user.name)
+                // log(user.public_address, user.name)
                 this.addUserInQueue(user)
                 this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
             }
         })
-        this.parent.messageBus.on('newPlayer', (user) => {
+        // this.parent.messageBus.on('addUsersInQueue', (users: IUser[], lastUpdate: number) => {
+        //     if (users && lastUpdate > this.queueLastUpdate) {
+        //         this.addUsersInQueue(users)
+        //         this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
+        //     }
+        // })
+        this.parent.messageBus.on('newUser', (user) => {
             if (user) {
                 // log(user)
-                // log(user.id, user.name)
-                // this.usersInWaiting.push(user.id, user.name)
+                // log(user.public_address, user.name)
+                // this.usersInWaiting.push(user.public_address, user.name)
                 movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8))
                 this.parent.mainGame0?.gameApprovalSolo('gameApprovalSolo')
                 this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
@@ -156,8 +163,7 @@ export default class LobbyScreen implements ISystem {
         try {
             let data = await getUserData()
             log('USER DATA', data)
-            this.parent.userId = data?.userId
-            this.parent.userName = data?.displayName
+            if (data) this.parent.user = { public_address: data.userId, name: data.displayName }
         } catch {
             log("Failed to get user")
         }
@@ -304,8 +310,9 @@ export default class LobbyScreen implements ISystem {
             this.playBtn.getComponent(AudioSource).playOnce()
             if (this.parent.streamSource) this.parent.streamSource.getComponent(AudioStream).playing = false
             await this.getUser()
-            log("result getUserData", { id: this.parent.userId, name: this.parent.userName })
-            this.parent.messageBus.emit('addPlayerInQueue', { id: this.parent.userId, name: this.parent.userName })
+            log("result getUserData", { id: this.parent.user.public_address, name: this.parent.user.name })
+            // this.parent.messageBus.emit('addUserInQueue', { id: this.parent.user.public_address, name: this.parent.user.name })
+            this.parent.messageBus.emit('newUser', { id: this.parent.user.public_address, name: this.parent.user.name })
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
@@ -316,9 +323,9 @@ export default class LobbyScreen implements ISystem {
 
     addUserInQueue(user: IUser) {
         log("this.addUserInQueue", user)
-        const userInQueue = this.usersInQueue.filter(item => item.id === user.id)
-        log("userInQueue", userInQueue)
+        const userInQueue = this.usersInQueue.filter(value => value.public_address === user.public_address)
         if (userInQueue.length === 0) {
+            log("userInQueue", userInQueue)
             this.usersInQueue.push(user)
             this.updateQueueScreen()
         } else {
@@ -326,8 +333,19 @@ export default class LobbyScreen implements ISystem {
         }
     }
 
+    addUsersInQueue(users: IUser[]) {
+        log("this.addUserInQueue", users)
+        log("userInQueue", this.usersInQueue)
+        if (users.length !== 0) {
+            this.usersInQueue = users
+            this.updateQueueScreen()
+        } else {
+            log('Already in Queue !')
+        }
+    }
+
     removeUserInQueue(user: IUser) {
-        const condition = (item: IUser) => { return item.id === user.id && item.name === user.name }
+        const condition = (item: IUser) => { return item.public_address === user.public_address && item.name === user.name }
         this.usersInQueue.forEach(element => {
             if (condition(element)) {
                 this.usersInQueue.splice(this.usersInQueue.indexOf(element), 1)

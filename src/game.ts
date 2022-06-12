@@ -1,10 +1,11 @@
 import { loadColliders } from "@/colliderSetup";
-import { IGameAssets, ISceneAssets, IMainGame } from "@/interfaces/class.interface";
+import { IGameAssets, ISceneAssets, IMainGame, IUser } from "@/interfaces/class.interface";
 import MainGame from "@/mainGame";
 import { GameAssets, SceneAssets } from "@/assets";
 import * as utils from "@dcl/ecs-scene-utils";
 import LobbyScreen from "@/lobbyScreen";
 import HigherTower from "./higherTower";
+import { LeaderBoard } from "./LeaderBoard";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -38,13 +39,13 @@ export default class Game implements ISystem {
     sceneAssets: ISceneAssets
     mainGame0?: IMainGame
     mainGame1?: IMainGame
-    userId?: string
-    userName?: string
+    user: IUser = { public_address: '', name: '' }
     rulesBtn: Entity = new Entity()
     playBtn: Entity = new Entity()
     globalScene: Entity = new Entity()
     higherTower?: HigherTower;
     streamSource?: Entity;
+    leaderBoard?: LeaderBoard;
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
@@ -136,6 +137,8 @@ export default class Game implements ISystem {
         engine.addEntity(this.streamSource)
 
         this.streamSource.getComponent(AudioStream).playing = true
+
+        this.leaderBoard = new LeaderBoard()
     }
 
     private BuildMobius(parent: Entity, left: boolean) {

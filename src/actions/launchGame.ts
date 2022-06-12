@@ -18,7 +18,7 @@ export class LaunchSoloGameAction implements utils.ActionsSequenceSystem.IAction
 
     onStart(): void {
         this.parent.messageBus.emit('addUserInGame', {
-            user: this.parent.parent.userId
+            user: this.parent.parent.user.public_address
         })
         if (this.parent.side === 'left') {
             this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0)))
@@ -50,7 +50,7 @@ export class LaunchMultGameAction implements utils.ActionsSequenceSystem.IAction
             item.CleanEntities()
         })
         this.parent.messageBus.emit('addUserInGame', {
-            user: this.parent.parent.userId
+            user: this.parent.parent.user.public_address
         })
         this.parent.TowerDuel.push(new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0)))
         this.hasFinished = true

@@ -12,6 +12,7 @@ import NumericalCounter from "@/numericalCounter";
 import HigherTower from "@/higherTower";
 import FallingBlocks from "@/fallingBlocks";
 import InterEffect from "@/interEffect";
+import { LeaderBoard } from "@/LeaderBoard";
 
 export interface IGame {
     physicsMaterial: CANNON.Material
@@ -28,6 +29,7 @@ export interface IGame {
     globalScene: Entity
     higherTower?: HigherTower
     streamSource?: Entity
+    leaderBoard?: LeaderBoard
 
     SetupWorldConfig(): void
     buildScene(): void
@@ -174,6 +176,6 @@ export interface ISceneAssets {
 }
 
 export interface IUser {
-    id: string,
+    public_address: string,
     name: string
 }
