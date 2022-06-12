@@ -25,7 +25,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
     maxCount: number = 20
     blockScaleY: number = 0.4
-    offsetY: number = 0.2
+    offsetY: number = 1.75
     lastScale: Vector3 = new Vector3(4, this.blockScaleY, 4)
     lastPosition: Vector3 = new Vector3(8, this.offsetY, 8)
 

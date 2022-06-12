@@ -11,24 +11,6 @@ onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
     const game = new Game()
     engine.addSystem(game);
-    // const socket = new WebSocket(`wss://159.65.22.12.nip.io`)
-    // const socket = new WebSocket(`ws://localhost:8080`)
-    // socket.onopen = () => socket.send("getPlayersInGame")
-    // socket.send(
-    //     JSON.stringify({
-    //         event: 'message',
-    //         data: 'test'
-    //     })
-    // )
-    // socket.onmessage = function (event) {
-    //     try {
-    //         const parsed = JSON.parse(event.data)
-    //         log(parsed)
-    //         // DO SOMETHING WITH INPUT
-    //     } catch (error) {
-    //         log(error)
-    //     }
-    // }
 });
 
 export default class Game implements ISystem {
@@ -63,6 +45,20 @@ export default class Game implements ISystem {
         this.mainGame1 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'right')
         engine.addSystem(this.mainGame1)
 
+        const arena = new Entity()
+        arena.addComponent(new GLTFShape('models/globalScene.glb'))
+        arena.addComponent(new Transform({
+            position: new Vector3(16, 0, 16)
+        }))
+        arena.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        engine.addEntity(arena)
+
+
+        // const liftContainer = new Entity()
+        // liftContainer.addComponent(new Transform({
+        //     position: new Vector3(25, 0.2, 16)
+        // }))
+        // engine.addEntity(liftContainer)
     }
 
     private SetupWorldConfig() {
@@ -85,20 +81,11 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
-        const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 16))
+        const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 17))
         engine.addSystem(lobbyScreen)
 
         this.higherTower = new HigherTower(this)
         engine.addSystem(this.higherTower)
-
-        this.globalScene = new Entity()
-        this.globalScene.addComponent(new Transform({
-            position: new Vector3(16, 0, 24),
-        }))
-        this.globalScene.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        this.globalScene.addComponent(this.sceneAssets.globalScene)
-        engine.addEntity(this.globalScene)
-        
         const dclLogo = new Entity()
         dclLogo.addComponent(new GLTFShape('models/dcl_logo.glb'))
         dclLogo.addComponent(new Transform({

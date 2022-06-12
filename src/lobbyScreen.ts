@@ -8,15 +8,15 @@ import Game from "./game";
 import { getUserData } from "@decentraland/Identity"
 import { movePlayerTo } from "@decentraland/RestrictedActions";
 import { IUser } from "./interfaces/class.interface";
+import LobbyScreenBorder from "@/lobbyScreenBorder";
 
 export default class LobbyScreen implements ISystem {
     parent: Game
+    messageBus: MessageBus
 
     container: Entity
     screen: Entity
-    borderModel: GLTFShape
     title: Entity
-    content: Entity
     borderTopLeft?: Entity
     borderTopRight?: Entity
     borderBotLeft?: Entity
@@ -46,6 +46,7 @@ export default class LobbyScreen implements ISystem {
 
     constructor(parent: Game, position: Vector3) {
         this.parent = parent
+        this.messageBus = parent.messageBus
 
         this.container = new Entity()
         this.container.addComponent(new Transform({ position: position }))
@@ -54,9 +55,6 @@ export default class LobbyScreen implements ISystem {
         this.screen = new Entity()
         this.title = new Entity()
         this.title.setParent(this.container)
-        this.content = new Entity()
-        this.content.setParent(this.container)
-        this.borderModel = new GLTFShape('models/glassAngles.glb')
 
         this.Init()
     }
@@ -210,37 +208,13 @@ export default class LobbyScreen implements ISystem {
     }
     // -----------------------------------------------------------------------------------------------------------------
     BuildBorders = () => {
-        this.borderTopLeft = new Entity()
-        this.borderTopLeft.addComponent(this.borderModel)
-        this.borderTopLeft.addComponent(new Transform({
-            position: this.positionTopLeft(this.queueScale),
-        }))
-        this.borderTopLeft.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -90, 0)
-        this.borderTopLeft.setParent(this.container)
+        this.borderTopLeft = new LobbyScreenBorder(this, this.messageBus, this.positionTopLeft(this.queueScale), new Vector3(0, -90, 0))
         // -----------------------------------------
-        this.borderTopRight = new Entity()
-        this.borderTopRight.addComponent(this.borderModel)
-        this.borderTopRight.addComponent(new Transform({
-            position: this.positionTopRight(this.queueScale),
-        }))
-        this.borderTopRight.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        this.borderTopRight.setParent(this.container)
+        this.borderTopRight = new LobbyScreenBorder(this, this.messageBus, this.positionTopRight(this.queueScale), new Vector3(0, 90, 0))
         // -----------------------------------------
-        this.borderBotLeft = new Entity()
-        this.borderBotLeft.addComponent(this.borderModel)
-        this.borderBotLeft.addComponent(new Transform({
-            position: this.positionBotLeft(this.queueScale),
-        }))
-        this.borderBotLeft.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -90, -180)
-        this.borderBotLeft.setParent(this.container)
+        this.borderBotLeft = new LobbyScreenBorder(this, this.messageBus, this.positionBotLeft(this.queueScale), new Vector3(0, -90, -180))
         // -----------------------------------------
-        this.borderBotRight = new Entity()
-        this.borderBotRight.addComponent(this.borderModel)
-        this.borderBotRight.addComponent(new Transform({
-            position: this.positionBotRight(this.queueScale),
-        }))
-        this.borderBotRight.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 180)
-        this.borderBotRight.setParent(this.container)
+        this.borderBotRight = new LobbyScreenBorder(this, this.messageBus, this.positionBotRight(this.queueScale), new Vector3(0, 90, 180))
     }
     // -----------------------------------------------------------------------------------------------------------------
     BuildButtons = () => {
