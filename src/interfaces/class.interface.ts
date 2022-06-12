@@ -91,15 +91,13 @@ export interface ILift {
     step: number
     state: boolean
     startPos: Vector3
-    endPosY: number
+    minPosY: number
     hearts: LifeHearts
     staminaBar: StaminaBar
     numericalCounter: NumericalCounter
 
     autoMove(): void
     reset(): void
-    moveUp(): void
-    moveDown(): void
     Delete(): void
     update?(dt: number): void
 }

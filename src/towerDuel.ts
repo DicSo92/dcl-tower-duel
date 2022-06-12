@@ -25,7 +25,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
 
     maxCount: number = 20
     blockScaleY: number = 0.4
-    offsetY: number = 0.52
+    offsetY: number = 1.75
     lastScale: Vector3 = new Vector3(4, this.blockScaleY, 4)
     lastPosition: Vector3 = new Vector3(8, this.offsetY, 8)
 
@@ -50,13 +50,6 @@ export default class TowerDuel implements ISystem, ITowerDuel {
             scale: new Vector3(1, 1, 1)
         }))
         engine.addEntity(this.gameArea)
-
-        const baseBlock = new Entity()
-        baseBlock.addComponent(new GLTFShape("models/baseBlock.glb"))
-        baseBlock.addComponent(new Transform({
-            position: new Vector3(8, 0, 8),
-        }))
-        baseBlock.setParent(this.gameArea)
 
         this.Init();
     }
