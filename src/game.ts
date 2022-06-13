@@ -81,7 +81,7 @@ export default class Game implements ISystem {
         this.higherTower = new HigherTower(this)
         engine.addSystem(this.higherTower)
 
-        this.leaderBoard = new LeaderBoard()
+        this.leaderBoard = new LeaderBoard(this)
     }
 
     private BuildEvents() {
