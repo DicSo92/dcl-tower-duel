@@ -26,12 +26,10 @@ export class LeaderBoard {
 
     async updateBoard(newDatas?: any) {
         let scoreData: any = []
-        if (newDatas) {
-            log("updateBoard with newData")
+        if (newDatas) { // updateBoard with newData
             scoreData = newDatas
         }
-        else {
-            log("updateBoard without newData")
+        else { // updateBoard without newData
             scoreData = await getScoreBoard() // data.scoreBoard
         }
         this.buildLeaderBoard(scoreData, this.global, 9).catch((error) => log(error))
@@ -53,7 +51,6 @@ export class LeaderBoard {
                     this.scoreBoardValues.push(score)
                 } else {
                     // create empty line
-
                     const name = new ScoreBoardText(TextTypes.TINYTITLE, '-', { position: new Vector3(-0.6, 0.2 - i / 4, 0), scale: this.fontSize }, parent)
                     this.scoreBoardNames.push(name)
 

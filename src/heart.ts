@@ -16,7 +16,6 @@ export default class Heart implements ISystem {
         this.entity.addComponent(new GLTFShape("models/HeartFlat.glb"))
         this.entity.addComponent(new Transform({
             position: position,
-            // scale: new Vector3(0.13, 0.13, 0.13)
         }))
         this.entity.getComponent(Transform).rotation.eulerAngles = new Vector3(180, 90, 0)
 
@@ -36,6 +35,5 @@ export default class Heart implements ISystem {
     }
 
     update(dt: number) {
-        // log("Update", dt)
     }
 }

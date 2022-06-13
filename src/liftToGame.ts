@@ -100,15 +100,9 @@ export default class LiftToGame implements ISystem {
     }
 
     update(dt: number) {
-        // log('liftToGame update')
         if (this.isActive && this.state !== 0) {
-            // log('liftToGame isActive')
             const userOutOfLiftY = Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10
-            const userOutOfLiftX = Camera.instance.position.x < this.endPos.x + .5 || Camera.instance.position.x > this.endPos.x + .5
-            const userOutOfLiftZ = Camera.instance.position.z < this.endPos.z + .5 || Camera.instance.position.z > this.endPos.z + .5
             if (userOutOfLiftY) {
-                log('Player isnt on liftToGame')
-                // if (((this.state === 1 && (userOutOfLiftX && userOutOfLiftZ)) || ((this.state === -1 && (userOutOfLiftX && userOutOfLiftZ))))) {
                 movePlayerTo(this.state === 1 ? new Vector3(this.endPos.x, this.endPos.y + 3, this.endPos.z) : this.startPos, this.state === 1 ? this.startPos : new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z))
                 if (this.state === 1) {
                     if (this.lift.getComponent(GLTFShape).visible !== false) {
@@ -124,7 +118,6 @@ export default class LiftToGame implements ISystem {
                     this.entity.removeComponent(GLTFShape)
                     engine.removeSystem(this)
                 }
-                // }
             }
         }
     }
