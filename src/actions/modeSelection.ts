@@ -2,6 +2,7 @@ import Game from '@/game'
 import MainGame from '@/mainGame'
 import * as utils from '@dcl/ecs-scene-utils'
 import * as ui from '@dcl/ui-scene-utils'
+import { movePlayerTo } from '@decentraland/RestrictedActions'
 
 //Use IAction to define action for movement
 export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
@@ -18,6 +19,7 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
                 'Would you play ?',
                 () => {
                     log(`Yes`)
+                    movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8))
                     this.parent.gameApprovalSolo('gameApprovalSolo')
                     this.parent.liftToGame.entity.getComponent(AudioSource).playOnce()
                     this.hasFinished = true
@@ -25,6 +27,7 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
                 () => {
                     log(`No`)
                     this.prompt?.hide()
+                    this.parent.stopSequence()
                     this.hasFinished = true
                 },
                 'Yes',
@@ -37,6 +40,7 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
                 'Would you play ?',
                 () => {
                     log(`Yes`)
+                    movePlayerTo(new Vector3(8, .1, 24), new Vector3(8, 0, 8))
                     this.parent.gameApprovalSolo('gameApprovalSolo')
                     this.parent.liftToGame.entity.getComponent(AudioSource).playOnce()
                     this.hasFinished = true
@@ -44,6 +48,7 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
                 () => {
                     log(`No`)
                     this.prompt?.hide()
+                    this.parent.stopSequence()
                     this.hasFinished = true
                 },
                 'Yes',

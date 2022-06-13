@@ -19,6 +19,8 @@ export default class MainGame implements ISystem {
     isActive: boolean = false
     parent: Game;
     side: string
+    gameSequence?: utils.ActionsSequenceSystem.SequenceBuilder;
+    gameSequenceSystem?: utils.ActionsSequenceSystem;
 
     constructor(cannonMaterial: CANNON.Material, world: CANNON.World, parent: Game, messageBus: MessageBus, side: string) {
         this.physicsMaterial = cannonMaterial
@@ -68,17 +70,24 @@ export default class MainGame implements ISystem {
         this.addSequence('AfterTowerDuelSequence')
     }
 
+    public stopSequence() {
+        this.gameSequenceSystem?.stop()
+        if (this.gameSequenceSystem) {
+            engine.removeSystem(this.gameSequenceSystem)
+            this.gameSequenceSystem = undefined
+        }
+    }
+
     private addSequence(type: string) {
-        let sequence = null
         switch (type) {
             case "modeSelection": {
-                sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(this.modeSelectionAction = new SelectModeAction(this))
                 
                 break;
             }
             case "gameApprovalSolo": {
-                sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new GoToPlayAction(this.liftToGame))
                     .then(new CleanTowerDuelAction(this))
 
@@ -89,30 +98,30 @@ export default class MainGame implements ISystem {
                 // Find player
                 // Clean scene, move player
 
-                // sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                // this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                 //     .then(new GoToPlayAction(this.liftToGame))
                 //     .then(new WaitTowerDuelAction(this.messageBus))
 
                 break;
             }
             case "launchGame": {
-                sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new LaunchSoloGameAction(this, this.physicsMaterial, this.world))
                 
                 break;
             }
             case "AfterTowerDuelSequence": {
-                sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new BackToLobbyAction(this.liftToGame))
                     .then(new FinaliseTowerDuelAction(this))
                 
                 break;
             }
         }
-        if (sequence) {
-            const system = new utils.ActionsSequenceSystem(sequence)
+        if (this.gameSequence) {
+            this.gameSequenceSystem = new utils.ActionsSequenceSystem(this.gameSequence)
             // actionSystem.setOnFinishCallback(() => { })
-            engine.addSystem(system) 
+            engine.addSystem(this.gameSequenceSystem) 
         }
     }
 

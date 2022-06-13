@@ -177,12 +177,10 @@ export default class LobbyScreen implements ISystem {
                 // this.usersInWaiting.push(user.public_address, user.name)
                 if (this.usersInGame.left.public_address === "") {
                     log("this.usersInGame.left.public_address empty")
-                    movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8))
                     this.parent.mainGame0?.modeSelection('left')
                     this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
                 } else if (this.usersInGame.right.public_address === "") {
                     log("this.usersInGame.right.public_address empty")
-                    movePlayerTo(new Vector3(8, .1, 24), new Vector3(8, 0, 8))
                     this.parent.mainGame1?.modeSelection('right')
                     this.parent.mainGame1?.liftToGame.entity.getComponent(AudioSource).playOnce()
                 }
