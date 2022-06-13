@@ -109,6 +109,19 @@ export default class LobbyScreen implements ISystem {
                 this.usersInGame.right.realm === ""
             }
         })
+        // Event when player disconnects
+        onPlayerDisconnectedObservable.add((player) => {
+            log("player left scene: ", player.userId)
+            if (player.userId === this.usersInGame.left.public_address) {
+                this.usersInGame.left.public_address === ""
+                this.usersInGame.left.name === ""
+                this.usersInGame.left.realm === ""
+            } else if (player.userId === this.usersInGame.right.public_address) {
+                this.usersInGame.right.public_address === ""
+                this.usersInGame.right.name === ""
+                this.usersInGame.right.realm === ""
+            }
+        })
         // -------------------------------------------------------
         // this.parent.messageBus.emit('getUsersInQueue', { data: { users: this.usersInQueue, lastUpdate: this.queueLastUpdate } })
         // this.parent.messageBus.on('getUsersInQueue', (data: { users: IUser[], lastUpdate: number }) => {
