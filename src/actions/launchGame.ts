@@ -41,6 +41,7 @@ export class StarterTimerAction implements utils.ActionsSequenceSystem.IAction {
 
     onFinish(): void {
         ui.hideAnnouncements()
+        this.parent.messageBus.emit("StarterButton_" + this.parent.TowerDuel?.towerDuelId, {})
     }
 }
 
@@ -71,9 +72,7 @@ export class LaunchSoloGameAction implements utils.ActionsSequenceSystem.IAction
 
     update(dt: number): void { }
 
-    onFinish(): void {
-        this.parent.messageBus.emit("StarterButton_" + this.parent.TowerDuel?.towerDuelId, {})
-    }
+    onFinish(): void {    }
 }
 
 export class LaunchMultGameAction implements utils.ActionsSequenceSystem.IAction {

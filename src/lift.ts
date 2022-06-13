@@ -1,6 +1,5 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 import TowerDuel from "@/towerDuel";
-import GreenButton from "@/greenButton";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
@@ -135,8 +134,6 @@ export default class Lift implements ISystem {
         this.numericalCounter = new NumericalCounter(this.TowerDuel, this)
 
         // Buttons
-        const greenButton = new GreenButton(this.TowerDuel);
-        greenButton.entity.setParent(this.global)
 
         // Instance the input object
         this.playerInputs = inputs

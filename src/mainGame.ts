@@ -95,8 +95,8 @@ export default class MainGame implements ISystem {
             }
             case "launchGame": {
                 this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                    .then(new StarterTimerAction(this, this.physicsMaterial, this.world))
                     .then(new LaunchSoloGameAction(this, this.physicsMaterial, this.world))
+                    .then(new StarterTimerAction(this, this.physicsMaterial, this.world))
                 
                 break;
             }

@@ -109,7 +109,7 @@ export default class LiftToGame implements ISystem {
             if (userOutOfLiftY) {
                 log('Player isnt on liftToGame')
                 // if (((this.state === 1 && (userOutOfLiftX && userOutOfLiftZ)) || ((this.state === -1 && (userOutOfLiftX && userOutOfLiftZ))))) {
-                movePlayerTo(this.state === 1 ? new Vector3(this.endPos.x, this.endPos.y + 2, this.endPos.z) : this.startPos, this.state === 1 ? this.startPos : new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z))
+                movePlayerTo(this.state === 1 ? new Vector3(this.endPos.x, this.endPos.y + 3, this.endPos.z) : this.startPos, this.state === 1 ? this.startPos : new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z))
                 if (this.state === 1) {
                     if (this.lift.getComponent(GLTFShape).visible !== false) {
                         this.lift.getComponent(GLTFShape).visible = false
