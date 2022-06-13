@@ -26,11 +26,11 @@ export default class LiftToGame implements ISystem {
         if (this.parent.side === 'left') {
             this.centerPos = new Vector3(24, this.liftMaxHeight, 8)
             this.startPos = new Vector3(24, 0, 24)
-            this.endPos = new Vector3(30, 3.4, 2)
+            this.endPos = new Vector3(30, 3.3, 2)
         } else {
             this.centerPos = new Vector3(8, this.liftMaxHeight, 8)
             this.startPos = new Vector3(8, 0, 24)
-            this.endPos = new Vector3(2, 3.4, 2)
+            this.endPos = new Vector3(2, 3.3, 2)
         }
         this.lift = new Entity()
         this.lift.addComponent(this.parent.parent.sceneAssets.soundLiftMove)
@@ -74,16 +74,15 @@ export default class LiftToGame implements ISystem {
         this.state = 1
         this.entity.addComponent(this.parent.parent.gameAssets.liftOpen)
         this.entity.getComponent(GLTFShape).withCollisions = true
-        this.entity.addComponent(new utils.Delay(2000, () => {
-            this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.startPath, this.liftMoveDuration, () => {
-                if (this.lift.getComponent(GLTFShape).visible !== false) {
-                    this.lift.getComponent(GLTFShape).visible = false
-                    this.entity.getComponent(GLTFShape).visible = false
-                }
-                this.state = 0
-                this.isActive = false
-                engine.removeSystem(this)
-            }))
+        this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.startPath, this.liftMoveDuration, () => {
+            if (this.lift.getComponent(GLTFShape).visible !== false) {
+                this.lift.getComponent(GLTFShape).visible = false
+                this.entity.getComponent(GLTFShape).visible = false
+            }
+            this.state = 0
+            this.isActive = false
+            engine.removeSystem(this)
+            return 
         }))
     }
 
@@ -109,9 +108,23 @@ export default class LiftToGame implements ISystem {
             const userOutOfLiftZ = Camera.instance.position.z < this.endPos.z + .5 || Camera.instance.position.z > this.endPos.z + .5
             if (userOutOfLiftY) {
                 log('Player isnt on liftToGame')
-                if (((this.state === 1 && (userOutOfLiftX && userOutOfLiftZ)) || ((this.state === -1 && (userOutOfLiftX && userOutOfLiftZ))))) {
-                    movePlayerTo(this.state === 1 ? new Vector3(this.endPos.x, this.endPos.y + 2, this.endPos.z) : this.startPos, this.state === 1 ? this.startPos : new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z))
+                // if (((this.state === 1 && (userOutOfLiftX && userOutOfLiftZ)) || ((this.state === -1 && (userOutOfLiftX && userOutOfLiftZ))))) {
+                movePlayerTo(this.state === 1 ? new Vector3(this.endPos.x, this.endPos.y + 2, this.endPos.z) : this.startPos, this.state === 1 ? this.startPos : new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z))
+                if (this.state === 1) {
+                    if (this.lift.getComponent(GLTFShape).visible !== false) {
+                        this.lift.getComponent(GLTFShape).visible = false
+                        this.entity.getComponent(GLTFShape).visible = false
+                    }
+                    this.state = 0
+                    this.isActive = false
+                    engine.removeSystem(this)
+                } else if (this.state === -1) {
+                    this.isActive = false
+                    this.state = 0
+                    this.entity.removeComponent(GLTFShape)
+                    engine.removeSystem(this)
                 }
+                // }
             }
         }
     }
