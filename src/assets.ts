@@ -12,21 +12,16 @@ const COLORS: string[] = [
 ]
 
 export class GameAssets {
-    heartBase: GLTFShape
-    heartOn: GLTFShape
-    heartOff: GLTFShape
-    numericalCounter: GLTFShape
     liftOpen: GLTFShape
     liftClose: GLTFShape
+    staminaBar: GLTFShape
 
     blockMaterials: Material[] = []
     glowMaterial: Material
     noGlowMaterial: Material
 
     constructor() {
-        this.heartBase = new GLTFShape('models/HeartBase.glb')
-        this.heartOn = new GLTFShape('models/HeartOn.glb')
-        this.heartOff = new GLTFShape('models/HeartOff.glb')
+        this.staminaBar = new GLTFShape('models/StaminaFlat.glb')
 
         COLORS.forEach(color => {
             const material = new Material()
@@ -52,8 +47,6 @@ export class GameAssets {
 
         this.liftOpen = new GLTFShape('models/liftToGameWithInvi.glb')
         this.liftClose = new GLTFShape('models/closedLiftToGame.glb')
-
-        this.numericalCounter = new GLTFShape('models/numericalCounter.glb')
     }
 }
 

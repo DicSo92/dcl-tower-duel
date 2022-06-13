@@ -13,6 +13,7 @@ import HigherTower from "@/higherTower";
 import FallingBlocks from "@/fallingBlocks";
 import InterEffect from "@/interEffect";
 import { LeaderBoard } from "@/LeaderBoard";
+import Lift from "@/lift";
 
 export interface IGame {
     physicsMaterial: CANNON.Material
@@ -46,7 +47,7 @@ export interface ITowerDuel {
     towerDuelId: string
     gameArea: Entity
     spawner?: Spawner
-    lift?: ILift
+    lift?: Lift
     playerInputsListener: Input
     physicsSystem?: PhysicsSystem
     isActive: Boolean
@@ -136,10 +137,7 @@ export interface IMainGame {
 }
 
 export interface IGameAssets {
-    heartBase: GLTFShape
-    heartOn: GLTFShape
-    heartOff: GLTFShape
-    numericalCounter: GLTFShape
+    staminaBar: GLTFShape
     liftOpen: GLTFShape
     liftClose: GLTFShape
 

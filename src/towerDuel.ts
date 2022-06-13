@@ -18,7 +18,7 @@ export default class TowerDuel implements ISystem, ITowerDuel {
     towerDuelId: string
     gameArea: Entity
     spawner?: Spawner
-    lift?: ILift
+    lift?: Lift
     playerInputsListener: Input = Input.instance
     physicsSystem?: PhysicsSystem
     isActive: Boolean = true
