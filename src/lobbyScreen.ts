@@ -96,6 +96,20 @@ export default class LobbyScreen implements ISystem {
         log(this.usersInQueue)
         log(this.usersInGame)
         // -------------------------------------------------------
+        // Event when player leaves scene
+        onLeaveSceneObservable.add((player) => {
+            log("player left scene: ", player.userId)
+            if (player.userId === this.usersInGame.left.public_address) {
+                this.usersInGame.left.public_address === ""
+                this.usersInGame.left.name === ""
+                this.usersInGame.left.realm === ""
+            } else if (player.userId === this.usersInGame.right.public_address) {
+                this.usersInGame.left.public_address === ""
+                this.usersInGame.left.name === ""
+                this.usersInGame.left.realm === ""
+            }
+        })
+        // -------------------------------------------------------
         // this.parent.messageBus.emit('getUsersInQueue', { data: { users: this.usersInQueue, lastUpdate: this.queueLastUpdate } })
         // this.parent.messageBus.on('getUsersInQueue', (data: { users: IUser[], lastUpdate: number }) => {
         //     if (this.usersInQueue !== data.users && data.lastUpdate > this.queueLastUpdate) {
