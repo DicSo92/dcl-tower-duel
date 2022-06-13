@@ -1,13 +1,13 @@
-import { ILiftToGame } from '@/interfaces/class.interface'
+import LiftToGame from '@/liftToGame'
 import MainGame from '@/mainGame'
 import { publishScore } from '@/serverHandler'
 import * as utils from '@dcl/ecs-scene-utils'
 
 export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
-    liftToGame: ILiftToGame
+    liftToGame: LiftToGame
 
-    constructor(liftToGame: ILiftToGame) {
+    constructor(liftToGame: LiftToGame) {
         this.liftToGame = liftToGame
     }
     
@@ -39,7 +39,7 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     onStart(): void {
         log('FinaliseTowerDuelAction')
         this.parent.isActive = false
-        this.parent.TowerDuel[0].lift?.reset()
+        this.parent.TowerDuel?.lift?.reset()
         if (this.parent.parent.user.public_address) {
             this.parent.messageBus.emit('removeUserInGame', {
                 user: this.parent.parent.user.public_address
@@ -53,8 +53,8 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     }
 
     async setScore() {
-        if (this.parent.TowerDuel[0].lift) {
-            const result = await publishScore(this.parent.parent.user, parseInt(this.parent.TowerDuel[0].lift.numericalCounter.text.value))
+        if (this.parent.TowerDuel?.lift) {
+            const result = await publishScore(this.parent.parent.user, parseInt(this.parent.TowerDuel?.lift.numericalCounter.text.value))
             log('setScore OK', result)
             this.parent.parent.leaderBoard?.updateBoard(result)
         }

@@ -1,7 +1,7 @@
-import { ITowerDuel } from "@/interfaces/class.interface";
+import TowerDuel from "@/towerDuel";
 
 export default class Heart implements ISystem {
-    TowerDuel: ITowerDuel
+    TowerDuel: TowerDuel
     messageBus: MessageBus
 
     entity: Entity;
@@ -12,7 +12,7 @@ export default class Heart implements ISystem {
     base: Entity
     isActive: Boolean
 
-    constructor(towerDuel: ITowerDuel, position: Vector3, isActive: boolean) {
+    constructor(towerDuel: TowerDuel, position: Vector3, isActive: boolean) {
         this.TowerDuel = towerDuel
         this.messageBus = towerDuel.messageBus
         this.isActive = isActive

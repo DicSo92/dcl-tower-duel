@@ -42,7 +42,7 @@ export default class LobbyScreen implements ISystem {
     rulesScale: Vector3 = new Vector3(5, 3.2, 0.05)
     playBtn: Entity = new Entity();
     rulesBtn: Entity = new Entity();
-    usersInGame: Array<IUser> = []
+    usersInGame: { left?: IUser, right?: IUser } = { left: undefined, right: undefined}
 
     constructor(parent: Game, position: Vector3) {
         this.parent = parent
@@ -58,7 +58,8 @@ export default class LobbyScreen implements ISystem {
 
         this.Init()
     }
-    Init = () => {
+    Init = async () => {
+        await this.getUser()
         this.BuildEvents()
         this.BuildScreen()
         this.BuildBorders()
@@ -83,16 +84,20 @@ export default class LobbyScreen implements ISystem {
         })
         this.parent.messageBus.on('addUserInGame', (data) => {
             if (data) {
-                this.usersInGame.push(data.user)
+                if (!this.usersInGame.left) {
+                    this.usersInGame.left = data.user
+                } else if (!this.usersInGame.right) {
+                    this.usersInGame.right = data.user
+                }
             }
             log('usersInGame', this.usersInGame)
         })
-        this.parent.messageBus.on('removeUserInGame', (data) => {
-            if (data) {
-                this.usersInGame = this.usersInGame.filter((item: IUser) => item !== data.user)
-            }
-            log('usersInGame', this.usersInGame)
-        })
+        // this.parent.messageBus.on('removeUserInGame', (data) => {
+        //     if (data) {
+        //         this.usersInGame = this.usersInGame.filter((item: IUser) => item !== data.user)
+        //     }
+        //     log('usersInGame', this.usersInGame)
+        // })
         this.parent.messageBus.on('addUserInQueue', (user: IUser) => {
             if (user) {
                 // log(user)
@@ -107,14 +112,20 @@ export default class LobbyScreen implements ISystem {
         //         this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
         //     }
         // })
-        this.parent.messageBus.on('newUser', (user) => {
+        this.parent.messageBus.on('newUser_' + this.parent.user.public_address, (user) => {
             if (user) {
                 // log(user)
                 // log(user.public_address, user.name)
                 // this.usersInWaiting.push(user.public_address, user.name)
-                movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8))
-                this.parent.mainGame0?.gameApprovalSolo('gameApprovalSolo')
-                this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
+                if (!this.usersInGame.left) {
+                    movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8))
+                    this.parent.mainGame0?.modeSelection('in')
+                    this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
+                } else if (!this.usersInGame.right) {
+                    movePlayerTo(new Vector3(8, 0, 24), new Vector3(8, 0, 8))
+                    this.parent.mainGame1?.modeSelection('in')
+                    this.parent.mainGame1?.liftToGame.entity.getComponent(AudioSource).playOnce()
+                }
             }
         })
     }
@@ -283,10 +294,9 @@ export default class LobbyScreen implements ISystem {
             this.playBtn.getComponent(Animator).getClip('viberZBezier').play()
             this.playBtn.getComponent(AudioSource).playOnce()
             if (this.parent.streamSource) this.parent.streamSource.getComponent(AudioStream).playing = false
-            await this.getUser()
-            log("result getUserData", { id: this.parent.user.public_address, name: this.parent.user.name })
+            // log("result getUserData", { id: this.parent.user.public_address, name: this.parent.user.name })
             // this.parent.messageBus.emit('addUserInQueue', { id: this.parent.user.public_address, name: this.parent.user.name })
-            this.parent.messageBus.emit('newUser', { id: this.parent.user.public_address, name: this.parent.user.name })
+            this.parent.messageBus.emit('newUser_' + this.parent.user.public_address, { id: this.parent.user.public_address, name: this.parent.user.name })
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,

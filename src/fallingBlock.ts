@@ -1,4 +1,4 @@
-import { ITowerDuel } from "@/interfaces/class.interface";
+import TowerDuel from "@/towerDuel";
 import { ExpireIn } from "@dcl/ecs-scene-utils";
 
 const THROW_STRENGTH_MULTIPLIER = 0.125
@@ -8,9 +8,9 @@ export class FallingBlock extends Entity {
     public isThrown: boolean = true
     public body: CANNON.Body
     public world: CANNON.World
-    TowerDuel: ITowerDuel
+    TowerDuel: TowerDuel
 
-    constructor(towerDuel: ITowerDuel, transform: Transform) {
+    constructor(towerDuel: TowerDuel, transform: Transform) {
         super()
         this.TowerDuel = towerDuel
         this.setParent(this.TowerDuel.gameArea)

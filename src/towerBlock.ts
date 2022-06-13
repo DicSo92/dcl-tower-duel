@@ -1,11 +1,11 @@
 import { MoveTransformComponent, ScaleTransformComponent, InterpolationType, map } from "@dcl/ecs-scene-utils";
-import { ITowerBlock, ITowerDuel } from "@/interfaces/class.interface";
+import TowerDuel from "@/towerDuel";
 import FallingBlocks from "@/fallingBlocks";
 import { FallingBlock } from "@/fallingBlock";
 import InterEffect from "@/interEffect";
 
-export default class TowerBlock implements ISystem, ITowerBlock {
-    TowerDuel: ITowerDuel
+export default class TowerBlock implements ISystem {
+    TowerDuel: TowerDuel
     messageBus: MessageBus
     isBase: Boolean
     animation?: MoveTransformComponent
@@ -15,7 +15,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
     interEffect?: InterEffect
     marginError: number = 0.15 // 1
 
-    constructor(towerDuel: ITowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
+    constructor(towerDuel: TowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
         this.messageBus = this.TowerDuel.messageBus
 
@@ -67,7 +67,7 @@ export default class TowerBlock implements ISystem, ITowerBlock {
         if (this.animation) this.entity.addComponent(this.animation)
     }
 
-    public stopBlock(prevBlock: ITowerBlock) {
+    public stopBlock(prevBlock: TowerBlock) {
         this.entity.removeComponent(MoveTransformComponent) // stopTransform animation
 
         const currentBlockTransform = this.entity.getComponent(Transform)

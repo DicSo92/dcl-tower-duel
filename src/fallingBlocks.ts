@@ -1,15 +1,15 @@
 import { FallingBlock } from "@/fallingBlock";
-import { ITowerDuel } from "@/interfaces/class.interface";
+import TowerDuel from "@/towerDuel";
 
 export default class FallingBlocks implements ISystem {
-    TowerDuel: ITowerDuel
+    TowerDuel: TowerDuel
     towerBlockTransform: Transform
     offsetX: number
     offsetZ: number
     posX: number
     posZ: number
 
-    constructor(towerDuel: ITowerDuel, towerBlockTransform: Transform, offsetX: number, offsetZ: number) {
+    constructor(towerDuel: TowerDuel, towerBlockTransform: Transform, offsetX: number, offsetZ: number) {
         this.TowerDuel = towerDuel
 
         this.towerBlockTransform = towerBlockTransform

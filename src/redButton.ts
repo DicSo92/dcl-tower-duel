@@ -1,13 +1,13 @@
-import { ITowerDuel } from "@/interfaces/class.interface";
+import TowerDuel from "@/towerDuel";
 
 export default class RedButton implements ISystem {
-    TowerDuel: ITowerDuel
+    TowerDuel: TowerDuel
     entity: Entity;
     transform: Transform
     messageBus: MessageBus
     clip = new AudioClip('sounds/click.mp3');
 
-    constructor(towerDuel: ITowerDuel) {
+    constructor(towerDuel: TowerDuel) {
         this.TowerDuel = towerDuel
         this.entity = new Entity()
         this.transform = new Transform({

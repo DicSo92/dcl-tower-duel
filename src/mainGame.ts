@@ -1,4 +1,4 @@
-import { ILiftToGame, IMainGame, ITowerDuel } from "@/interfaces/class.interface";
+import TowerDuel from "@/towerDuel";
 import * as utils from "@dcl/ecs-scene-utils";
 import { GoToPlayAction, CleanTowerDuelAction } from "@/actions/gameApproval";
 import { LaunchSoloGameAction } from "@/actions/launchGame";
@@ -7,13 +7,13 @@ import LiftToGame from "@/liftToGame";
 import { SelectModeAction } from "./actions/modeSelection";
 import Game from "./game";
 
-export default class MainGame implements ISystem, IMainGame {
+export default class MainGame implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
 
-    TowerDuel: ITowerDuel[] = [] // ITowerDuel
-    liftToGame: ILiftToGame
+    TowerDuel?: TowerDuel// TowerDuel
+    liftToGame: LiftToGame
     modeSelectionAction: SelectModeAction
 
     isActive: boolean = false
@@ -29,7 +29,7 @@ export default class MainGame implements ISystem, IMainGame {
         this.liftToGame = new LiftToGame(this)
 
         // Actions
-        this.modeSelectionAction = new SelectModeAction(this)
+        this.modeSelectionAction = new SelectModeAction(this.parent)
 
         this.Init();
     }
@@ -44,7 +44,7 @@ export default class MainGame implements ISystem, IMainGame {
     public modeSelection(type: string) {
         log('modeSelection')
         if (type === 'in') this.addSequence('modeSelection')
-        else this.modeSelectionAction?.prompt.hide()
+        // else this.modeSelectionAction?.prompt?.hide()
     }
 
     public gameApprovalSolo(type: string) {

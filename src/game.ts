@@ -1,5 +1,5 @@
 import { loadColliders } from "@/colliderSetup";
-import { IGameAssets, ISceneAssets, IMainGame, IUser } from "@/interfaces/class.interface";
+import { IUser } from "@/interfaces/class.interface";
 import MainGame from "@/mainGame";
 import { GameAssets, SceneAssets } from "@/assets";
 import * as utils from "@dcl/ecs-scene-utils";
@@ -17,10 +17,10 @@ export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
-    gameAssets: IGameAssets
-    sceneAssets: ISceneAssets
-    mainGame0?: IMainGame
-    mainGame1?: IMainGame
+    gameAssets: GameAssets
+    sceneAssets: SceneAssets
+    mainGame0?: MainGame
+    mainGame1?: MainGame
     user: IUser = { public_address: '', name: '' }
     rulesBtn: Entity = new Entity()
     playBtn: Entity = new Entity()
@@ -52,13 +52,6 @@ export default class Game implements ISystem {
         }))
         arena.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
         engine.addEntity(arena)
-
-
-        // const liftContainer = new Entity()
-        // liftContainer.addComponent(new Transform({
-        //     position: new Vector3(25, 0.2, 16)
-        // }))
-        // engine.addEntity(liftContainer)
     }
 
     private SetupWorldConfig() {

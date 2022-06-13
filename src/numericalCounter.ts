@@ -1,12 +1,13 @@
-import { ILift, ITowerDuel } from "@/interfaces/class.interface";
+import Lift from '@/lift'
+import TowerDuel from "@/towerDuel";
 
 export default class NumericalCounter implements ISystem {
-    towerDuel: ITowerDuel
+    towerDuel: TowerDuel
     global: Entity
     counter: Entity
     text: TextShape
 
-    constructor(towerDuel: ITowerDuel, lift: ILift) {
+    constructor(towerDuel: TowerDuel, lift: Lift) {
         this.towerDuel = towerDuel
         this.global = new Entity()
         this.global.addComponent(new Transform({

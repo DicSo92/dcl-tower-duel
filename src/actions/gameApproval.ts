@@ -1,4 +1,5 @@
-import { ILiftToGame, ITowerDuel } from '@/interfaces/class.interface'
+// import { , ITowerDuel } from '@/interfaces/class.interface'
+import LiftToGame from '@/liftToGame'
 import MainGame from '@/mainGame'
 import * as utils from '@dcl/ecs-scene-utils'
 
@@ -15,18 +16,13 @@ export class CleanTowerDuelAction implements utils.ActionsSequenceSystem.IAction
     onStart(): void {
         this.hasFinished = false
 
-        // utils.setTimeout(5000, () => {
-            this.parent.TowerDuel.forEach((item: ITowerDuel) => {
-                item.CleanEntities()
-                item.lift?.Delete()
-                engine.removeSystem(item)
-            })
-            if (this.parent.TowerDuel.length > 0) {
-                engine.removeSystem(this.parent.TowerDuel[0])
-                this.parent.TowerDuel = []
-            }
-            this.hasFinished = true
-        // })
+        this.parent.TowerDuel?.CleanEntities()
+        this.parent.TowerDuel?.lift?.Delete()
+        if (this.parent.TowerDuel) {
+            engine.removeSystem(this.parent.TowerDuel)
+                this.parent.TowerDuel = undefined
+        }
+        this.hasFinished = true
     }
     //Method to run on every frame
     update(dt: number): void { }
@@ -39,9 +35,9 @@ export class CleanTowerDuelAction implements utils.ActionsSequenceSystem.IAction
 //Use IAction to define action for movement
 export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
-    liftToGame: ILiftToGame
+    liftToGame: LiftToGame
 
-    constructor(liftToGame: ILiftToGame) {
+    constructor(liftToGame: LiftToGame) {
         this.liftToGame = liftToGame
     }
 

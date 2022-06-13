@@ -37,9 +37,6 @@ export default class LiftToGame implements ISystem {
             scale: new Vector3(this.radius, 1, this.radius)
         }))
         this.lift.addComponent(this.parent.parent.gameAssets.liftOpen)
-        // const animator = new Animator()
-        // animator.addClip(new AnimationState('active', { layer: 0 }))
-        // this.lift.addComponent(animator)
 
         this.startPath = [
             this.startPos,
@@ -65,26 +62,7 @@ export default class LiftToGame implements ISystem {
         }))
         this.lift.setParent(this.entity)
 
-        // let triggerSphere = new utils.TriggerSphereShape(2.5)
-        // this.entity.addComponent(new utils.TriggerComponent(triggerSphere, {
-        //     onCameraEnter: () => {
-        //         // log("enter trigger modeSelection")
-        //         if (!this.parent.isActive && !this.isActive) {
-        //             this.parent.modeSelection('in')
-        //         }
-        //     },
-        //     onCameraExit: () => {
-        //         // log("exit trigger modeSelection")
-        //         if (!this.parent.isActive && !this.isActive) {
-        //             this.parent.modeSelection('out')
-        //         }
-        //     }
-        // }))
-
         engine.addEntity(this.entity)
-
-        // this.lift.getComponent(Animator).getClip('UpAndDown').reset()
-        // this.lift.getComponent(Animator).getClip('UpAndDown').play()
     }
 
     goToPlay() {
@@ -123,12 +101,14 @@ export default class LiftToGame implements ISystem {
         // log('liftToGame update')
         if (this.isActive && this.state !== 0) {
             // log('liftToGame isActive')
-            if (Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10) {
+            const userOutOfLiftY = Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10
+            const userOutOfLiftX = Camera.instance.position.x < this.endPos.x + .5 || Camera.instance.position.x > this.endPos.x + .5
+            const userOutOfLiftZ = Camera.instance.position.z < this.endPos.z + .5 || Camera.instance.position.z > this.endPos.z + .5
+            if (userOutOfLiftY) {
                 log('Player isnt on liftToGame')
-                if ((this.state === 1 && (Camera.instance.position.x !== this.endPos.x && Camera.instance.position.z !== this.endPos.z) || (this.state === -1 && (Camera.instance.position.x !== this.endPos.x && Camera.instance.position.z !== this.endPos.z)))) {
+                if (((this.state === 1 && (userOutOfLiftX && userOutOfLiftZ)) || ((this.state === -1 && (userOutOfLiftX && userOutOfLiftZ))))) {
                     const nextPos = new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z)
-                    movePlayerTo(this.state === 1 ? nextPos : this.startPos, this.state === 1 ? new Vector3(8, 0, 24) : nextPos)}
-                // movePlayerTo(this.entity.getComponent(Transform).position, Camera.instance.rotation.eulerAngles)
+                    movePlayerTo(this.state === 1 ? nextPos : this.startPos, this.state === 1 ? this.startPos : nextPos)}
             }
         }
     }
