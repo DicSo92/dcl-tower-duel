@@ -84,7 +84,7 @@ export default class Spawner implements ISystem {
     private upSpawner() {
         const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length
         this.plane.addComponentOrReplace(new MoveTransformComponent(this.plane.getComponent(Transform).position, new Vector3(0, posY, 0), 0.25))
-        this.spawnSpeed -= 0.05
+        this.spawnSpeed -= 0.01
     }
 
     public spawnBlock() {
@@ -105,7 +105,7 @@ export default class Spawner implements ISystem {
     }
 
     maxCountReachedAnimation() {
-        const blockTimeTravel = 0.2
+        const blockTimeTravel = 0.1
         const slice = 3
         const offsetRescale = 7
         const remainingBlocks = this.TowerDuel.currentBlocks.slice(-slice)

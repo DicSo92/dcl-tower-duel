@@ -81,38 +81,39 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
-        const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 17))
+        const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1.4, 17))
         engine.addSystem(lobbyScreen)
 
         this.higherTower = new HigherTower(this)
         engine.addSystem(this.higherTower)
-        const dclLogo = new Entity()
-        dclLogo.addComponent(new GLTFShape('models/dcl_logo.glb'))
-        dclLogo.addComponent(new Transform({
-            position: new Vector3(12, 3, 24),
-        }))
-        dclLogo.addComponent(new OnPointerDown(() => {
-            openExternalURL('https://decentraland.org/')
-        }, {
-            button: ActionButton.POINTER,
-            showFeedback: true,
-            hoverText: "Decentraland",
-        }))
-        engine.addEntity(dclLogo)
 
-        const mghLogo = new Entity()
-        mghLogo.addComponent(new GLTFShape('models/mgh_logo.glb'))
-        mghLogo.addComponent(new Transform({
-            position: new Vector3(20, 3, 24),
-        }))
-        mghLogo.addComponent(new OnPointerDown(() => {
-            openExternalURL('https://www.metagamehub.io/')
-        }, {
-            button: ActionButton.POINTER,
-            showFeedback: true,
-            hoverText: "MetaGameHub",
-        }))
-        engine.addEntity(mghLogo)
+        // const dclLogo = new Entity()
+        // dclLogo.addComponent(new GLTFShape('models/dcl_logo.glb'))
+        // dclLogo.addComponent(new Transform({
+        //     position: new Vector3(12, 3, 24),
+        // }))
+        // dclLogo.addComponent(new OnPointerDown(() => {
+        //     openExternalURL('https://decentraland.org/')
+        // }, {
+        //     button: ActionButton.POINTER,
+        //     showFeedback: true,
+        //     hoverText: "Decentraland",
+        // }))
+        // engine.addEntity(dclLogo)
+        //
+        // const mghLogo = new Entity()
+        // mghLogo.addComponent(new GLTFShape('models/mgh_logo.glb'))
+        // mghLogo.addComponent(new Transform({
+        //     position: new Vector3(20, 3, 24),
+        // }))
+        // mghLogo.addComponent(new OnPointerDown(() => {
+        //     openExternalURL('https://www.metagamehub.io/')
+        // }, {
+        //     button: ActionButton.POINTER,
+        //     showFeedback: true,
+        //     hoverText: "MetaGameHub",
+        // }))
+        // engine.addEntity(mghLogo)
 
         this.streamSource = new Entity()
         this.streamSource.addComponent(
@@ -123,7 +124,7 @@ export default class Game implements ISystem {
         this.streamSource.getComponent(AudioStream).volume = 0.05
         engine.addEntity(this.streamSource)
 
-        this.streamSource.getComponent(AudioStream).playing = true
+        this.streamSource.getComponent(AudioStream).playing = false
 
         this.leaderBoard = new LeaderBoard()
     }
