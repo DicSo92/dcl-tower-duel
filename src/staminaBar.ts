@@ -4,10 +4,9 @@ import TowerDuel from "@/towerDuel";
 export default class StaminaBar implements ISystem {
     TowerDuel: TowerDuel
     messageBus: MessageBus
+
     entity: Entity;
-    bar: Entity
-    staminaOn: Entity
-    staminaOff: Entity
+    bars: Entity[] = []
     maxStamina: number = 10
     minStamina: number = 0
     staminaCount: number = 0
@@ -20,64 +19,45 @@ export default class StaminaBar implements ISystem {
         this.messageBus = towerDuel.messageBus
 
         this.entity = new Entity()
-        this.entity.addComponent(this.TowerDuel.mainGame.parent.sceneAssets.soundSpell)
         this.entity.addComponent(new Transform({
-            position: new Vector3(0.25, 1.3, -1.3),
+            position: new Vector3(0.2, 0, 0.42),
             scale: new Vector3(1, 1, 1)
         }))
-        this.entity.getComponent(Transform).rotation.eulerAngles = new Vector3(-45, 180, 0)
-        this.entity.setParent(lift.global)
-
-        this.bar = new Entity()
-        this.bar.setParent(this.entity)
-
-        this.staminaOn = new Entity()
-        this.staminaOff = new Entity()
-        this.staminaOn.setParent(this.entity)
-        this.staminaOff.setParent(this.entity)
+        this.entity.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -90, 0)
+        this.entity.setParent(lift.miniScreenLeft)
 
         this.Init()
     }
     Init = () => {
-        this.buildStaminaBar()
+        this.buildStaminaBars()
         this.buildEvents()
     }
     // -----------------------------------------------------------------------------------------------------------------
-    buildStaminaBar = () => {
-        const staminaBarModel = new GLTFShape('models/StaminaBar.glb')
-        this.bar.addComponent(new Transform({
-            scale: new Vector3(this.barScale, this.barScale, this.barScale)
-        }))
-        this.bar.addComponent(staminaBarModel)
+    buildStaminaBars = () => {
+        for (let i = 1; i <= this.maxStamina; i++) {
+            const staminaBar = new Entity()
+            // staminaBar.addComponentOrReplace(this.TowerDuel.gameAssets.staminaBar)
+            staminaBar.addComponentOrReplace(new Transform({
+                position: new Vector3(0.075 * i, 0, 0)
+            }))
+            this.entity.getComponent(Transform).rotation.eulerAngles = new Vector3(180, 90, 0)
+            staminaBar.setParent(this.entity)
 
-        this.staminaOn.addComponent(new BoxShape())
-        const onMaterial = new Material()
-        onMaterial.albedoColor = Color3.FromInts(77, 145, 209)
-        this.staminaOn.addComponent(onMaterial)
-
-        this.staminaOff.addComponent(new BoxShape())
-        const offMaterial = new Material()
-        offMaterial.albedoColor = Color3.FromInts(10, 15, 25)
-        this.staminaOff.addComponent(offMaterial)
-
-        this.setStamina(this.staminaCount)
+            this.bars.push(staminaBar)
+        }
     }
 
     private setStamina(stamina: number) {
         log("setStamina", stamina)
         this.staminaCount = stamina
 
-        const scaleXOn = this.cellSize * stamina
-        this.staminaOn.addComponentOrReplace(new Transform({
-            position: new Vector3(-(this.cellSize * 5) + scaleXOn / 2, 0, 0),
-            scale: new Vector3(scaleXOn, 0.01, 0.07)
-        }))
-
-        const scaleXOff = this.cellSize * (this.maxStamina - stamina)
-        this.staminaOff.addComponentOrReplace(new Transform({
-            position: new Vector3(-(this.cellSize * 5) + scaleXOn + scaleXOff / 2, 0, 0),
-            scale: new Vector3(scaleXOff, 0.005, 0.07)
-        }))
+        for (let i = 1; i <= this.maxStamina; i++) {
+            if (i <= this.staminaCount) {
+                this.bars[i-1].addComponentOrReplace(this.TowerDuel.gameAssets.staminaBar)
+            } else {
+                this.bars[i-1].removeComponent(GLTFShape)
+            }
+        }
     }
 
     private buildEvents = () => {

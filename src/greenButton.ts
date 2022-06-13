@@ -11,7 +11,7 @@ export default class GreenButton implements ISystem {
         this.TowerDuel = towerDuel
         this.entity = new Entity()
         this.transform = new Transform({
-            position: new Vector3(-.3, 1.1, -1),
+            position: new Vector3(-1.5, 1.1, 0),
             scale: new Vector3(2, 2, 2)
         })
         this.messageBus = this.TowerDuel.messageBus

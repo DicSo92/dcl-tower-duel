@@ -5,12 +5,7 @@ export default class Heart implements ISystem {
     messageBus: MessageBus
 
     entity: Entity;
-    heartBase: GLTFShape
-    heartOn: GLTFShape
-    heartOff: GLTFShape
-    heart: Entity
-    base: Entity
-    isActive: Boolean
+    isActive: boolean
 
     constructor(towerDuel: TowerDuel, position: Vector3, isActive: boolean) {
         this.TowerDuel = towerDuel
@@ -18,49 +13,26 @@ export default class Heart implements ISystem {
         this.isActive = isActive
 
         this.entity = new Entity()
-        this.heart = new Entity()
-        this.base = new Entity()
-        engine.addEntity(this.entity)
-        this.heart.setParent(this.entity)
-        this.base.setParent(this.entity)
-
+        this.entity.addComponent(new GLTFShape("models/HeartFlat.glb"))
         this.entity.addComponent(new Transform({
             position: position,
-            scale: new Vector3(0.13, 0.13, 0.13)
+            // scale: new Vector3(0.13, 0.13, 0.13)
         }))
-
-        this.heartBase = this.TowerDuel.gameAssets.heartBase
-        this.heartOn = this.TowerDuel.gameAssets.heartOn
-        this.heartOff = this.TowerDuel.gameAssets.heartOff
+        this.entity.getComponent(Transform).rotation.eulerAngles = new Vector3(180, 90, 0)
 
         this.Init()
     }
     Init = () => {
         this.buildHeart()
-        this.buildEvents()
     }
     // -----------------------------------------------------------------------------------------------------------------
     buildHeart = () => {
-        this.base.addComponent(this.heartBase)
-        this.heart.addComponentOrReplace(this.isActive ? this.heartOff : this.heartOn) // init other color for smooth first transition
-        this.heart.addComponentOrReplace(this.isActive ? this.heartOn : this.heartOff)
+        this.entity.getComponent(GLTFShape).visible = this.isActive
     }
 
-    buildEvents = () => {
-        this.heart.addComponent(
-            new OnPointerDown(() => {
-                log('heart click')
-                this.messageBus.emit("looseHeart", {})
-            }, {
-                button: ActionButton.POINTER,
-                showFeedback: true,
-                hoverText: "Remove Heart",
-            })
-        )
-    }
     toggle() {
         this.isActive = !this.isActive
-        this.heart.addComponentOrReplace(this.isActive ? this.heartOn : this.heartOff)
+        this.entity.getComponent(GLTFShape).visible = this.isActive
     }
 
     update(dt: number) {

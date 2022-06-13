@@ -4,29 +4,16 @@ import * as utils from "@dcl/ecs-scene-utils"
 export default class HigherTower implements ISystem {
     parent: Game
     global: Entity = new Entity()
-    model: Entity
     datas: any = { height: 0 }
     tower: Entity;
 
     constructor(parent: Game) {
         this.parent = parent
         this.global.addComponent(new Transform({
-            position: new Vector3(16, 0, 24),
+            position: new Vector3(16, .2, 26),
             scale: new Vector3(1, 1, 1)
         }))
         engine.addEntity(this.global)
-
-        this.model = new Entity()
-        this.model.addComponent(this.parent.sceneAssets.soundLooseGame)
-        this.model.addComponent(this.parent.sceneAssets.higherTowerModel)
-        const htAnimator = new Animator()
-        this.parent.sceneAssets.higherTowerAnimStates.forEach(item => {
-            htAnimator.addClip(item)
-            item.reset()
-            item.play()
-        })
-        this.model.addComponent(htAnimator)
-        this.model.setParent(this.global)
 
         this.tower = new Entity()
         this.tower.addComponent(new Transform())

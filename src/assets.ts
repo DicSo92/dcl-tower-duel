@@ -12,22 +12,16 @@ const COLORS: string[] = [
 ]
 
 export class GameAssets {
-    heartBase: GLTFShape
-    heartOn: GLTFShape
-    heartOff: GLTFShape
-    numericalCounter: GLTFShape
-    numericalCounterAnimStates: AnimationState[]
     liftOpen: GLTFShape
     liftClose: GLTFShape
+    staminaBar: GLTFShape
 
     blockMaterials: Material[] = []
     glowMaterial: Material
     noGlowMaterial: Material
 
     constructor() {
-        this.heartBase = new GLTFShape('models/HeartBase.glb')
-        this.heartOn = new GLTFShape('models/HeartOn.glb')
-        this.heartOff = new GLTFShape('models/HeartOff.glb')
+        this.staminaBar = new GLTFShape('models/StaminaFlat.glb')
 
         COLORS.forEach(color => {
             const material = new Material()
@@ -53,13 +47,6 @@ export class GameAssets {
 
         this.liftOpen = new GLTFShape('models/liftToGameWithInvi.glb')
         this.liftClose = new GLTFShape('models/closedLiftToGame.glb')
-
-        this.numericalCounter = new GLTFShape('models/numericalCounter.glb')
-        this.numericalCounterAnimStates = [
-            new AnimationState('layer0_anim', { layer: 0 }),
-            new AnimationState('layer1_anim', { layer: 1 }),
-            new AnimationState('layer2_anim', { layer: 2 })
-        ]
     }
 }
 
@@ -106,7 +93,7 @@ export class SceneAssets {
             new AnimationState('mobius_anim_0', { layer: 0 }),
             new AnimationState('mobius_anim_1', { layer: 1 }),
         ]
-        
+
         this.rulesBtn = new GLTFShape('models/rules.glb')
         this.rulesBtnAnimStates = [
             new AnimationState('rotationXBezier', { layer: 0 }),

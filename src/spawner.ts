@@ -65,14 +65,14 @@ export default class Spawner implements ISystem {
         this.entity.addComponent(new ToggleComponent(ToggleState.Off,(value: ToggleState) => {
             //Define the positions of the path for move animation
             const path = [
-                new Vector3(13, 0, 1),
-                new Vector3(15, 0, 3),
-                new Vector3(15, 0, 13),
-                new Vector3(13, 0, 15),
-                new Vector3(3, 0, 15),
-                new Vector3(1, 0, 13),
-                new Vector3(1, 0, 3),
-                new Vector3(3, 0, 1),
+                new Vector3(13, 0, 1.2),
+                new Vector3(14.8, 0, 3),
+                new Vector3(14.8, 0, 13),
+                new Vector3(13, 0, 14.8),
+                new Vector3(3.2, 0, 14.8),
+                new Vector3(1.2, 0, 13),
+                new Vector3(1.2, 0, 3),
+                new Vector3(3, 0, 1.2),
             ]
             this.entity.addComponentOrReplace(new FollowCurvedPathComponent(path, this.moveDuration, 25, true, true, () => {
                 log('curve finished')
@@ -84,7 +84,7 @@ export default class Spawner implements ISystem {
     private upSpawner() {
         const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length
         this.plane.addComponentOrReplace(new MoveTransformComponent(this.plane.getComponent(Transform).position, new Vector3(0, posY, 0), 0.25))
-        this.spawnSpeed -= 0.05
+        this.spawnSpeed -= 0.01
     }
 
     public spawnBlock() {
@@ -105,7 +105,7 @@ export default class Spawner implements ISystem {
     }
 
     maxCountReachedAnimation() {
-        const blockTimeTravel = 0.2
+        const blockTimeTravel = 0.1
         const slice = 3
         const offsetRescale = 7
         const remainingBlocks = this.TowerDuel.currentBlocks.slice(-slice)

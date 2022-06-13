@@ -4,7 +4,6 @@ import GreenButton from "@/greenButton";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
-import RedButton from "@/redButton";
 import * as utils from "@dcl/ecs-scene-utils";
 
 export default class Lift implements ISystem {
@@ -52,7 +51,9 @@ export default class Lift implements ISystem {
 
         // Lift
         this.lift = new Entity()
-        this.lift.addComponent(new GLTFShape('models/gameLift.glb'))
+        const liftShape = new GLTFShape('models/gameLift.glb')
+        // liftShape.isPointerBlocker = false
+        this.lift.addComponent(liftShape)
         this.lift.addComponent(new Transform({
             position: new Vector3(0, 0, 0)
         }))
@@ -64,14 +65,37 @@ export default class Lift implements ISystem {
         diamondAnimation.play()
         ringAnimation.play()
         this.lift.setParent(this.global)
-
+        // -------------------------------------------------------------------------------------------------------------
         this.screen = new Entity()
         this.screen.addComponent(new GLTFShape('models/LiftScreen.glb'))
         this.screen.addComponent(new Transform({
             position: new Vector3(0.75, 0, -0.75)
         }))
         this.screen.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 45, 45)
+        this.screen.addComponent(
+            new OnPointerDown(() => {
+                this.TowerDuel.StopBlock()
+            }, {
+                button: ActionButton.POINTER,
+                showFeedback: false,
+                // hoverText: "Stop Block",
+            })
+        )
         this.screen.setParent(this.global)
+
+        const screenText = new Entity()
+        screenText.addComponent(new PlaneShape())
+        const screenTextMaterial = new BasicMaterial()
+        screenTextMaterial.texture = new Texture("images/ScreenText.png")
+        screenText.addComponent(screenTextMaterial)
+        screenText.addComponent(new Transform({
+            position: new Vector3(0.6, 0, 0),
+            scale: new Vector3(1, 1, 1)
+        }))
+        screenText.getComponent(Transform).rotation.eulerAngles = new Vector3(90, 90, 180)
+        screenText.setParent(this.screen)
+
+        // -------------------------------------------------------------------------------------------------------------
 
         this.miniScreenLeft = new Entity()
         this.miniScreenLeft.addComponent(new GLTFShape('models/MiniScreenLift.glb'))
@@ -81,6 +105,8 @@ export default class Lift implements ISystem {
         this.miniScreenLeft.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 0, 45)
         this.miniScreenLeft.setParent(this.global)
 
+        // -------------------------------------------------------------------------------------------------------------
+
         this.miniScreenRight = new Entity()
         this.miniScreenRight.addComponent(new GLTFShape('models/MiniScreenLift.glb'))
         this.miniScreenRight.addComponent(new Transform({
@@ -89,17 +115,28 @@ export default class Lift implements ISystem {
         this.miniScreenRight.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 45)
         this.miniScreenRight.setParent(this.global)
 
+        const miniScreenRightText = new Entity()
+        miniScreenRightText.addComponent(new PlaneShape())
+        const miniScreenRightTextMaterial = new BasicMaterial()
+        miniScreenRightTextMaterial.texture = new Texture("images/MiniScreenText.png")
+        miniScreenRightText.addComponent(miniScreenRightTextMaterial)
+        miniScreenRightText.addComponent(new Transform({
+            position: new Vector3(0.36, 0.05, 0),
+            scale: new Vector3(0.75, 0.3, 1)
+        }))
+        miniScreenRightText.getComponent(Transform).rotation.eulerAngles = new Vector3(90, 90, 180)
+        miniScreenRightText.setParent(this.miniScreenRight)
+
+        // -------------------------------------------------------------------------------------------------------------
+
         // // User Interface
         this.hearts = new LifeHearts(this.TowerDuel, this)
         this.staminaBar = new StaminaBar(this.TowerDuel, this)
         this.numericalCounter = new NumericalCounter(this.TowerDuel, this)
 
         // Buttons
-        const redButton = new RedButton(this.TowerDuel);
-        redButton.entity.setParent(this.global)
         const greenButton = new GreenButton(this.TowerDuel);
         greenButton.entity.setParent(this.global)
-
 
         // Instance the input object
         this.playerInputs = inputs
