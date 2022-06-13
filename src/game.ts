@@ -45,14 +45,19 @@ export default class Game implements ISystem {
         this.mainGame1 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'right')
         engine.addSystem(this.mainGame1)
 
-        const arena = new Entity()
-        arena.addComponent(new GLTFShape('models/globalScene.glb'))
-        arena.addComponent(new Transform({
+        this.globalScene.addComponent(new GLTFShape('models/globalScene.glb'))
+        this.globalScene.addComponent(new Transform({
             position: new Vector3(16, 0, 16)
         }))
-        arena.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        engine.addEntity(arena)
-
+        this.globalScene.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        this.globalScene.addComponent(new Animator())
+        const midTableAnimation = new AnimationState("MidTableAction", { layer: 0 })
+        const tableDiamondAnimation = new AnimationState("TableDiamondAction", { layer: 1 })
+        this.globalScene.getComponent(Animator).addClip(midTableAnimation)
+        this.globalScene.getComponent(Animator).addClip(tableDiamondAnimation)
+        midTableAnimation.play()
+        tableDiamondAnimation.play()
+        engine.addEntity(this.globalScene)
 
         // const liftContainer = new Entity()
         // liftContainer.addComponent(new Transform({
