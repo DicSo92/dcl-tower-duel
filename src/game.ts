@@ -46,6 +46,7 @@ export default class Game implements ISystem {
         this.mainGame1 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'right')
         engine.addSystem(this.mainGame1)
 
+        this.globalScene.addComponent(this.sceneAssets.soundLooseGame)
         this.globalScene.addComponent(new GLTFShape('models/globalScene.glb'))
         this.globalScene.addComponent(new Transform({
             position: new Vector3(16, 0, 16)
