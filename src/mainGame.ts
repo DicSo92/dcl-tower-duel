@@ -1,4 +1,4 @@
-import { ILiftToGame, IMainGame, ITowerDuel } from "@/interfaces/class.interface";
+import TowerDuel from "@/towerDuel";
 import * as utils from "@dcl/ecs-scene-utils";
 import { GoToPlayAction, CleanTowerDuelAction } from "@/actions/gameApproval";
 import { LaunchSoloGameAction } from "@/actions/launchGame";
@@ -7,18 +7,20 @@ import LiftToGame from "@/liftToGame";
 import { SelectModeAction } from "./actions/modeSelection";
 import Game from "./game";
 
-export default class MainGame implements ISystem, IMainGame {
+export default class MainGame implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
 
-    TowerDuel: ITowerDuel[] = [] // ITowerDuel
-    liftToGame: ILiftToGame
-    modeSelectionAction: SelectModeAction
+    TowerDuel?: TowerDuel// TowerDuel
+    liftToGame: LiftToGame
+    modeSelectionAction?: SelectModeAction
 
     isActive: boolean = false
     parent: Game;
     side: string
+    gameSequence?: utils.ActionsSequenceSystem.SequenceBuilder;
+    gameSequenceSystem?: utils.ActionsSequenceSystem;
 
     constructor(cannonMaterial: CANNON.Material, world: CANNON.World, parent: Game, messageBus: MessageBus, side: string) {
         this.physicsMaterial = cannonMaterial
@@ -29,7 +31,6 @@ export default class MainGame implements ISystem, IMainGame {
         this.liftToGame = new LiftToGame(this)
 
         // Actions
-        this.modeSelectionAction = new SelectModeAction(this)
 
         this.Init();
     }
@@ -43,8 +44,8 @@ export default class MainGame implements ISystem, IMainGame {
 
     public modeSelection(type: string) {
         log('modeSelection')
-        if (type === 'in') this.addSequence('modeSelection')
-        else this.modeSelectionAction?.prompt.hide()
+        this.addSequence('modeSelection')
+        // else this.modeSelectionAction?.prompt?.hide()
     }
 
     public gameApprovalSolo(type: string) {
@@ -69,17 +70,24 @@ export default class MainGame implements ISystem, IMainGame {
         this.addSequence('AfterTowerDuelSequence')
     }
 
+    public stopSequence() {
+        this.gameSequenceSystem?.stop()
+        if (this.gameSequenceSystem) {
+            engine.removeSystem(this.gameSequenceSystem)
+            this.gameSequenceSystem = undefined
+        }
+    }
+
     private addSequence(type: string) {
-        let sequence = null
         switch (type) {
             case "modeSelection": {
-                sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                    .then(this.modeSelectionAction)
+                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                    .then(this.modeSelectionAction = new SelectModeAction(this))
                 
                 break;
             }
             case "gameApprovalSolo": {
-                sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new GoToPlayAction(this.liftToGame))
                     .then(new CleanTowerDuelAction(this))
 
@@ -90,30 +98,30 @@ export default class MainGame implements ISystem, IMainGame {
                 // Find player
                 // Clean scene, move player
 
-                // sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                // this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                 //     .then(new GoToPlayAction(this.liftToGame))
                 //     .then(new WaitTowerDuelAction(this.messageBus))
 
                 break;
             }
             case "launchGame": {
-                sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new LaunchSoloGameAction(this, this.physicsMaterial, this.world))
                 
                 break;
             }
             case "AfterTowerDuelSequence": {
-                sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new BackToLobbyAction(this.liftToGame))
                     .then(new FinaliseTowerDuelAction(this))
                 
                 break;
             }
         }
-        if (sequence) {
-            const system = new utils.ActionsSequenceSystem(sequence)
+        if (this.gameSequence) {
+            this.gameSequenceSystem = new utils.ActionsSequenceSystem(this.gameSequence)
             // actionSystem.setOnFinishCallback(() => { })
-            engine.addSystem(system) 
+            engine.addSystem(this.gameSequenceSystem) 
         }
     }
 

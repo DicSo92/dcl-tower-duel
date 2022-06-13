@@ -11,6 +11,7 @@ export default class LiftToGame implements ISystem {
     parent: MainGame
     startPos: Vector3
     endPos: Vector3
+    centerPos: Vector3
     startPath: Vector3[]
     endPath: Vector3[]
     state: number = 0 // 0: !isActive; 1: goToPlay; -1: goToLobby
@@ -23,9 +24,11 @@ export default class LiftToGame implements ISystem {
     constructor(parent: MainGame) {
         this.parent = parent
         if (this.parent.side === 'left') {
+            this.centerPos = new Vector3(24, this.liftMaxHeight, 8)
             this.startPos = new Vector3(24, 0, 24)
             this.endPos = new Vector3(30, 3.4, 2)
         } else {
+            this.centerPos = new Vector3(8, this.liftMaxHeight, 8)
             this.startPos = new Vector3(8, 0, 24)
             this.endPos = new Vector3(2, 3.4, 2)
         }
@@ -37,21 +40,18 @@ export default class LiftToGame implements ISystem {
             scale: new Vector3(this.radius, 1, this.radius)
         }))
         this.lift.addComponent(this.parent.parent.gameAssets.liftOpen)
-        // const animator = new Animator()
-        // animator.addClip(new AnimationState('active', { layer: 0 }))
-        // this.lift.addComponent(animator)
 
         this.startPath = [
             this.startPos,
             new Vector3(this.startPos.x, this.liftMaxHeight, this.startPos.z),
-            new Vector3(22, this.liftMaxHeight, 19),
+            this.centerPos,
             new Vector3(this.endPos.x, this.liftMaxHeight, this.endPos.z),
             this.endPos
         ]
         this.endPath = [
             new Vector3(this.endPos.x, this.lift.getComponent(Transform).position.y, this.endPos.z),
             new Vector3(this.endPos.x, this.liftMaxHeight, this.endPos.z),
-            new Vector3(22, this.liftMaxHeight, 19),
+            this.centerPos,
             new Vector3(this.startPos.x, this.liftMaxHeight, this.startPos.z),
             this.startPos,
         ]
@@ -65,26 +65,7 @@ export default class LiftToGame implements ISystem {
         }))
         this.lift.setParent(this.entity)
 
-        // let triggerSphere = new utils.TriggerSphereShape(2.5)
-        // this.entity.addComponent(new utils.TriggerComponent(triggerSphere, {
-        //     onCameraEnter: () => {
-        //         // log("enter trigger modeSelection")
-        //         if (!this.parent.isActive && !this.isActive) {
-        //             this.parent.modeSelection('in')
-        //         }
-        //     },
-        //     onCameraExit: () => {
-        //         // log("exit trigger modeSelection")
-        //         if (!this.parent.isActive && !this.isActive) {
-        //             this.parent.modeSelection('out')
-        //         }
-        //     }
-        // }))
-
         engine.addEntity(this.entity)
-
-        // this.lift.getComponent(Animator).getClip('UpAndDown').reset()
-        // this.lift.getComponent(Animator).getClip('UpAndDown').play()
     }
 
     goToPlay() {
@@ -123,12 +104,14 @@ export default class LiftToGame implements ISystem {
         // log('liftToGame update')
         if (this.isActive && this.state !== 0) {
             // log('liftToGame isActive')
-            if (Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10) {
+            const userOutOfLiftY = Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10
+            const userOutOfLiftX = Camera.instance.position.x < this.endPos.x + .5 || Camera.instance.position.x > this.endPos.x + .5
+            const userOutOfLiftZ = Camera.instance.position.z < this.endPos.z + .5 || Camera.instance.position.z > this.endPos.z + .5
+            if (userOutOfLiftY) {
                 log('Player isnt on liftToGame')
-                if ((this.state === 1 && (Camera.instance.position.x !== this.endPos.x && Camera.instance.position.z !== this.endPos.z) || (this.state === -1 && (Camera.instance.position.x !== this.endPos.x && Camera.instance.position.z !== this.endPos.z)))) {
-                    const nextPos = new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z)
-                    movePlayerTo(this.state === 1 ? nextPos : this.startPos, this.state === 1 ? new Vector3(8, 0, 24) : nextPos)}
-                // movePlayerTo(this.entity.getComponent(Transform).position, Camera.instance.rotation.eulerAngles)
+                if (((this.state === 1 && (userOutOfLiftX && userOutOfLiftZ)) || ((this.state === -1 && (userOutOfLiftX && userOutOfLiftZ))))) {
+                    movePlayerTo(this.state === 1 ? new Vector3(this.endPos.x, this.endPos.y + 2, this.endPos.z) : this.startPos, this.state === 1 ? this.startPos : new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z))
+                }
             }
         }
     }

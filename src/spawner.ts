@@ -5,11 +5,11 @@ import {
     ToggleComponent,
     ToggleState
 } from "@dcl/ecs-scene-utils";
-import { ITowerDuel } from "@/interfaces/class.interface";
+import TowerDuel from "@/towerDuel";
 import TowerBlock from "@/towerBlock";
 
 export default class Spawner implements ISystem {
-    TowerDuel: ITowerDuel
+    TowerDuel: TowerDuel
     messageBus: MessageBus
 
     plane: Entity
@@ -19,7 +19,7 @@ export default class Spawner implements ISystem {
     spawnSpeed: number = 3
     moveDuration: number = 10
 
-    constructor(towerDuel: ITowerDuel) {
+    constructor(towerDuel: TowerDuel) {
         this.TowerDuel = towerDuel
         this.messageBus = this.TowerDuel.messageBus
 

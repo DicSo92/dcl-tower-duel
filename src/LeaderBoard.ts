@@ -1,3 +1,4 @@
+import Game from "./game"
 import { getScoreBoard } from "./serverHandler"
 
 export class LeaderBoard {
@@ -7,8 +8,10 @@ export class LeaderBoard {
     scoreTitle?: ScoreBoardText
     scoreBoardNames: ScoreBoardText[] = []
     scoreBoardValues: ScoreBoardText[] = []
-    
-    constructor() {
+    parent: Game
+
+    constructor(parent: Game) {
+        this.parent = parent
         this.global.addComponent(
             new Transform({
                 position: new Vector3(16, 8, 2),
@@ -40,6 +43,7 @@ export class LeaderBoard {
             scoreData = await getScoreBoard() // data.scoreBoard
         }
         this.buildLeaderBoard(scoreData, this.global, 9).catch((error) => log(error))
+        this.parent.higherTower?.updateTower(scoreData[0].score)
     }
 
     async buildLeaderBoard(scoreData: any[], parent: Entity, length: number) {

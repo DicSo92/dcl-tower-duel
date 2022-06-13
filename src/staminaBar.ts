@@ -1,8 +1,8 @@
-import { ITowerDuel } from "@/interfaces/class.interface";
-import Lift from "@/lift";
+import Lift from '@/lift'
+import TowerDuel from "@/towerDuel";
 
 export default class StaminaBar implements ISystem {
-    TowerDuel: ITowerDuel
+    TowerDuel: TowerDuel
     messageBus: MessageBus
 
     entity: Entity;
@@ -11,7 +11,10 @@ export default class StaminaBar implements ISystem {
     minStamina: number = 0
     staminaCount: number = 0
 
-    constructor(towerDuel: ITowerDuel, lift: Lift) {
+    cellSize: number = 0.1015 // 0.203 for 0.5 barScale
+    barScale: number = 0.25
+
+    constructor(towerDuel: TowerDuel, lift: Lift) {
         this.TowerDuel = towerDuel
         this.messageBus = towerDuel.messageBus
 

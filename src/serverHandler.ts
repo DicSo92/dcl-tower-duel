@@ -1,15 +1,14 @@
 import { IUser } from "./interfaces/class.interface"
 
 // external servers being used by the project - Please change these to your own if working on something else!
-export const fireBaseServer =
-    'http://localhost:3000/scores/'
-    // 'http://localhost:5001/dcl-tower-duel/us-central1/app/'
-// 'https://us-central1-dcl-tower-duel.cloudfunctions.net/app/'
+export const fireBaseServer = 'https://dcl-tower-duel-server.herokuapp.com/'
+
+    export const fireBaseBucketScore = "scores/"
 
 // get latest scoreboard data from server
 export async function getScoreBoard() {
     try {
-        const url = fireBaseServer + 'get-scores'
+        const url = fireBaseServer + fireBaseBucketScore + 'get-scores'
         const response = await fetch(url)
         const json = await response.json()
         log(json)
@@ -22,7 +21,7 @@ export async function getScoreBoard() {
 // change data in scoreboard
 export async function publishScore(user: IUser, score: number) {
     try {
-        const url = fireBaseServer + 'set-scores'
+        const url = fireBaseServer + fireBaseBucketScore + 'set-scores'
         const body = JSON.stringify({
             public_address: user.public_address,
             name: user.name,

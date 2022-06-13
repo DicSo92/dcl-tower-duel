@@ -1,6 +1,6 @@
-import TowerDuel from "./towerDuel";
+import TowerDuel from "@/towerDuel";
 
-export default class GreenButton implements ISystem {
+export default class RedButton implements ISystem {
     TowerDuel: TowerDuel
     entity: Entity;
     transform: Transform
@@ -11,7 +11,7 @@ export default class GreenButton implements ISystem {
         this.TowerDuel = towerDuel
         this.entity = new Entity()
         this.transform = new Transform({
-            position: new Vector3(-1.5, 1.1, 0),
+            position: new Vector3(-1, 1.1, -.3),
             scale: new Vector3(2, 2, 2)
         })
         this.messageBus = this.TowerDuel.messageBus
@@ -26,7 +26,7 @@ export default class GreenButton implements ISystem {
     // -----------------------------------------------------------------------------------------------------------------
     buildButton = () => {
         this.entity.addComponent(this.transform)
-        this.entity.addComponent(new GLTFShape('models/Green_Button.glb'))
+        this.entity.addComponent(new GLTFShape('models/Red_Button.glb'))
     }
     buildPole = () => {
         const btnPole = new Entity()
@@ -42,13 +42,13 @@ export default class GreenButton implements ISystem {
     buildEvents = () => {
         this.entity.addComponent(
             new OnPointerDown(() => {
-                log('StarterButton click')
+                log('redButton click')
                 this.play()
-                this.messageBus.emit("StarterButton_" + this.TowerDuel.towerDuelId, { })
+                this.TowerDuel.StopBlock()
             }, {
                 button: ActionButton.POINTER,
                 showFeedback: true,
-                hoverText: "Spawn Block",
+                hoverText: "Stop Block",
             })
         )
     }

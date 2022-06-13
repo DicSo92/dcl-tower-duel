@@ -1,5 +1,5 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
-import { ITowerDuel } from "@/interfaces/class.interface";
+import TowerDuel from "@/towerDuel";
 import GreenButton from "@/greenButton";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
@@ -7,7 +7,7 @@ import NumericalCounter from "./numericalCounter";
 import * as utils from "@dcl/ecs-scene-utils";
 
 export default class Lift implements ISystem {
-    TowerDuel: ITowerDuel
+    TowerDuel: TowerDuel
     playerInputs: Input
 
     global: Entity
@@ -32,7 +32,7 @@ export default class Lift implements ISystem {
     spell3cost: number = 3
     spell3EffectDuration: number = 5000 // millisec
 
-    constructor(inputs: Input, towerDuel: ITowerDuel) {
+    constructor(inputs: Input, towerDuel: TowerDuel) {
         this.TowerDuel = towerDuel
         if (this.TowerDuel.mainGame.side === 'left') {
             this.startPos = new Vector3(13.6, this.minPosY, 2.4)

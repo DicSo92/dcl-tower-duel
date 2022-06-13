@@ -1,14 +1,12 @@
-import { ILift, ITowerDuel } from "@/interfaces/class.interface";
-
 import Lift from "@/lift";
 import TowerBlock from "@/towerBlock";
 import PhysicsSystem from "@/physicsSystem";
 import { FallingBlock } from "@/fallingBlock";
 import Spawner from "@/spawner";
 import MainGame from "./mainGame";
-import { GameAssets, SceneAssets } from "@/assets";
+import { GameAssets } from "@/assets";
 
-export default class TowerDuel implements ISystem, ITowerDuel {
+export default class TowerDuel implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     mainGame: MainGame

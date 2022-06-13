@@ -1,7 +1,7 @@
-import { ITowerDuel } from "@/interfaces/class.interface";
+import TowerDuel from "@/towerDuel";
 
 export default class InterEffect implements ISystem {
-    TowerDuel: ITowerDuel
+    TowerDuel: TowerDuel
     messageBus: MessageBus
 
     blockParent: Entity
@@ -10,7 +10,7 @@ export default class InterEffect implements ISystem {
     borderEntity: Entity
     borderScaleY: number = 0.16
 
-    constructor(towerDuel: ITowerDuel, blockParent: Entity, transform: Transform, isPerfect: boolean) {
+    constructor(towerDuel: TowerDuel, blockParent: Entity, transform: Transform, isPerfect: boolean) {
         this.TowerDuel = towerDuel
         this.messageBus = this.TowerDuel.messageBus
         this.blockParent = blockParent
