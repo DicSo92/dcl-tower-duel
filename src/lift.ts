@@ -4,7 +4,6 @@ import GreenButton from "@/greenButton";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
-import RedButton from "@/redButton";
 import * as utils from "@dcl/ecs-scene-utils";
 
 export default class Lift implements ISystem {
@@ -52,7 +51,9 @@ export default class Lift implements ISystem {
 
         // Lift
         this.lift = new Entity()
-        this.lift.addComponent(new GLTFShape('models/gameLift.glb'))
+        const liftShape = new GLTFShape('models/gameLift.glb')
+        // liftShape.isPointerBlocker = false
+        this.lift.addComponent(liftShape)
         this.lift.addComponent(new Transform({
             position: new Vector3(0, 0, 0)
         }))
@@ -71,6 +72,15 @@ export default class Lift implements ISystem {
             position: new Vector3(0.75, 0, -0.75)
         }))
         this.screen.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 45, 45)
+        this.screen.addComponent(
+            new OnPointerDown(() => {
+                this.TowerDuel.StopBlock()
+            }, {
+                button: ActionButton.POINTER,
+                showFeedback: false,
+                // hoverText: "Stop Block",
+            })
+        )
         this.screen.setParent(this.global)
 
         const screenText = new Entity()
@@ -79,7 +89,7 @@ export default class Lift implements ISystem {
         screenTextMaterial.texture = new Texture("images/ScreenText.png")
         screenText.addComponent(screenTextMaterial)
         screenText.addComponent(new Transform({
-            position: new Vector3(0.6, 0.05, 0),
+            position: new Vector3(0.6, 0, 0),
             scale: new Vector3(1, 1, 1)
         }))
         screenText.getComponent(Transform).rotation.eulerAngles = new Vector3(90, 90, 180)
@@ -125,11 +135,8 @@ export default class Lift implements ISystem {
         this.numericalCounter = new NumericalCounter(this.TowerDuel, this)
 
         // Buttons
-        const redButton = new RedButton(this.TowerDuel);
-        redButton.entity.setParent(this.global)
         const greenButton = new GreenButton(this.TowerDuel);
         greenButton.entity.setParent(this.global)
-
 
         // Instance the input object
         this.playerInputs = inputs
