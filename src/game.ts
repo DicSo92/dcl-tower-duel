@@ -60,14 +60,6 @@ export default class Game implements ISystem {
         midTableAnimation.play()
         tableDiamondAnimation.play()
         engine.addEntity(this.globalScene)
-
-        // const liftContainer = new Entity()
-        // liftContainer.addComponent(new Transform({
-        //     position: new Vector3(25, 0.2, 16)
-        // }))
-        // engine.addEntity(liftContainer)
-        // arena.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
-        // engine.addEntity(arena)
     }
 
     private SetupWorldConfig() {

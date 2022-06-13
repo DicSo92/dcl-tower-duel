@@ -9,7 +9,7 @@ export class LeaderBoard {
     scoreBoardNames: ScoreBoardText[] = []
     scoreBoardValues: ScoreBoardText[] = []
     parent: Game
-    fontSize: Vector3 = new Vector3(.75, .75, .75)
+    fontSize: Vector3 = new Vector3(1.25, 1.25, 1.25)
 
     constructor(parent: Game) {
         this.parent = parent
@@ -26,12 +26,10 @@ export class LeaderBoard {
 
     async updateBoard(newDatas?: any) {
         let scoreData: any = []
-        if (newDatas) {
-            log("updateBoard with newData")
+        if (newDatas) { // updateBoard with newData
             scoreData = newDatas
         }
-        else {
-            log("updateBoard without newData")
+        else { // updateBoard without newData
             scoreData = await getScoreBoard() // data.scoreBoard
         }
         this.buildLeaderBoard(scoreData, this.global, 9).catch((error) => log(error))
@@ -53,11 +51,10 @@ export class LeaderBoard {
                     this.scoreBoardValues.push(score)
                 } else {
                     // create empty line
-
-                    const name = new ScoreBoardText(TextTypes.TINYTITLE, '-', { position: new Vector3(-0.6, 0.2 - i / 4, 0) }, parent)
+                    const name = new ScoreBoardText(TextTypes.TINYTITLE, '-', { position: new Vector3(-0.6, 0.2 - i / 4, 0), scale: this.fontSize }, parent)
                     this.scoreBoardNames.push(name)
 
-                    const score = new ScoreBoardText(TextTypes.TINYVALUE, '-', { position: new Vector3(0.6, 0.2 - i / 4, 0) }, parent)
+                    const score = new ScoreBoardText(TextTypes.TINYVALUE, '-', { position: new Vector3(0.6, 0.2 - i / 4, 0), scale: this.fontSize }, parent)
                     this.scoreBoardValues.push(score)
                 }
             }
@@ -104,46 +101,46 @@ export class ScoreBoardText extends Entity {
 
         switch (type) {
             case TextTypes.BIGTITLE:
-                shape.fontSize = 3
+                shape.fontSize = 2
                 shape.color = Color3.White()
                 shape.vTextAlign = 'center'
                 shape.font = this.TiltleFont
                 break
             case TextTypes.BIGVALUE:
-                shape.fontSize = 2.5
+                shape.fontSize = 2
                 shape.color = Color3.Green()
                 shape.vTextAlign = 'center'
                 shape.font = this.TiltleFont
                 break
 
             case TextTypes.TITLE:
-                shape.fontSize = 3
+                shape.fontSize = 2
                 shape.color = Color3.White()
                 shape.vTextAlign = 'center'
                 shape.width = 10
                 shape.font = this.TiltleFont
                 break
             case TextTypes.TINYTITLE:
-                shape.fontSize = 2
+                shape.fontSize = 1
                 shape.color = Color3.White()
                 shape.vTextAlign = 'center'
                 shape.width = 10
                 shape.font = this.SFFont
                 break
             case TextTypes.LABEL:
-                shape.fontSize = 3
+                shape.fontSize = 2
                 shape.color = Color3.White()
                 shape.vTextAlign = 'left'
                 shape.font = this.SFFont
                 break
             case TextTypes.VALUE:
-                shape.fontSize = 3
+                shape.fontSize = 2
                 shape.color = Color3.Green()
                 shape.vTextAlign = 'right'
                 shape.font = this.SFFont
                 break
             case TextTypes.TINYVALUE:
-                shape.fontSize = 2
+                shape.fontSize = 1
                 shape.color = Color3.Green()
                 shape.vTextAlign = 'right'
                 shape.font = this.SFFont

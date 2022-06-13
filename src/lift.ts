@@ -1,6 +1,5 @@
 import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
 import TowerDuel from "@/towerDuel";
-import GreenButton from "@/greenButton";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
@@ -26,7 +25,6 @@ export default class Lift implements ISystem {
     staminaBar: StaminaBar
     numericalCounter: NumericalCounter
     spell1cost: number = 3
-    // spell1EffectDuration: number = 5000 // millisec
     spell2cost: number = 3
     spell2EffectDuration: number = 5000 // millisec
     spell3cost: number = 3
@@ -36,7 +34,6 @@ export default class Lift implements ISystem {
         this.TowerDuel = towerDuel
         if (this.TowerDuel.mainGame.side === 'left') {
             this.startPos = new Vector3(13.6, this.minPosY, 2.4)
-            // this.startPos = new Vector3(13.6, 1, 20)
             this.rotation = new Vector3(0, 180, 0)
 
         } else {
@@ -52,7 +49,7 @@ export default class Lift implements ISystem {
         // Lift
         this.lift = new Entity()
         const liftShape = new GLTFShape('models/gameLift.glb')
-        // liftShape.isPointerBlocker = false
+        
         this.lift.addComponent(liftShape)
         this.lift.addComponent(new Transform({
             position: new Vector3(0, 0, 0)
@@ -134,10 +131,6 @@ export default class Lift implements ISystem {
         this.staminaBar = new StaminaBar(this.TowerDuel, this)
         this.numericalCounter = new NumericalCounter(this.TowerDuel, this)
 
-        // Buttons
-        const greenButton = new GreenButton(this.TowerDuel);
-        greenButton.entity.setParent(this.global)
-
         // Instance the input object
         this.playerInputs = inputs
 
@@ -183,11 +176,6 @@ export default class Lift implements ISystem {
                 }))
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell3cost })
             }
-        })
-        // button Spell 4
-        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_6, false, (e) => {
-            this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
-            log("Key 4")
         })
     }
 

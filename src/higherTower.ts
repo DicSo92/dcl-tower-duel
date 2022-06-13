@@ -1,5 +1,4 @@
 import Game from "./game";
-import * as utils from "@dcl/ecs-scene-utils"
 
 export default class HigherTower implements ISystem {
     parent: Game
@@ -31,7 +30,7 @@ export default class HigherTower implements ISystem {
         this.tower.getComponent(Transform).position.y = (towerHeight / 2) + 1
         this.tower.getComponent(Transform).scale = new Vector3(.5, (.05 * this.datas.height), .5)
     }
+
     update(dt: number) {
-        // log("Update", dt)
     }
 }

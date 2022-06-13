@@ -1,7 +1,7 @@
 import TowerDuel from "@/towerDuel";
 import * as utils from "@dcl/ecs-scene-utils";
 import { GoToPlayAction, CleanTowerDuelAction } from "@/actions/gameApproval";
-import { LaunchSoloGameAction } from "@/actions/launchGame";
+import { LaunchSoloGameAction, StarterTimerAction } from "@/actions/launchGame";
 import { BackToLobbyAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
 import LiftToGame from "@/liftToGame";
 import { SelectModeAction } from "./actions/modeSelection";
@@ -93,20 +93,10 @@ export default class MainGame implements ISystem {
 
                 break;
             }
-            case "gameApprovalMulti": {
-                // Wait other player
-                // Find player
-                // Clean scene, move player
-
-                // this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                //     .then(new GoToPlayAction(this.liftToGame))
-                //     .then(new WaitTowerDuelAction(this.messageBus))
-
-                break;
-            }
             case "launchGame": {
                 this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new LaunchSoloGameAction(this, this.physicsMaterial, this.world))
+                    .then(new StarterTimerAction(this, this.physicsMaterial, this.world))
                 
                 break;
             }

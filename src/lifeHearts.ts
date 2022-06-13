@@ -9,7 +9,6 @@ export default class LifeHearts implements ISystem {
     hearts: Heart[] = []
     maxHearts: number = 4
     heartCount: number = this.maxHearts
-    // parent: Lift;
 
     constructor(towerDuel: TowerDuel, lift: Lift) {
         this.TowerDuel = towerDuel
@@ -30,7 +29,6 @@ export default class LifeHearts implements ISystem {
     // -----------------------------------------------------------------------------------------------------------------
     buildHearts = () => {
         for (let i = 1; i <= this.maxHearts; i++) {
-            // const heart = new Heart(this.TowerDuel, new Vector3(0.5 * i, 0, 0), true)
             const heart = new Heart(this.TowerDuel, new Vector3(0.2 * i, 0, 0), true)
             heart.entity.setParent(this.entity)
             this.hearts.push(heart)
@@ -41,7 +39,6 @@ export default class LifeHearts implements ISystem {
         let fHearts = this.hearts.filter(heart => heart.isActive)
         fHearts[0].toggle()
         if (fHearts.length <= 1) {
-            log("No hearts remaining")
             this.TowerDuel.GameFinish()
         } else {
             this.TowerDuel.spawner?.spawnBlock()
