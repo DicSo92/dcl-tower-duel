@@ -51,17 +51,9 @@ export class GameAssets {
 }
 
 export class SceneAssets {
-    higherTowerModel: GLTFShape
-    higherTowerAnimStates: AnimationState[]
     gameStarter: GLTFShape
     gameStarterAnimStates: AnimationState[]
     globalScene: GLTFShape
-    mobius: GLTFShape
-    mobiusAnimStates: AnimationState[]
-    rulesBtn: GLTFShape
-    rulesBtnAnimStates: AnimationState[]
-    playBtn: GLTFShape
-    playBtnAnimStates: AnimationState[]
     soundClick: AudioSource
     soundValide: AudioSource
     soundTeleport: AudioSource
@@ -81,75 +73,7 @@ export class SceneAssets {
             new AnimationState('rightFront_anim', { layer: 2 }),
             new AnimationState('rightTop_anim', { layer: 3 }),
         ]
-        this.higherTowerModel = new GLTFShape('models/HigherTower.glb')
-        this.higherTowerAnimStates = [
-            new AnimationState('tower_anim', { layer: 0 }),
-            new AnimationState('under_anim', { layer: 1 }),
-            new AnimationState('base_anim', { layer: 2 }),
-        ]
         this.globalScene = new GLTFShape('models/globalScene.glb')
-        this.mobius = new GLTFShape('models/Mobius.glb')
-        this.mobiusAnimStates = [
-            new AnimationState('mobius_anim_0', { layer: 0 }),
-            new AnimationState('mobius_anim_1', { layer: 1 }),
-        ]
-
-        this.rulesBtn = new GLTFShape('models/rules.glb')
-        this.rulesBtnAnimStates = [
-            new AnimationState('rotationXBezier', { layer: 0 }),
-            new AnimationState('rotationYBezier', { layer: 1 }),
-            new AnimationState('rotationZBezier', { layer: 2 }),
-            new AnimationState('rotationXLinear', { layer: 3 }),
-            new AnimationState('rotationYLinear', { layer: 4 }),
-            new AnimationState('rotationZLinear', { layer: 5 }),
-            new AnimationState('rotationBorderXBezier', { layer: 6 }),
-            new AnimationState('rotationBorderYBezier', { layer: 7 }),
-            new AnimationState('rotationBorderZBezier', { layer: 8 }),
-            new AnimationState('rotationBorderXLinear', { layer: 9 }),
-            new AnimationState('rotationBorderYLinear', { layer: 10 }),
-            new AnimationState('rotationBorderZLinear', { layer: 11 }),
-
-            new AnimationState('viberXBezier', { layer: 12, speed: 5 }),
-            new AnimationState('viberYBezier', { layer: 13, speed: 5 }),
-            new AnimationState('viberZBezier', { layer: 14, speed: 5 }),
-            new AnimationState('viberXLinear', { layer: 15, speed: 5 }),
-            new AnimationState('viberYLinear', { layer: 16, speed: 5 }),
-            new AnimationState('viberZLinear', { layer: 17, speed: 5 }),
-            new AnimationState('viberBorderXBezier', { layer: 18, speed: 5 }),
-            new AnimationState('viberBorderYBezier', { layer: 19, speed: 5 }),
-            new AnimationState('viberBorderZBezier', { layer: 20, speed: 5 }),
-            new AnimationState('viberBorderXLinear', { layer: 21, speed: 5 }),
-            new AnimationState('viberBorderYLinear', { layer: 22, speed: 5 }),
-            new AnimationState('viberBorderZLinear', { layer: 23, speed: 5 }),
-        ]
-        this.playBtn = new GLTFShape('models/play.glb')
-        this.playBtnAnimStates = [
-            new AnimationState('rotationXBezier', { layer: 0 }),
-            new AnimationState('rotationYBezier', { layer: 1 }),
-            new AnimationState('rotationZBezier', { layer: 2 }),
-            new AnimationState('rotationXLinear', { layer: 3 }),
-            new AnimationState('rotationYLinear', { layer: 4 }),
-            new AnimationState('rotationZLinear', { layer: 5 }),
-            new AnimationState('rotationBorderXBezier', { layer: 6 }),
-            new AnimationState('rotationBorderYBezier', { layer: 7 }),
-            new AnimationState('rotationBorderZBezier', { layer: 8 }),
-            new AnimationState('rotationBorderXLinear', { layer: 9 }),
-            new AnimationState('rotationBorderYLinear', { layer: 10 }),
-            new AnimationState('rotationBorderZLinear', { layer: 11 }),
-
-            new AnimationState('viberXBezier', { layer: 12, speed: 5 }),
-            new AnimationState('viberYBezier', { layer: 13, speed: 5 }),
-            new AnimationState('viberZBezier', { layer: 14, speed: 5 }),
-            new AnimationState('viberXLinear', { layer: 15, speed: 5 }),
-            new AnimationState('viberYLinear', { layer: 16, speed: 5 }),
-            new AnimationState('viberZLinear', { layer: 17, speed: 5 }),
-            new AnimationState('viberBorderXBezier', { layer: 18, speed: 5 }),
-            new AnimationState('viberBorderYBezier', { layer: 19, speed: 5 }),
-            new AnimationState('viberBorderZBezier', { layer: 20, speed: 5 }),
-            new AnimationState('viberBorderXLinear', { layer: 21, speed: 5 }),
-            new AnimationState('viberBorderYLinear', { layer: 22, speed: 5 }),
-            new AnimationState('viberBorderZLinear', { layer: 23, speed: 5 }),
-        ]
 
         this.soundClick = new AudioSource(new AudioClip("sounds/click.wav"))
         this.soundValide = new AudioSource(new AudioClip("sounds/valide.wav"))

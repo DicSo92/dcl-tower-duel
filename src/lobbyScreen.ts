@@ -43,7 +43,7 @@ export default class LobbyScreen implements ISystem {
     queueScale: Vector3 = new Vector3(2.75, 3, 0.05)
     rulesScale: Vector3 = new Vector3(5, 3.2, 0.05)
     playBtn: Entity = new Entity();
-    rulesBtn: Entity = new Entity();
+    queueBtn: Entity = new Entity();
     usersInGame: { left: IUser, right: IUser } = { left: { public_address: "", name: "" }, right: { public_address: "", name: "" } }
 
     constructor(parent: Game, position: Vector3) {
@@ -240,6 +240,7 @@ export default class LobbyScreen implements ISystem {
                 this.borderTopRight?.getComponent(Transform).position,
                 this.positionTopRight(newScale),
                 this.animationDuration
+
             ))
             this.borderBotLeft?.addComponentOrReplace(new MoveTransformComponent(
                 this.borderBotLeft?.getComponent(Transform).position,
@@ -323,69 +324,48 @@ export default class LobbyScreen implements ISystem {
     }
     // -----------------------------------------------------------------------------------------------------------------
     BuildButtons = () => {
-        this.rulesBtn.addComponent(this.parent.sceneAssets.soundValide)
-        this.rulesBtn.addComponent(new Transform({
-            position: new Vector3(-0.6, 0, 1),
-            scale: new Vector3(1, 1, 1)
-        }))
-        this.rulesBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, -40)
-        this.rulesBtn.addComponent(this.parent.sceneAssets.rulesBtn)
-        const rbtnAnimator = new Animator()
-        this.parent.sceneAssets.rulesBtnAnimStates.forEach(item => {
-            if (item.clip === 'viberZBezier') {
-                item.looping = true
-            }
-            else {
-                item.looping = false
-            }
-            item.stop()
-            rbtnAnimator.addClip(item)
-        })
-        this.rulesBtn.addComponent(rbtnAnimator)
-        this.rulesBtn.getComponent(Animator).getClip('viberZBezier').play()
+        const transparentMaterial = new Material()
+        transparentMaterial.albedoColor = new Color4(0, 0, 0, 0)
 
-        this.rulesBtn.addComponent(new OnPointerDown(() => {
+        this.queueBtn.addComponent(this.parent.sceneAssets.soundValide)
+        this.queueBtn.addComponent(new BoxShape())
+        this.queueBtn.addComponent(new Transform({
+            position: new Vector3(-0.6, 0.4, 0.9),
+            scale: new Vector3(1.1, 0.5, 0.2)
+        }))
+        this.queueBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(-25, 0, 0)
+        this.queueBtn.addComponentOrReplace(transparentMaterial)
+
+        this.queueBtn.addComponent(new OnPointerDown(() => {
             log('rules click')
-            this.rulesBtn.getComponent(Animator).getClip('viberBorderXLinear').play()
-            this.rulesBtn.getComponent(Animator).getClip('viberZBezier').reset()
-            this.rulesBtn.getComponent(Animator).getClip('viberZBezier').play()
+            this.parent.globalScene.getComponent(Animator).getClip('BtnQueueBorderAction').looping = false
+            this.parent.globalScene.getComponent(Animator).getClip('BtnQueueBorderAction').play()
             this.container.getComponent(ToggleComponent).toggle()
-            this.rulesBtn.getComponent(AudioSource).playOnce()
+            this.queueBtn.getComponent(AudioSource).playOnce()
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
             hoverText: "Rules",
         }))
-        this.rulesBtn.setParent(this.container)
+        this.queueBtn.setParent(this.container)
+
 
         // --------------------------------------------------------------------------
         this.playBtn.addComponent(this.parent.sceneAssets.soundClick)
 
+        this.playBtn.addComponent(new BoxShape())
         this.playBtn.addComponent(new Transform({
-            position: new Vector3(0.6, 0, 1),
-            scale: new Vector3(1, 1, 1)
+            position: new Vector3(0.6, 0.4, 0.9),
+            scale: new Vector3(1.1, 0.5, 0.2)
         }))
-        this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, -40)
-        this.playBtn.addComponent(this.parent.sceneAssets.playBtn)
-        const pbtnAnimator = new Animator()
-        this.parent.sceneAssets.playBtnAnimStates.forEach(item => {
-            if (item.clip === 'viberZBezier') {
-                item.looping = true
-            }
-            else {
-                item.looping = false
-            }
-            this.playBtn.getComponent(AudioSource).playOnce()
-            pbtnAnimator.addClip(item)
-        })
-        this.playBtn.addComponent(pbtnAnimator)
-        this.playBtn.getComponent(Animator).getClip('viberZBezier').play()
+        this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(-25, 0, 0)
+
+        this.playBtn.addComponentOrReplace(transparentMaterial)
 
         this.playBtn.addComponent(new OnPointerDown(async () => {
             log('play click')
-            this.playBtn.getComponent(Animator).getClip('viberBorderXLinear').play()
-            this.playBtn.getComponent(Animator).getClip('viberZBezier').reset()
-            this.playBtn.getComponent(Animator).getClip('viberZBezier').play()
+            this.parent.globalScene.getComponent(Animator).getClip('BtnPlayBorderAction').looping = false
+            this.parent.globalScene.getComponent(Animator).getClip('BtnPlayBorderAction').play()
             this.playBtn.getComponent(AudioSource).playOnce()
             if (this.parent.streamSource) this.parent.streamSource.getComponent(AudioStream).playing = false
             // log("result getUserData", { id: this.parent.user.public_address, name: this.parent.user.name })
