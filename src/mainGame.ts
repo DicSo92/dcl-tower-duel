@@ -14,7 +14,7 @@ export default class MainGame implements ISystem {
 
     TowerDuel?: TowerDuel// TowerDuel
     liftToGame: LiftToGame
-    modeSelectionAction: SelectModeAction
+    modeSelectionAction?: SelectModeAction
 
     isActive: boolean = false
     parent: Game;
@@ -29,7 +29,6 @@ export default class MainGame implements ISystem {
         this.liftToGame = new LiftToGame(this)
 
         // Actions
-        this.modeSelectionAction = new SelectModeAction(this.parent)
 
         this.Init();
     }
@@ -43,7 +42,7 @@ export default class MainGame implements ISystem {
 
     public modeSelection(type: string) {
         log('modeSelection')
-        if (type === 'in') this.addSequence('modeSelection')
+        this.addSequence('modeSelection')
         // else this.modeSelectionAction?.prompt?.hide()
     }
 
@@ -74,7 +73,7 @@ export default class MainGame implements ISystem {
         switch (type) {
             case "modeSelection": {
                 sequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                    .then(this.modeSelectionAction)
+                    .then(this.modeSelectionAction = new SelectModeAction(this))
                 
                 break;
             }

@@ -21,13 +21,14 @@ export default class Game implements ISystem {
     sceneAssets: SceneAssets
     mainGame0?: MainGame
     mainGame1?: MainGame
-    user: IUser = { public_address: '', name: '' }
+    user: IUser = { public_address: "", name: "", realm: "" }
     rulesBtn: Entity = new Entity()
     playBtn: Entity = new Entity()
     globalScene: Entity = new Entity()
     higherTower?: HigherTower;
     streamSource?: Entity;
     leaderBoard?: LeaderBoard;
+    lobbyScreen?: LobbyScreen;
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
@@ -74,8 +75,8 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
-        const lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 17))
-        engine.addSystem(lobbyScreen)
+        this.lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 17))
+        engine.addSystem(this.lobbyScreen)
 
         this.higherTower = new HigherTower(this)
         engine.addSystem(this.higherTower)

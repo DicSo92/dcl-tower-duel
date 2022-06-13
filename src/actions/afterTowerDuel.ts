@@ -10,7 +10,7 @@ export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     constructor(liftToGame: LiftToGame) {
         this.liftToGame = liftToGame
     }
-    
+
     onStart(): void {
         log('BackToLobbyAction')
         this.hasFinished = false
@@ -24,7 +24,7 @@ export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
             this.hasFinished = true
         }
     }
-    
+
     onFinish(): void { }
 }
 
@@ -41,9 +41,7 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
         this.parent.isActive = false
         this.parent.TowerDuel?.lift?.reset()
         if (this.parent.parent.user.public_address) {
-            this.parent.messageBus.emit('removeUserInGame', {
-                user: this.parent.parent.user.public_address
-            })
+            this.parent.messageBus.emit('removeUserInGame', { user: this.parent.parent.user })
         }
         this.setScore()
         utils.setTimeout(1000, () => {
@@ -59,7 +57,7 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
             this.parent.parent.leaderBoard?.updateBoard(result)
         }
     }
-    
+
     update(dt: number): void { }
 
     onFinish(): void { }

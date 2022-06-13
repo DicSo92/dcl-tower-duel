@@ -1,4 +1,3 @@
-import { ITowerDuel } from "@/interfaces/class.interface"
 import MainGame from "@/mainGame"
 import TowerDuel from "@/towerDuel"
 import * as utils from '@dcl/ecs-scene-utils'
@@ -17,8 +16,9 @@ export class LaunchSoloGameAction implements utils.ActionsSequenceSystem.IAction
     }
 
     onStart(): void {
+        log("launchGame.onStart",this.parent.side)
         this.parent.messageBus.emit('addUserInGame', {
-            user: this.parent.parent.user.public_address
+            user: this.parent.parent.user, side: this.parent.side, lastUpdate: this.parent.parent.lobbyScreen?.gameLastUpdate
         })
         if (this.parent.side === 'left') {
             this.parent.TowerDuel =new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0))

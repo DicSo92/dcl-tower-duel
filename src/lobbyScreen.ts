@@ -9,6 +9,7 @@ import { getUserData } from "@decentraland/Identity"
 import { movePlayerTo } from "@decentraland/RestrictedActions";
 import { IUser } from "./interfaces/class.interface";
 import LobbyScreenBorder from "@/lobbyScreenBorder";
+import { getCurrentRealm } from "@decentraland/EnvironmentAPI";
 
 export default class LobbyScreen implements ISystem {
     parent: Game
@@ -25,6 +26,7 @@ export default class LobbyScreen implements ISystem {
     animationDuration: number = 0.6
     titleOffsetTop: number = 0.55
     queueLastUpdate: number = Date.now()
+    gameLastUpdate?: number
     queueTitle: string = `---- QUEUE ----`
     usersInQueue: Array<IUser> = []
     rulesTitle: string = `---- RULES ----\n
@@ -42,7 +44,7 @@ export default class LobbyScreen implements ISystem {
     rulesScale: Vector3 = new Vector3(5, 3.2, 0.05)
     playBtn: Entity = new Entity();
     rulesBtn: Entity = new Entity();
-    usersInGame: { left?: IUser, right?: IUser } = { left: undefined, right: undefined}
+    usersInGame: { left: IUser, right: IUser } = { left: { public_address: "", name: "" }, right: { public_address: "", name: "" } }
 
     constructor(parent: Game, position: Vector3) {
         this.parent = parent
@@ -59,7 +61,9 @@ export default class LobbyScreen implements ISystem {
         this.Init()
     }
     Init = async () => {
+
         await this.getUser()
+        await this.getRealm()
         this.BuildEvents()
         this.BuildScreen()
         this.BuildBorders()
@@ -70,41 +74,83 @@ export default class LobbyScreen implements ISystem {
 
     // -----------------------------------------------------------------------------------------------------------------
     private BuildEvents() {
-        this.parent.messageBus.emit('getUsersInQueue', { data: { users: this.usersInQueue, lastUpdate: this.queueLastUpdate } })
-        this.parent.messageBus.on('getUsersInQueue', (data: { users: IUser[], lastUpdate: number }) => {
-            if (this.usersInGame !== data.users && data.lastUpdate > this.queueLastUpdate) {
-                this.parent.messageBus.emit('addUsersInQueue', { users: data.users, lastUpdate: this.queueLastUpdate })
+        // -------------------------------------------------------
+        this.parent.messageBus.on('setData_' + this.parent.user.public_address, (data: { usersInQueue: IUser[], usersInGame: { left: IUser, right: IUser }, lastUpdate: number }) => {
+            log("onSetData")
+            if (!this.gameLastUpdate || this.gameLastUpdate < data.lastUpdate) {
+                this.usersInQueue = data.usersInQueue
+                this.usersInGame = data.usersInGame
+                this.gameLastUpdate = data.lastUpdate
+                this.queueLastUpdate = data.lastUpdate
             }
+            log("this.usersInQueue", this.usersInQueue)
+            log("this.usersInGame", this.usersInGame)
         })
-        this.parent.messageBus.emit('getUsersInGame', { users: this.usersInGame })
-        this.parent.messageBus.on('getUsersInGame', (users: IUser[]) => {
-            if (this.usersInGame !== users) {
-                this.parent.messageBus.emit('addUsersInGame', { users: users })
-            }
+        this.parent.messageBus.emit('getData_' + this.parent.user.realm, { user: this.parent.user })
+        this.parent.messageBus.on('getData_' + this.parent.user.realm, (data: { user: IUser }) => {
+            log("onGetData", this.usersInGame)
+            log("user", data.user)
+            log("user.public_address", data.user.public_address)
+            this.parent.messageBus.emit('setData_' + data.user.public_address, { usersInQueue: this.usersInQueue, usersInGame: this.usersInGame, lastUpdate: this.queueLastUpdate })
         })
-        this.parent.messageBus.on('addUserInGame', (data) => {
+        log(this.usersInQueue)
+        log(this.usersInGame)
+        // -------------------------------------------------------
+        // this.parent.messageBus.emit('getUsersInQueue', { data: { users: this.usersInQueue, lastUpdate: this.queueLastUpdate } })
+        // this.parent.messageBus.on('getUsersInQueue', (data: { users: IUser[], lastUpdate: number }) => {
+        //     if (this.usersInQueue !== data.users && data.lastUpdate > this.queueLastUpdate) {
+        //         this.parent.messageBus.emit('addUsersInQueue', { users: data.users, lastUpdate: this.queueLastUpdate })
+        //     }
+        // })
+        // -------------------------------------------------------
+        // log("this.usersInGame before emitGetUsersInGame", this.usersInGame)
+        // this.parent.messageBus.emit('getUsersInGame', { data: { usersInGame: this.usersInGame, lastUpdate: this.gameLastUpdate } })
+        // this.parent.messageBus.on('getUsersInGame', (data: { usersInGame: { left: IUser, right: IUser }, lastUpdate: number }) => {
+        //     log("onGetUsersInGame")
+        //     log("onGetUsersInGame.input.data.userInGame", data.usersInGame)
+        //     log("this.usersInGame", this.usersInGame)
+        //     const leftCondition = this.usersInGame.left.public_address !== data.usersInGame.left.public_address
+        //     log("leftCondition", leftCondition)
+        //     const rightCondition = this.usersInGame.right.public_address !== data.usersInGame.right.public_address
+        //     log("rightCondition", rightCondition)
+        //     if ((leftCondition || rightCondition) && this.gameLastUpdate && data.lastUpdate > this.gameLastUpdate) {
+        //         this.parent.messageBus.emit('addUsersInGame', { usersInGame: this.usersInGame, lastUpdate: this.gameLastUpdate })
+        //     } else if (!this.gameLastUpdate) this.gameLastUpdate = Date.now()
+        // })
+        // -------------------------------------------------------
+        // this.parent.messageBus.on('addUsersInGame', (data) => {
+        //     if (data) {
+        //         if (this.usersInGame !== data.usersInGame && this.gameLastUpdate && data.lastUpdate > this.gameLastUpdate) {
+        //             this.usersInGame = data.usersInGame
+        //             this.gameLastUpdate = data.lastUpdate
+        //         }
+        //     }
+        //     log('usersInGame', this.usersInGame)
+        // })
+        this.parent.messageBus.on('addUserInGame', (data: { user: IUser, side: string, lastUpdate: number }) => {
             if (data) {
-                if (!this.usersInGame.left) {
+                if (data.side === 'left') {
                     this.usersInGame.left = data.user
-                } else if (!this.usersInGame.right) {
+                } else if (data.side === 'right') {
                     this.usersInGame.right = data.user
                 }
             }
             log('usersInGame', this.usersInGame)
         })
-        // this.parent.messageBus.on('removeUserInGame', (data) => {
-        //     if (data) {
-        //         this.usersInGame = this.usersInGame.filter((item: IUser) => item !== data.user)
-        //     }
-        //     log('usersInGame', this.usersInGame)
-        // })
-        this.parent.messageBus.on('addUserInQueue', (user: IUser) => {
-            if (user) {
-                // log(user)
-                // log(user.public_address, user.name)
-                this.addUserInQueue(user)
-                this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
+        // -------------------------------------------------------
+        this.parent.messageBus.on('removeUserInGame', (data) => {
+            if (data) {
+                if (this.usersInGame.left.public_address === data.user.public_address) {
+                    this.usersInGame.left.name = ""
+                    this.usersInGame.left.public_address = ""
+                    this.usersInGame.left.realm = ""
+                } else if (this.usersInGame.right.public_address === data.user.public_address) {
+                    this.usersInGame.left.name = ""
+                    this.usersInGame.left.public_address = ""
+                    this.usersInGame.left.realm = ""
+                }
             }
+            log('usersInGame', this.usersInGame)
         })
         // this.parent.messageBus.on('addUsersInQueue', (users: IUser[], lastUpdate: number) => {
         //     if (users && lastUpdate > this.queueLastUpdate) {
@@ -112,18 +158,32 @@ export default class LobbyScreen implements ISystem {
         //         this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
         //     }
         // })
-        this.parent.messageBus.on('newUser_' + this.parent.user.public_address, (user) => {
+        // this.parent.messageBus.on('addUserInQueue', (user: IUser) => {
+        //     if (user) {
+        //         // log(user)
+        //         // log(user.public_address, user.name)
+        //         this.addUserInQueue(user)
+        //         this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
+        //     }
+        // })
+        // -------------------------------------------------------
+        this.parent.messageBus.on('newGame_' + this.parent.user.public_address, (user) => {
             if (user) {
-                // log(user)
-                // log(user.public_address, user.name)
+                log("newGame_" + this.parent.user.public_address)
+                log(user)
+                log(user.public_address, user.name)
+                log(this.usersInGame)
+                log(this.usersInGame.left.public_address)
                 // this.usersInWaiting.push(user.public_address, user.name)
-                if (!this.usersInGame.left) {
+                if (this.usersInGame.left.public_address === "") {
+                    log("this.usersInGame.left.public_address empty")
                     movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8))
-                    this.parent.mainGame0?.modeSelection('in')
+                    this.parent.mainGame0?.modeSelection('left')
                     this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
-                } else if (!this.usersInGame.right) {
-                    movePlayerTo(new Vector3(8, 0, 24), new Vector3(8, 0, 8))
-                    this.parent.mainGame1?.modeSelection('in')
+                } else if (this.usersInGame.right.public_address === "") {
+                    log("this.usersInGame.right.public_address empty")
+                    movePlayerTo(new Vector3(8, .1, 24), new Vector3(8, 0, 8))
+                    this.parent.mainGame1?.modeSelection('right')
                     this.parent.mainGame1?.liftToGame.entity.getComponent(AudioSource).playOnce()
                 }
             }
@@ -173,6 +233,15 @@ export default class LobbyScreen implements ISystem {
             let data = await getUserData()
             log('USER DATA', data)
             if (data) this.parent.user = { public_address: data.userId, name: data.displayName }
+        } catch {
+            log("Failed to get user")
+        }
+    }
+    async getRealm() {
+        try {
+            let realm = await getCurrentRealm()
+            log('REALM DATA', realm)
+            if (realm) this.parent.user.realm = realm.domain
         } catch {
             log("Failed to get user")
         }
@@ -296,7 +365,7 @@ export default class LobbyScreen implements ISystem {
             if (this.parent.streamSource) this.parent.streamSource.getComponent(AudioStream).playing = false
             // log("result getUserData", { id: this.parent.user.public_address, name: this.parent.user.name })
             // this.parent.messageBus.emit('addUserInQueue', { id: this.parent.user.public_address, name: this.parent.user.name })
-            this.parent.messageBus.emit('newUser_' + this.parent.user.public_address, { id: this.parent.user.public_address, name: this.parent.user.name })
+            this.parent.messageBus.emit('newGame_' + this.parent.user.public_address, this.parent.user)
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,

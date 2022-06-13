@@ -7,18 +7,19 @@ import * as ui from '@dcl/ui-scene-utils'
 export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     prompt?: ui.OptionPrompt
-    parent: Game
+    parent: MainGame
 
-    constructor(parent: Game) {
+    constructor(parent: MainGame) {
         this.parent = parent
-        if (!this.parent.mainGame0?.isActive) {
+        log("SelectModeAction.")
+        if (this.parent.side === "left") {
             this.prompt = new ui.OptionPrompt(
                 'Select your mode !',
                 'Would you play ?',
                 () => {
                     log(`Yes`)
-                    this.parent.mainGame0?.gameApprovalSolo('gameApprovalSolo')
-                    this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
+                    this.parent.gameApprovalSolo('gameApprovalSolo')
+                    this.parent.liftToGame.entity.getComponent(AudioSource).playOnce()
                     this.hasFinished = true
                 },
                 () => {
@@ -30,14 +31,14 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
                 'No'
             )
             this.prompt?.hide()
-        } else if (!this.parent.mainGame1?.isActive) {
+        } else if (this.parent.side === "right") {
             this.prompt = new ui.OptionPrompt(
                 'Select your mode !',
                 'Would you play ?',
                 () => {
                     log(`Yes`)
-                    this.parent.mainGame1?.gameApprovalSolo('gameApprovalSolo')
-                    this.parent.mainGame1?.liftToGame.entity.getComponent(AudioSource).playOnce()
+                    this.parent.gameApprovalSolo('gameApprovalSolo')
+                    this.parent.liftToGame.entity.getComponent(AudioSource).playOnce()
                     this.hasFinished = true
                 },
                 () => {
@@ -49,7 +50,7 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
                 'No'
             )
             this.prompt.hide()
-}
+        }
     }
 
     //Method when action starts

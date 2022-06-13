@@ -11,6 +11,7 @@ export default class LiftToGame implements ISystem {
     parent: MainGame
     startPos: Vector3
     endPos: Vector3
+    centerPos: Vector3
     startPath: Vector3[]
     endPath: Vector3[]
     state: number = 0 // 0: !isActive; 1: goToPlay; -1: goToLobby
@@ -23,9 +24,11 @@ export default class LiftToGame implements ISystem {
     constructor(parent: MainGame) {
         this.parent = parent
         if (this.parent.side === 'left') {
+            this.centerPos = new Vector3(24, this.liftMaxHeight, 8)
             this.startPos = new Vector3(24, 0, 24)
             this.endPos = new Vector3(30, 3.4, 2)
         } else {
+            this.centerPos = new Vector3(8, this.liftMaxHeight, 8)
             this.startPos = new Vector3(8, 0, 24)
             this.endPos = new Vector3(2, 3.4, 2)
         }
@@ -41,14 +44,14 @@ export default class LiftToGame implements ISystem {
         this.startPath = [
             this.startPos,
             new Vector3(this.startPos.x, this.liftMaxHeight, this.startPos.z),
-            new Vector3(22, this.liftMaxHeight, 19),
+            this.centerPos,
             new Vector3(this.endPos.x, this.liftMaxHeight, this.endPos.z),
             this.endPos
         ]
         this.endPath = [
             new Vector3(this.endPos.x, this.lift.getComponent(Transform).position.y, this.endPos.z),
             new Vector3(this.endPos.x, this.liftMaxHeight, this.endPos.z),
-            new Vector3(22, this.liftMaxHeight, 19),
+            this.centerPos,
             new Vector3(this.startPos.x, this.liftMaxHeight, this.startPos.z),
             this.startPos,
         ]
@@ -107,8 +110,8 @@ export default class LiftToGame implements ISystem {
             if (userOutOfLiftY) {
                 log('Player isnt on liftToGame')
                 if (((this.state === 1 && (userOutOfLiftX && userOutOfLiftZ)) || ((this.state === -1 && (userOutOfLiftX && userOutOfLiftZ))))) {
-                    const nextPos = new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z)
-                    movePlayerTo(this.state === 1 ? nextPos : this.startPos, this.state === 1 ? this.startPos : nextPos)}
+                    movePlayerTo(this.state === 1 ? new Vector3(this.endPos.x, this.endPos.y + 2, this.endPos.z) : this.startPos, this.state === 1 ? this.startPos : new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z))
+                }
             }
         }
     }
