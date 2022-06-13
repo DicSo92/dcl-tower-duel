@@ -1,35 +1,23 @@
 import { ILift, ITowerDuel } from "@/interfaces/class.interface";
+import Lift from "@/lift";
 
 export default class NumericalCounter implements ISystem {
     towerDuel: ITowerDuel
     global: Entity
-    counter: Entity
     text: TextShape
 
-    constructor(towerDuel: ITowerDuel, lift: ILift) {
+    constructor(towerDuel: ITowerDuel, lift: Lift) {
         this.towerDuel = towerDuel
         this.global = new Entity()
         this.global.addComponent(new Transform({
-            position: new Vector3(-1.5, 1, .5)
+            position: new Vector3(0.3, 0.05, 0)
         }))
-        this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -90, 0)
+        this.global.getComponent(Transform).rotation.eulerAngles = new Vector3(90, 90, 0)
 
-        this.counter = new Entity()
-        this.counter.addComponent(new Transform())
-        this.counter.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 180, 0)
-        this.counter.addComponent(this.towerDuel.gameAssets.numericalCounter)
-        const numCounterAnimator = new Animator()
-        this.towerDuel.gameAssets.numericalCounterAnimStates.forEach(item => {
-            numCounterAnimator.addClip(item)
-            item.reset()
-            item.play()
-        })
-        this.counter.addComponent(numCounterAnimator)
-        this.counter.setParent(this.global)
         this.text = new TextShape(this.towerDuel.blocks.length.toString())
-        this.text.fontSize = 5
+        this.text.fontSize = 3
         this.global.addComponent(this.text)
-        this.global.setParent(lift.global)
+        this.global.setParent(lift.screen)
     }
 
     public setScore(value: number) {

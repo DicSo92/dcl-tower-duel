@@ -140,7 +140,6 @@ export interface IGameAssets {
     heartOn: GLTFShape
     heartOff: GLTFShape
     numericalCounter: GLTFShape
-    numericalCounterAnimStates: AnimationState[]
     liftOpen: GLTFShape
     liftClose: GLTFShape
 
