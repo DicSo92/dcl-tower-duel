@@ -104,9 +104,9 @@ export default class LobbyScreen implements ISystem {
                 this.usersInGame.left.name === ""
                 this.usersInGame.left.realm === ""
             } else if (player.userId === this.usersInGame.right.public_address) {
-                this.usersInGame.left.public_address === ""
-                this.usersInGame.left.name === ""
-                this.usersInGame.left.realm === ""
+                this.usersInGame.right.public_address === ""
+                this.usersInGame.right.name === ""
+                this.usersInGame.right.realm === ""
             }
         })
         // -------------------------------------------------------
