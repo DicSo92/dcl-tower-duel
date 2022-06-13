@@ -111,7 +111,7 @@ export default class LobbyScreen implements ISystem {
         })
         // Event when player disconnects
         onPlayerDisconnectedObservable.add((player) => {
-            log("player left scene: ", player.userId)
+            log("player disconnect: ", player.userId)
             if (player.userId === this.usersInGame.left.public_address) {
                 this.usersInGame.left.public_address === ""
                 this.usersInGame.left.name === ""
