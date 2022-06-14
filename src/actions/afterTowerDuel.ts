@@ -2,6 +2,7 @@ import LiftToGame from '@/liftToGame'
 import MainGame from '@/mainGame'
 import { publishScore } from '@/serverHandler'
 import * as utils from '@dcl/ecs-scene-utils'
+import * as ui from '@dcl/ui-scene-utils'
 
 export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
@@ -61,4 +62,42 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     update(dt: number): void { }
 
     onFinish(): void { }
+}
+
+export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction {
+    hasFinished: boolean = false
+    parent: MainGame
+    counter: number = 5
+    prompt?: ui.OptionPrompt
+
+    constructor(parent: MainGame) {
+        this.parent = parent
+    }
+
+    onStart(): void {
+        if (this.parent.TowerDuel?.lift?.numericalCounter.text.value) {
+            this.prompt = new ui.OptionPrompt(
+                'End game',
+                `Your previous tower high : ${this.parent.TowerDuel?.lift.numericalCounter.text.value}\nDo you want to play again ?`,
+                () => {
+                    this.parent.messageBus.emit('newGame_' + this.parent.parent.user.public_address, this.parent.parent.user)
+                    this.hasFinished = true
+                },
+                () => {
+                    this.prompt?.hide()
+                    this.hasFinished = true
+                },
+                'Yes',
+                'No',
+                true
+            )
+        }
+    }
+
+    onFinish(): void {
+        this.prompt?.hide()
+    }
+
+    update(dt: number): void {
+    }
 }

@@ -368,8 +368,6 @@ export default class LobbyScreen implements ISystem {
             this.parent.globalScene.getComponent(Animator).getClip('BtnPlayBorderAction').play()
             this.playBtn.getComponent(AudioSource).playOnce()
             if (this.parent.streamSource) this.parent.streamSource.getComponent(AudioStream).playing = false
-            // log("result getUserData", { id: this.parent.user.public_address, name: this.parent.user.name })
-            // this.parent.messageBus.emit('addUserInQueue', { id: this.parent.user.public_address, name: this.parent.user.name })
             this.parent.messageBus.emit('newGame_' + this.parent.user.public_address, this.parent.user)
         }, {
             button: ActionButton.POINTER,
