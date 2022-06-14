@@ -14,9 +14,9 @@ export default class MainGame implements ISystem {
 
     TowerDuel?: TowerDuel// TowerDuel
     liftToGame: LiftToGame
-    modeSelectionAction?: SelectModeAction
 
     isActive: boolean = false
+    isActiveSequence: boolean = false
     parent: Game;
     side: string
     gameSequence?: utils.ActionsSequenceSystem.SequenceBuilder;
@@ -42,37 +42,48 @@ export default class MainGame implements ISystem {
     private BuildEvents() {
     }
 
-    public modeSelection(type: string) {
+    public modeSelection() {
         log('modeSelection')
+        !this.isActiveSequence ? this.isActiveSequence = true : false
         this.addSequence('modeSelection')
-        // else this.modeSelectionAction?.prompt?.hide()
     }
 
     public gameApprovalSolo(type: string) {
         log('gameApproval')
         this.isActive = true
+        !this.isActiveSequence ? this.isActiveSequence = true : false
         this.addSequence('gameApprovalSolo')
     }
 
-    public gameApprovalMulti(type: string) {
+    public gameApprovalMulti() {
         log('gameApproval')
-        this.isActive = true
+        !this.isActive ? this.isActive = true :
+            !this.isActiveSequence ? this.isActiveSequence = true : false
         this.addSequence('gameApprovalMulti')
     }
 
     public launchGame() {
         log('launchGame')
+        !this.isActive ? this.isActive = true :
+            !this.isActiveSequence ? this.isActiveSequence = true : false
         this.addSequence('launchGame')
     }
 
     public afterTowerDuel() {
         log('afterTowerDuel')
+        this.isActive ? this.isActive = false : true
+        !this.isActiveSequence ? this.isActiveSequence = true : false
         this.addSequence('AfterTowerDuelSequence')
     }
 
     public stopSequence() {
+        this.isActiveSequence = false
         this.gameSequenceSystem?.stop()
         if (this.gameSequenceSystem) {
+            let queue = this.parent.lobbyScreen?.usersInQueue
+            if (queue && queue.filter(item => item.public_address === this.parent.user.public_address)) {
+                this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, {user: this.parent.user})
+            }
             engine.removeSystem(this.gameSequenceSystem)
             this.gameSequenceSystem = undefined
         }
@@ -82,7 +93,7 @@ export default class MainGame implements ISystem {
         switch (type) {
             case "modeSelection": {
                 this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
-                    .then(this.modeSelectionAction = new SelectModeAction(this))
+                    .then(new SelectModeAction(this))
                 
                 break;
             }

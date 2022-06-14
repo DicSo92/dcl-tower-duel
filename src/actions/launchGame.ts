@@ -59,7 +59,7 @@ export class LaunchSoloGameAction implements utils.ActionsSequenceSystem.IAction
 
     onStart(): void {
         log("launchGame.onStart", this.parent.side)
-        this.parent.messageBus.emit('addUserInGame', {
+        this.parent.messageBus.emit('addUserInGame_' + this.parent.parent.user.realm, {
             user: this.parent.parent.user, side: this.parent.side, lastUpdate: this.parent.parent.lobbyScreen?.gameLastUpdate
         })
         if (this.parent.side === 'left') {
@@ -89,7 +89,7 @@ export class LaunchMultGameAction implements utils.ActionsSequenceSystem.IAction
 
     onStart(): void {
         this.parent.TowerDuel?.CleanEntities()
-        this.parent.messageBus.emit('addUserInGame', {
+        this.parent.messageBus.emit('addUserInGame_' + this.parent.parent.user.realm, {
             user: this.parent.parent.user.public_address
         })
         this.parent.TowerDuel = new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0))

@@ -12,8 +12,7 @@ const COLORS: string[] = [
 ]
 
 export class GameAssets {
-    liftOpen: GLTFShape
-    liftClose: GLTFShape
+    liftToGame: GLTFShape
     staminaBar: GLTFShape
 
     blockMaterials: Material[] = []
@@ -45,8 +44,7 @@ export class GameAssets {
         noGlowMaterial.emissiveColor = new Color3(0, 1.1, 1.3)
         this.noGlowMaterial = noGlowMaterial
 
-        this.liftOpen = new GLTFShape('models/liftToGameWithInvi.glb')
-        this.liftClose = new GLTFShape('models/closedLiftToGame.glb')
+        this.liftToGame = new GLTFShape('models/liftToGame.glb')
     }
 }
 
