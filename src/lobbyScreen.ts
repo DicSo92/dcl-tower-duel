@@ -411,9 +411,6 @@ export default class LobbyScreen implements ISystem {
     }
     // -----------------------------------------------------------------------------------------------------------------
     BuildButtons = () => {
-        const transparentMaterial = new Material()
-        transparentMaterial.albedoColor = new Color4(0, 0, 0, 0)
-
         this.queueBtn.addComponent(this.parent.sceneAssets.soundValide)
         this.queueBtn.addComponent(new BoxShape())
         this.queueBtn.addComponent(new Transform({
@@ -421,7 +418,7 @@ export default class LobbyScreen implements ISystem {
             scale: new Vector3(1.1, 0.5, 0.2)
         }))
         this.queueBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(-25, 0, 0)
-        this.queueBtn.addComponentOrReplace(transparentMaterial)
+        this.queueBtn.addComponentOrReplace(this.parent.sceneAssets.transparentMaterial)
 
         this.queueBtn.addComponent(new OnPointerDown(() => {
             log('rules click')
@@ -447,7 +444,7 @@ export default class LobbyScreen implements ISystem {
         }))
         this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(-25, 0, 0)
 
-        this.playBtn.addComponentOrReplace(transparentMaterial)
+        this.playBtn.addComponentOrReplace(this.parent.sceneAssets.transparentMaterial)
 
         this.playBtn.addComponent(new OnPointerDown(async () => {
             log('play click')
