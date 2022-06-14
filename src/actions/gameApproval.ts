@@ -46,11 +46,10 @@ export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
         this.hasFinished = false
         this.liftToGame.lift.getComponent(AudioSource).audioClip.loop = true
         this.liftToGame.lift.getComponent(AudioSource).playing = true
-        this.liftToGame.goToPlay()
-
-        utils.setTimeout(this.liftToGame.liftMoveDuration * 1000, () => {
-            this.liftToGame.lift.getComponent(AudioSource).playing = false
-            this.hasFinished = true
+        utils.setTimeout(1000, () => {
+            this.liftToGame.goToPlay(this).then(() => {
+                this.liftToGame.lift.getComponent(AudioSource).playing = false
+            })
         })
     }
     //Method to run on every frame

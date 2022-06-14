@@ -42,7 +42,7 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
         this.parent.isActive = false
         this.parent.TowerDuel?.lift?.reset()
         if (this.parent.parent.user.public_address) {
-            this.parent.messageBus.emit('removeUserInGame', { user: this.parent.parent.user })
+            this.parent.messageBus.emit('removeUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
         }
         this.setScore()
         utils.setTimeout(1000, () => {
@@ -77,10 +77,10 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
     onStart(): void {
         if (this.parent.TowerDuel?.lift?.numericalCounter.text.value) {
             this.prompt = new ui.OptionPrompt(
-                'End game',
+                'E',
                 `Your previous tower high : ${this.parent.TowerDuel?.lift.numericalCounter.text.value}\nDo you want to play again ?`,
                 () => {
-                    this.parent.messageBus.emit('newGame_' + this.parent.parent.user.public_address, this.parent.parent.user)
+                    this.parent.messageBus.emit('newGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, this.parent.parent.user)
                     this.hasFinished = true
                 },
                 () => {
