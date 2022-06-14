@@ -37,7 +37,7 @@ export default class Lift implements ISystem {
             this.rotation = new Vector3(0, 180, 0)
 
         } else {
-            this.startPos = new Vector3(2, this.minPosY, 2)
+            this.startPos = new Vector3(2.4, this.minPosY, 2.4)
             this.rotation = new Vector3(0, -90, 0)
         }
         // Global def
@@ -49,7 +49,7 @@ export default class Lift implements ISystem {
         // Lift
         this.lift = new Entity()
         const liftShape = new GLTFShape('models/gameLift.glb')
-        
+
         this.lift.addComponent(liftShape)
         this.lift.addComponent(new Transform({
             position: new Vector3(0, 0, 0)
