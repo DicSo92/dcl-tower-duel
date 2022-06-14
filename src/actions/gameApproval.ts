@@ -2,6 +2,7 @@
 import LiftToGame from '@/liftToGame'
 import MainGame from '@/mainGame'
 import * as utils from '@dcl/ecs-scene-utils'
+import { movePlayerTo } from '@decentraland/RestrictedActions'
 
 //Use IAction to define action for movement
 export class CleanTowerDuelAction implements utils.ActionsSequenceSystem.IAction {
@@ -47,16 +48,13 @@ export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
         this.liftToGame.lift.getComponent(AudioSource).audioClip.loop = true
         this.liftToGame.lift.getComponent(AudioSource).playing = true
         utils.setTimeout(1000, () => {
-            this.liftToGame.goToPlay(this).then(() => {
-                this.liftToGame.lift.getComponent(AudioSource).playing = false
-            })
+            this.liftToGame.goToPlay(this)
         })
     }
     //Method to run on every frame
     update(dt: number): void { }
     //Method to run at the end
-    onFinish(): void {
-    }
+    onFinish(): void {}
 }
 
 //Use IAction to define action for movement

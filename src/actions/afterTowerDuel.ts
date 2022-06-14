@@ -4,6 +4,7 @@ import MainGame from '@/mainGame'
 import { publishScore } from '@/serverHandler'
 import * as utils from '@dcl/ecs-scene-utils'
 import * as ui from '@dcl/ui-scene-utils'
+import { movePlayerTo } from '@decentraland/RestrictedActions'
 
 export class BackToLiftToGamePositionAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
@@ -38,11 +39,7 @@ export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
         this.liftToGame.lift.getComponent(AudioSource).playing = true
         
         utils.setTimeout(1000, () => {
-            this.liftToGame.goToLobby(this).then(() => {
-                this.liftToGame.lift.getComponent(AudioSource).playing = false
-                this.liftToGame.parent.TowerDuel?.lift?.lift.getComponent(GLTFShape).withCollisions ? this.liftToGame.parent.TowerDuel.lift.lift.getComponent(GLTFShape).withCollisions = true : ''
-                this.hasFinished = true
-            })
+            this.liftToGame.goToLobby(this)
         })
     }
 

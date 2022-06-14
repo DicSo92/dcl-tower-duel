@@ -5,6 +5,7 @@ import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
 import * as utils from "@dcl/ecs-scene-utils";
 import { BackToLiftToGamePositionAction } from "./actions/afterTowerDuel";
+import { movePlayerTo } from "@decentraland/RestrictedActions";
 
 export default class Lift implements ISystem {
     TowerDuel: TowerDuel
@@ -72,7 +73,7 @@ export default class Lift implements ISystem {
         this.screen.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 45, 45)
         this.screen.addComponent(
             new OnPointerDown(() => {
-                this.TowerDuel.StopBlock()
+                if (this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive) this.TowerDuel.StopBlock()
             }, {
                 button: ActionButton.POINTER,
                 showFeedback: false,
@@ -137,14 +138,14 @@ export default class Lift implements ISystem {
 
         // button down event
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
-            if (this.TowerDuel.mainGame.isActive) {
+            if (this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive) {
                 this.TowerDuel.StopBlock()
             }
         })
         // button Spell 1
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_3, false, (e) => {
-            log("Key 1 : Remove last 3 blocks")
-            if (this.staminaBar.staminaCount - this.spell1cost >= 0 && this.TowerDuel.mainGame.isActive && this.TowerDuel.currentBlocks.length > 4) {
+            log("Key 1 : Speed down spawn")
+            if (this.staminaBar.staminaCount - this.spell1cost >= 0 && this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive && this.TowerDuel.currentBlocks.length > 4) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
                 // ----------------------------------------------------------------------------------------------------- 20 - 19
                 const last3 = this.TowerDuel.currentBlocks.slice(-4)
@@ -172,8 +173,8 @@ export default class Lift implements ISystem {
         })
         // button Spell 2
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_4, false, (e) => {
-            log("Key 2 : Speed down spawn")
-            if (this.staminaBar.staminaCount - this.spell2cost >= 0 && this.TowerDuel.mainGame.isActive) {
+            log("Key 2 : Speed up spawn")
+            if (this.staminaBar.staminaCount - this.spell2cost >= 0 && this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
 
                 const oldSpeed = this.TowerDuel.spawner?.spawnSpeed ? this.TowerDuel.spawner?.spawnSpeed : 3
@@ -190,7 +191,7 @@ export default class Lift implements ISystem {
         // button Spell 3
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_5, false, (e) => {
             log("Key 3 : Increase margin error")
-            if (this.staminaBar.staminaCount - this.spell3cost >= 0 && this.TowerDuel.mainGame.isActive) {
+            if (this.staminaBar.staminaCount - this.spell3cost >= 0 && this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
 
                 const oldMargin = this.TowerDuel.spawner?.spawningBlock?.marginError ? this.TowerDuel.spawner?.spawningBlock?.marginError : .15
@@ -202,6 +203,14 @@ export default class Lift implements ISystem {
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell3cost })
             } else {
                 // sound cannot use spell
+            }
+        })
+
+        // button moveOnLift
+        this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_6, false, (e) => {
+            if (this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive) {
+                const liftPos = this.TowerDuel.mainGame.side === "left" ? new Vector3(this.global.getComponent(Transform).position.x + 16, this.global.getComponent(Transform).position.y, this.global.getComponent(Transform).position.z) : this.global.getComponent(Transform).position
+                movePlayerTo(new Vector3(liftPos.x, liftPos.y + 2, liftPos.z), new Vector3(16, 0, 24))
             }
         })
     }
