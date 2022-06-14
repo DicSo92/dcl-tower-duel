@@ -30,17 +30,8 @@ export default class LobbyScreen implements ISystem {
     gameLastUpdate?: number
     queueTitle: string = `---- QUEUE ----`
     usersInQueue: Array<IUser> = []
-    rulesTitle: string = `---- RULES ----\n
-        Click on play button\n
-        Wait to be in game\n
-        Click on the green button to start the game\n
-        Click on red button to stop the block\n
-        Try to stop the block as much as possible in line with the previous block and build the higher tower\n
-        Cast spells\n
-            key 1/ Remove last 3 blocks\n
-            key 2/ Decrease speed for x secondes\n
-            key 3/ Increase margin error for x secondes\n
-            \n` //key 4/
+    rulesTitle: string = ""
+    rulesImage: Entity = new Entity()
     queueScale: Vector3 = new Vector3(2.75, 3, 0.05)
     rulesScale: Vector3 = new Vector3(5, 3.2, 0.05)
     playBtn: Entity = new Entity();
@@ -288,14 +279,20 @@ export default class LobbyScreen implements ISystem {
             const newScale = value ? this.queueScale : this.rulesScale
 
             this.title.getComponent(TextShape).opacity = 0
+            this.rulesImage.getComponent(PlaneShape).visible = false
 
             this.screen.addComponentOrReplace(new ScaleTransformComponent(this.screen.getComponent(Transform).scale, newScale, this.animationDuration, () => {
-                this.setTitleText(newScale, value ? this.queueTitle : this.rulesTitle)
+                if (value) {
+                    this.setTitleText(newScale, this.queueTitle)
 
-                const titleText = new TextShape(value ? this.queueTitle : this.rulesTitle)
-                titleText.fontSize = newScale === this.queueScale ? 2 : 1
-                this.title.addComponentOrReplace(titleText)
-                this.title.getComponent(Transform).position = this.titlePosition(newScale)
+                    const titleText = new TextShape(this.queueTitle)
+                    titleText.fontSize = 2
+                    this.title.addComponentOrReplace(titleText)
+                    this.title.getComponent(Transform).position = this.titlePosition(newScale)
+                } else {
+                    this.rulesImage.getComponent(PlaneShape).visible = true
+                }
+
             }, InterpolationType.EASEELASTIC))
             this.screen.addComponentOrReplace(new MoveTransformComponent(this.screen.getComponent(Transform).position, new Vector3(0, newScale.y / 2, 0), this.animationDuration, () => {}, InterpolationType.EASEELASTIC))
 
@@ -382,6 +379,17 @@ export default class LobbyScreen implements ISystem {
         screenMaterial.roughness = 0.1
         this.screen.addComponentOrReplace(screenMaterial)
         this.screen.setParent(this.container)
+
+        this.rulesImage.addComponent(new PlaneShape())
+        const screenTextMaterial = new BasicMaterial()
+        screenTextMaterial.texture = new Texture("images/Rules.png")
+        this.rulesImage.addComponent(screenTextMaterial)
+        this.rulesImage.addComponent(new Transform({
+            position: new Vector3(0, 0.02, 0.75),
+            scale: new Vector3(0.85, 0.85, 0.85)
+        }))
+        this.rulesImage.getComponent(Transform).rotation.eulerAngles = new Vector3(180, 0, 0)
+        this.rulesImage.setParent(this.screen)
     }
     // -----------------------------------------------------------------------------------------------------------------
     BuildBorders = () => {
