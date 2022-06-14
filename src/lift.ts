@@ -4,6 +4,7 @@ import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
 import * as utils from "@dcl/ecs-scene-utils";
+import { BackToLiftToGamePositionAction } from "./actions/afterTowerDuel";
 
 export default class Lift implements ISystem {
     TowerDuel: TowerDuel
@@ -136,12 +137,14 @@ export default class Lift implements ISystem {
 
         // button down event
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, (e) => {
-            this.TowerDuel.StopBlock()
+            if (this.TowerDuel.mainGame.isActive) {
+                this.TowerDuel.StopBlock()
+            }
         })
         // button Spell 1
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_3, false, (e) => {
             log("Key 1 : Speed down spawn")
-            if (this.staminaBar.staminaCount - this.spell1cost >= 0) {
+            if (this.staminaBar.staminaCount - this.spell1cost >= 0 && this.TowerDuel.mainGame.isActive) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
                 // if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell1cost })
@@ -150,7 +153,7 @@ export default class Lift implements ISystem {
         // button Spell 2
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_4, false, (e) => {
             log("Key 2 : Speed up spawn")
-            if (this.staminaBar.staminaCount - this.spell2cost >= 0) {
+            if (this.staminaBar.staminaCount - this.spell2cost >= 0 && this.TowerDuel.mainGame.isActive) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
 
                 const oldSpeed = this.TowerDuel.spawner?.spawnSpeed ? this.TowerDuel.spawner?.spawnSpeed : 3
@@ -165,7 +168,7 @@ export default class Lift implements ISystem {
         // button Spell 3
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_5, false, (e) => {
             log("Key 3 : Increase margin error")
-            if (this.staminaBar.staminaCount - this.spell3cost >= 0) {
+            if (this.staminaBar.staminaCount - this.spell3cost >= 0 && this.TowerDuel.mainGame.isActive) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
 
                 const oldMargin = this.TowerDuel.spawner?.spawningBlock?.marginError ? this.TowerDuel.spawner?.spawningBlock?.marginError : .15
@@ -189,11 +192,15 @@ export default class Lift implements ISystem {
         )
     }
 
-    reset() {
-        this.global.addComponentOrReplace(new MoveTransformComponent(this.global.getComponent(Transform).position, this.startPos, 1, () => { this.state = false }))
+    reset = async (parent: BackToLiftToGamePositionAction) => {
+        return this.global.addComponentOrReplace(new MoveTransformComponent(this.global.getComponent(Transform).position, this.startPos, 1, () => {
+            this.state = false
+            parent.hasFinished = true
+        }))
     }
 
     public Delete() {
+        this.TowerDuel.lift = undefined
         engine.removeSystem(this.hearts)
         engine.removeEntity(this.global)
         engine.removeEntity(this.lift)

@@ -2,7 +2,7 @@ import TowerDuel from "@/towerDuel";
 import * as utils from "@dcl/ecs-scene-utils";
 import { GoToPlayAction, CleanTowerDuelAction } from "@/actions/gameApproval";
 import { LaunchSoloGameAction, StarterTimerAction } from "@/actions/launchGame";
-import { BackToLobbyAction, EndGameResultAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
+import { BackToLiftToGamePositionAction, BackToLobbyAction, EndGameResultAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
 import LiftToGame from "@/liftToGame";
 import { SelectModeAction } from "./actions/modeSelection";
 import Game from "./game";
@@ -79,11 +79,11 @@ export default class MainGame implements ISystem {
     public stopSequence() {
         this.isActiveSequence = false
         this.gameSequenceSystem?.stop()
+        let queue = this.parent.lobbyScreen?.usersInQueue
+        if (queue && queue.filter(item => item.public_address === this.parent.user.public_address)) {
+            this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
+        }
         if (this.gameSequenceSystem) {
-            let queue = this.parent.lobbyScreen?.usersInQueue
-            if (queue && queue.filter(item => item.public_address === this.parent.user.public_address)) {
-                this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, {user: this.parent.user})
-            }
             engine.removeSystem(this.gameSequenceSystem)
             this.gameSequenceSystem = undefined
         }
@@ -113,6 +113,7 @@ export default class MainGame implements ISystem {
             }
             case "AfterTowerDuelSequence": {
                 this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                    .then(new BackToLiftToGamePositionAction(this.TowerDuel?.lift))
                     .then(new BackToLobbyAction(this.liftToGame))
                     .then(new FinaliseTowerDuelAction(this))
                     .then(new EndGameResultAction(this))

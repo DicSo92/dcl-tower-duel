@@ -90,8 +90,8 @@ export default class TowerDuel implements ISystem {
         ui.displayAnnouncement(gameOverResult, 5, Color4.Red(), 50, true)
         utils.setTimeout(5000, () => {
             ui.hideAnnouncements()
-            this.mainGame.afterTowerDuel()
         })
+        this.mainGame.afterTowerDuel()
     }
 
     public CleanEntities() {

@@ -17,7 +17,7 @@ export class CleanTowerDuelAction implements utils.ActionsSequenceSystem.IAction
         this.hasFinished = false
 
         this.parent.TowerDuel?.CleanEntities()
-        this.parent.TowerDuel?.lift?.Delete()
+        if (this.parent.TowerDuel?.lift) this.parent.TowerDuel?.lift?.Delete()
         if (this.parent.TowerDuel) {
             engine.removeSystem(this.parent.TowerDuel)
             this.parent.TowerDuel = undefined
