@@ -10,6 +10,7 @@ export default class TowerBlock implements ISystem {
     isBase: Boolean
     animation?: MoveTransformComponent
     entity: Entity
+    material: Material
     blockPhysic?: CANNON.Body
     fallingBlocks?: FallingBlocks
     interEffect?: InterEffect
@@ -24,16 +25,17 @@ export default class TowerBlock implements ISystem {
 
         this.entity = new Entity();
         this.entity.setParent(this.TowerDuel.gameArea)
-        this.Init();
-    }
 
-    private Init = () => {
         this.isBase ? this.BuildBase() : this.SpawnBlock()
         engine.addEntity(this.entity)
         this.TowerDuel.blocks.push(this)
         this.TowerDuel.currentBlocks.push(this)
-        this.setMaterial()
-    };
+
+        const countToChangeColor = 3
+        const step = (Math.ceil(this.TowerDuel.blocks.length / countToChangeColor) - 1) % 10 // (% 10) get last digit of number (12 % 10 = 2)
+        this.material = this.TowerDuel.gameAssets.blockMaterials[step]
+        this.entity.addComponent(this.material)
+    }
 
     private BuildBase = () => {
         this.entity.addComponent(
@@ -81,7 +83,7 @@ export default class TowerBlock implements ISystem {
 
         if (Math.abs(offsetX) > prevBlockTransform.scale.x || Math.abs(offsetZ) > prevBlockTransform.scale.z) { // If block not on top of the previous
             log('Block missed')
-            const fallBlock = new FallingBlock(this.TowerDuel, currentBlockTransform)
+            const fallBlock = new FallingBlock(this.TowerDuel, this.material, currentBlockTransform)
             this.TowerDuel.fallingBlocks.push(fallBlock)
 
             this.TowerDuel.blocks.pop()
@@ -127,7 +129,7 @@ export default class TowerBlock implements ISystem {
             }))
             this.addPhysicBlock(newPosition, newScale)
 
-            this.fallingBlocks = new FallingBlocks(this.TowerDuel, currentBlockTransform, offsetX, offsetZ)
+            this.fallingBlocks = new FallingBlocks(this.TowerDuel, this.material, currentBlockTransform, offsetX, offsetZ)
             engine.addSystem(this.fallingBlocks);
 
             this.interEffect = new InterEffect(this.TowerDuel, this.entity, new Transform({
@@ -150,12 +152,6 @@ export default class TowerBlock implements ISystem {
         })
         this.blockPhysic.material = this.TowerDuel.physicsMaterial
         this.TowerDuel.world.addBody(this.blockPhysic)
-    }
-
-    private setMaterial() {
-        const countToChangeColor = 3
-        const step = (Math.ceil(this.TowerDuel.blocks.length / countToChangeColor) - 1) % 10 // (% 10) get last digit of number (12 % 10 = 2)
-        this.entity.addComponent(this.TowerDuel.gameAssets.blockMaterials[step])
     }
 
     public Delete() {

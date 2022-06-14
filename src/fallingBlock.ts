@@ -10,12 +10,13 @@ export class FallingBlock extends Entity {
     public world: CANNON.World
     TowerDuel: TowerDuel
 
-    constructor(towerDuel: TowerDuel, transform: Transform) {
+    constructor(towerDuel: TowerDuel, blockMaterial: Material, transform: Transform) {
         super()
         this.TowerDuel = towerDuel
         this.setParent(this.TowerDuel.gameArea)
 
         this.addComponent(new BoxShape())
+        this.addComponent(blockMaterial)
         this.addComponent(transform)
         this.world = this.TowerDuel.world
 
