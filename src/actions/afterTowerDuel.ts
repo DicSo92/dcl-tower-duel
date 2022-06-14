@@ -36,14 +36,17 @@ export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
         log('BackToLobbyAction')
         this.hasFinished = false
         this.liftToGame.lift.getComponent(AudioSource).playing = true
-        this.liftToGame.goToLobby()
+        
+        utils.setTimeout(1000, () => {
+            this.liftToGame.goToLobby(this).then(() => {
+                this.liftToGame.lift.getComponent(AudioSource).playing = false
+                this.liftToGame.parent.TowerDuel?.lift?.lift.getComponent(GLTFShape).withCollisions ? this.liftToGame.parent.TowerDuel.lift.lift.getComponent(GLTFShape).withCollisions = true : ''
+                this.hasFinished = true
+            })
+        })
     }
 
     update(dt: number): void {
-        if (!this.liftToGame.isActive) {
-            this.liftToGame.lift.getComponent(AudioSource).playing = false
-            this.hasFinished = true
-        }
     }
 
     onFinish(): void { }
@@ -90,7 +93,9 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
     constructor(parent: MainGame) {
         this.parent = parent
     }
-
+    // game over
+    // ui autohide out of lift
+    // lift max height et path
     onStart(): void {
         if (this.parent.TowerDuel?.lift?.numericalCounter.text.value) {
             if (this.parent.parent.prompt) {
@@ -112,7 +117,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
                     'Result',
                     `Your previous tower high : ${this.parent.TowerDuel?.lift.numericalCounter.text.value}\nDo you want to play again ?`,
                     () => {
-                        this.parent.messageBus.emit('newGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, this.parent.parent.user)
+                        this.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
                         this.hasFinished = true
                     },
                     () => {
@@ -124,7 +129,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
                     true
                 )
             }
-}
+        }
     }
 
     onFinish(): void {

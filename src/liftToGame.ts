@@ -1,5 +1,6 @@
 import * as utils from "@dcl/ecs-scene-utils";
 import { movePlayerTo } from "@decentraland/RestrictedActions";
+import { BackToLobbyAction } from "./actions/afterTowerDuel";
 import { GoToPlayAction } from "./actions/gameApproval";
 import MainGame from "./mainGame";
 
@@ -16,8 +17,8 @@ export default class LiftToGame implements ISystem {
     startPath: Vector3[]
     endPath: Vector3[]
     state: number = 0 // 0: !isActive; 1: goToPlay; -1: goToLobby
-    liftMaxHeight: number = 25
-    liftMoveDuration: number = 8
+    liftMaxHeight: number = 5
+    liftMoveDuration: number = 5
     isActive: boolean = false
     radius: number = 1
     outOfLift: boolean = false
@@ -25,11 +26,11 @@ export default class LiftToGame implements ISystem {
     constructor(parent: MainGame) {
         this.parent = parent
         if (this.parent.side === 'left') {
-            this.centerPos = new Vector3(24, this.liftMaxHeight, 8)
+            this.centerPos = new Vector3(28, this.liftMaxHeight, 16)
             this.startPos = new Vector3(24, 0.1, 24)
             this.endPos = new Vector3(30, 3.3, 2)
         } else {
-            this.centerPos = new Vector3(8, this.liftMaxHeight, 8)
+            this.centerPos = new Vector3(4, this.liftMaxHeight, 16)
             this.startPos = new Vector3(8, 0.1, 24)
             this.endPos = new Vector3(2, 3.3, 2)
         }
@@ -87,16 +88,19 @@ export default class LiftToGame implements ISystem {
         }))
     }
 
-    goToLobby() {
+    goToLobby = async (parent: BackToLobbyAction) => {
         engine.addSystem(this)
         this.isActive = true
         this.state = -1
         this.lift.getComponent(GLTFShape).visible = true
-        this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.endPath, this.liftMoveDuration, () => {
+        this.parent.TowerDuel?.lift?.lift.getComponent(GLTFShape).withCollisions ? this.parent.TowerDuel.lift.lift.getComponent(GLTFShape).withCollisions  = false : ''
+        // this.parent.TowerDuel?.lift?.Delete()
+        return this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.endPath, this.liftMoveDuration, () => {
             this.isActive = false
             this.state = 0
             this.entity.removeComponent(GLTFShape)
             engine.removeSystem(this)
+            parent.hasFinished = true
         }))
     }
 

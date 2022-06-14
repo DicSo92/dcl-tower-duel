@@ -31,36 +31,38 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
                 log(`No`)
                 this.parent.parent.lobbyScreen?.removeUserInQueue(this.parent.parent.user)
                 this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: false, side: this.parent.side })
-
+                this.parent.parent.prompt?.hide()
                 this.hasFinished = true
             }
             this.parent.parent.prompt.buttonELabel.value = 'Yes'
             this.parent.parent.prompt.buttonFLabel.value = 'No'
+            this.parent.parent.prompt.show()
+        } else {
+            this.parent.parent.prompt = new ui.OptionPrompt(
+                'Confirmation !',
+                'Would you start to play ?',
+                () => {
+                    log(`Yes`, 'confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address)
+                    this.parent.parent.lobbyScreen?.removeUserInQueue(this.parent.parent.user)
+                    this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: true, side: this.parent.side })
+                    this.parent.parent.prompt?.hide()
+                    this.hasFinished = true
+                },
+                () => {
+                    log(`No`)
+                    this.parent.parent.lobbyScreen?.removeUserInQueue(this.parent.parent.user)
+                    this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: false, side: this.parent.side })
+                    this.parent.parent.prompt?.hide()
+                    this.hasFinished = true
+                },
+                'Yes',
+                'No',
+                true
+            )
         }
-        this.parent.parent.prompt = new ui.OptionPrompt(
-            'Confirmation !',
-            'Would you start to play ?',
-            () => {
-                log(`Yes`, 'confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address)
-                this.parent.parent.lobbyScreen?.removeUserInQueue(this.parent.parent.user)
-                this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: true, side: this.parent.side })
-                this.parent.parent.prompt?.hide()
-                this.hasFinished = true
-            },
-            () => {
-                log(`No`)
-                this.parent.parent.lobbyScreen?.removeUserInQueue(this.parent.parent.user)
-                this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: false, side: this.parent.side })
-
-                this.hasFinished = true
-            },
-            'Yes',
-            'No',
-            true
-        )
     }
 
     update(dt: number): void { }
 
-    onFinish(): void { this.parent.parent.prompt?.hide() }
+    onFinish(): void { }
 }

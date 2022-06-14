@@ -79,11 +79,11 @@ export default class MainGame implements ISystem {
     public stopSequence() {
         this.isActiveSequence = false
         this.gameSequenceSystem?.stop()
+        let queue = this.parent.lobbyScreen?.usersInQueue
+        if (queue && queue.filter(item => item.public_address === this.parent.user.public_address)) {
+            this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
+        }
         if (this.gameSequenceSystem) {
-            let queue = this.parent.lobbyScreen?.usersInQueue
-            if (queue && queue.filter(item => item.public_address === this.parent.user.public_address)) {
-                this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, {user: this.parent.user})
-            }
             engine.removeSystem(this.gameSequenceSystem)
             this.gameSequenceSystem = undefined
         }
