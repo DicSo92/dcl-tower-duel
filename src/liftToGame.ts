@@ -110,6 +110,13 @@ export default class LiftToGame implements ISystem {
             this.state = 0
             this.isActive = false
             engine.removeSystem(this)
+
+            parent.liftToGame.lift.getComponent(AudioSource).playing = false
+            const clampX = parent.liftToGame.entity.getComponent(Transform).position.x < Camera.instance.feetPosition.x - 1 || parent.liftToGame.entity.getComponent(Transform).position.x > Camera.instance.feetPosition.x + 1
+            const clampZ = parent.liftToGame.entity.getComponent(Transform).position.z < Camera.instance.feetPosition.z - 1 || parent.liftToGame.entity.getComponent(Transform).position.z > Camera.instance.feetPosition.z + 1
+            if (clampX || clampZ) {
+                movePlayerTo(new Vector3(parent.liftToGame.entity.getComponent(Transform).position.x, parent.liftToGame.entity.getComponent(Transform).position.y + 1, parent.liftToGame.entity.getComponent(Transform).position.z), new Vector3(16, 0, 16))
+            }
             parent.hasFinished = true
         }))
     }
@@ -120,12 +127,18 @@ export default class LiftToGame implements ISystem {
         this.state = -1
         this.lift.getComponent(GLTFShape).visible = true
         this.parent.TowerDuel?.lift?.lift.getComponent(GLTFShape).withCollisions ? this.parent.TowerDuel.lift.lift.getComponent(GLTFShape).withCollisions = false : ''
-        // this.parent.TowerDuel?.lift?.Delete()
         return this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.endPath, this.liftMoveDuration, () => {
             this.isActive = false
             this.state = 0
             this.entity.removeComponent(GLTFShape)
             engine.removeSystem(this)
+
+            parent.liftToGame.lift.getComponent(AudioSource).playing = false
+            const clampX = parent.liftToGame.entity.getComponent(Transform).position.x < Camera.instance.feetPosition.x - 1 || parent.liftToGame.entity.getComponent(Transform).position.x > Camera.instance.feetPosition.x + 1
+            const clampZ = parent.liftToGame.entity.getComponent(Transform).position.z < Camera.instance.feetPosition.z - 1 || parent.liftToGame.entity.getComponent(Transform).position.z > Camera.instance.feetPosition.z + 1
+            if (clampX || clampZ) {
+                movePlayerTo(this.entity.getComponent(Transform).position, new Vector3(16, 0, 24))
+            }
             parent.hasFinished = true
         }))
     }
