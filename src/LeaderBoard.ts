@@ -9,13 +9,14 @@ export class LeaderBoard {
     scoreBoardNames: ScoreBoardText[] = []
     scoreBoardValues: ScoreBoardText[] = []
     parent: Game
-    fontSize: Vector3 = new Vector3(1.25, 1.25, 1.25)
+    fontSize: Vector3 = new Vector3(1.2, 1.2, 1.2)
+    headerFontSize: Vector3 = new Vector3(1, 1, 1)
 
     constructor(parent: Game) {
         this.parent = parent
         this.global.addComponent(
             new Transform({
-                position: new Vector3(16, 12, .5),
+                position: new Vector3(16, 11.27, .5),
                 rotation: Quaternion.Euler(0, 180, 0),
                 scale: new Vector3(2, 2, 2)
             })
@@ -39,24 +40,15 @@ export class LeaderBoard {
     async buildLeaderBoard(scoreData: any[], parent: Entity, length: number) {
         // if canvas is empty
         if (this.scoreBoardNames.length === 0) {
-            this.nameTitle = new ScoreBoardText(TextTypes.BIGTITLE, 'Player', { position: new Vector3(-0.8, 0.65, 0), scale: this.fontSize }, parent)
-            this.scoreTitle = new ScoreBoardText(TextTypes.BIGTITLE, 'Score', { position: new Vector3(0.8, 0.65, 0), scale: this.fontSize }, parent)
+            this.nameTitle = new ScoreBoardText(TextTypes.LABEL, 'Player', { position: new Vector3(-1.3, 0.52, 0), scale: this.headerFontSize }, parent)
+            this.scoreTitle = new ScoreBoardText(TextTypes.LABEL, 'Score', { position: new Vector3(1.33, 0.52, 0), scale: this.headerFontSize }, parent)
 
             for (let i = 0; i < length; i++) {
-                if (i < scoreData.length) {
-                    const name = new ScoreBoardText(TextTypes.TINYTITLE, scoreData[i].name, { position: new Vector3(-0.6, 0.2 - i / 4, 0), scale: this.fontSize }, parent)
-                    this.scoreBoardNames.push(name)
+                const name = new ScoreBoardText(TextTypes.TINYTITLE, i < scoreData.length ? scoreData[i].name : '-', { position: new Vector3(-1.18, 0.2 - i / 4, 0), scale: this.fontSize }, parent)
+                this.scoreBoardNames.push(name)
 
-                    const score = new ScoreBoardText(TextTypes.TINYVALUE, scoreData[i].score.toString(), { position: new Vector3(0.6, 0.2 - i / 4, 0), scale: this.fontSize }, parent)
-                    this.scoreBoardValues.push(score)
-                } else {
-                    // create empty line
-                    const name = new ScoreBoardText(TextTypes.TINYTITLE, '-', { position: new Vector3(-0.6, 0.2 - i / 4, 0), scale: this.fontSize }, parent)
-                    this.scoreBoardNames.push(name)
-
-                    const score = new ScoreBoardText(TextTypes.TINYVALUE, '-', { position: new Vector3(0.6, 0.2 - i / 4, 0), scale: this.fontSize }, parent)
-                    this.scoreBoardValues.push(score)
-                }
+                const score = new ScoreBoardText(TextTypes.TINYVALUE, i < scoreData.length ? scoreData[i].score.toString() : '-', { position: new Vector3(1.48, 0.2 - i / 4, 0), scale: this.fontSize }, parent)
+                this.scoreBoardValues.push(score)
             }
         } else {
             // update existing board
@@ -123,7 +115,7 @@ export class ScoreBoardText extends Entity {
             case TextTypes.TINYTITLE:
                 shape.fontSize = 1
                 shape.color = Color3.White()
-                shape.vTextAlign = 'center'
+                shape.vTextAlign = 'left'
                 shape.width = 10
                 shape.font = this.SFFont
                 break
