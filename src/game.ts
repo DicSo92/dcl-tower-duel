@@ -74,7 +74,7 @@ export default class Game implements ISystem {
         this.world.quatNormalizeSkip = 0
         this.world.quatNormalizeFast = false
         this.world.gravity.set(0, -9.82, 0) // m/s²
-        loadColliders(this.world)
+        loadColliders(this.world, this.physicsMaterial)
         const ballContactMaterial = new CANNON.ContactMaterial(this.physicsMaterial, this.physicsMaterial, { friction: 1, restitution: 0.33 })
         this.world.addContactMaterial(ballContactMaterial)
 
