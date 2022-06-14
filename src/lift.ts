@@ -1,4 +1,4 @@
-import { MoveTransformComponent } from "@dcl/ecs-scene-utils";
+import { MoveTransformComponent, setTimeout } from "@dcl/ecs-scene-utils";
 import TowerDuel from "@/towerDuel";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
@@ -26,10 +26,10 @@ export default class Lift implements ISystem {
     hearts: LifeHearts
     staminaBar: StaminaBar
     numericalCounter: NumericalCounter
-    spell1cost: number = 3
+    spell1cost: number = 2
     spell2cost: number = 3
     spell2EffectDuration: number = 5000 // millisec
-    spell3cost: number = 3
+    spell3cost: number = 5
     spell3EffectDuration: number = 5000 // millisec
 
     constructor(inputs: Input, towerDuel: TowerDuel) {
@@ -145,10 +145,30 @@ export default class Lift implements ISystem {
         // button Spell 1
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_3, false, (e) => {
             log("Key 1 : Speed down spawn")
-            if (this.staminaBar.staminaCount - this.spell1cost >= 0 && this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive) {
+            if (this.staminaBar.staminaCount - this.spell1cost >= 0 && this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive && this.TowerDuel.currentBlocks.length > 4) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
-                // if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += .5
+                // ----------------------------------------------------------------------------------------------------- 20 - 19
+                const last3 = this.TowerDuel.currentBlocks.slice(-4)
+                last3.forEach(block => {
+                    block.Delete()
+                })
+                this.TowerDuel.blocks.splice(this.TowerDuel.blocks.length - 4, 4)
+                this.TowerDuel.currentBlocks.splice(this.TowerDuel.currentBlocks.length - 4, 4)
+
+                this.TowerDuel.currentBlock = this.TowerDuel.blocks[this.TowerDuel.blocks.length - 1]
+                this.TowerDuel.prevBlock = this.TowerDuel.blocks[this.TowerDuel.blocks.length - 2]
+                const newBLockTransform = this.TowerDuel.currentBlock.entity.getComponent(Transform)
+                this.TowerDuel.lastScale = newBLockTransform.scale
+                this.TowerDuel.lastPosition = newBLockTransform.position
+
+                this.TowerDuel.spawner?.upSpawner()
+                setTimeout(500, () => {
+                    this.TowerDuel.spawner?.spawnBlock()
+                })
+                // -----------------------------------------------------------------------------------------------------
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell1cost })
+            } else {
+                // sound cannot use spell
             }
         })
         // button Spell 2
@@ -164,6 +184,8 @@ export default class Lift implements ISystem {
                     if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed = oldSpeed
                 }))
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell2cost })
+            } else {
+                // sound cannot use spell
             }
         })
         // button Spell 3
@@ -179,6 +201,8 @@ export default class Lift implements ISystem {
                     if (this.TowerDuel.spawner?.spawningBlock) { this.TowerDuel.spawner.spawningBlock.marginError = oldMargin }
                 }))
                 this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell3cost })
+            } else {
+                // sound cannot use spell
             }
         })
 

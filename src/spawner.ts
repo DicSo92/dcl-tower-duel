@@ -81,7 +81,7 @@ export default class Spawner implements ISystem {
         }))
     }
 
-    private upSpawner() {
+    public upSpawner() {
         const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * this.TowerDuel.currentBlocks.length
         this.plane.addComponentOrReplace(new MoveTransformComponent(this.plane.getComponent(Transform).position, new Vector3(0, posY, 0), 0.25))
         this.spawnSpeed -= 0.01
@@ -194,7 +194,9 @@ export default class Spawner implements ISystem {
         let StartPos = new Vector3(startX, posY, startZ)
         let EndPos = new Vector3(endX, posY, endZ)
 
-        return new MoveTransformComponent(StartPos, EndPos, this.spawnSpeed)
+        return new MoveTransformComponent(StartPos, EndPos, this.spawnSpeed, () => {
+            this.TowerDuel.StopBlock()
+        })
     }
 
     private BuildEvents() {

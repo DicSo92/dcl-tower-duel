@@ -4,14 +4,16 @@ import TowerDuel from "@/towerDuel";
 export default class FallingBlocks implements ISystem {
     TowerDuel: TowerDuel
     towerBlockTransform: Transform
+    blockMaterial: Material
     offsetX: number
     offsetZ: number
     posX: number
     posZ: number
 
-    constructor(towerDuel: TowerDuel, towerBlockTransform: Transform, offsetX: number, offsetZ: number) {
+    constructor(towerDuel: TowerDuel, blockMaterial: Material, towerBlockTransform: Transform, offsetX: number, offsetZ: number) {
         this.TowerDuel = towerDuel
 
+        this.blockMaterial = blockMaterial
         this.towerBlockTransform = towerBlockTransform
         this.offsetX = offsetX
         this.offsetZ = offsetZ
@@ -30,7 +32,7 @@ export default class FallingBlocks implements ISystem {
             position: new Vector3(this.posX, this.towerBlockTransform.position.y, this.towerBlockTransform.position.z + this.offsetZ / 2),
             scale: new Vector3(Math.abs(this.offsetX), 0.4, this.towerBlockTransform.scale.z - Math.abs(this.offsetZ))
         })
-        const fallBlock = new FallingBlock(this.TowerDuel, transform)
+        const fallBlock = new FallingBlock(this.TowerDuel, this.blockMaterial, transform)
         this.TowerDuel.fallingBlocks.push(fallBlock)
     }
     private BuildBlockZ() {
@@ -38,7 +40,7 @@ export default class FallingBlocks implements ISystem {
             position: new Vector3(this.towerBlockTransform.position.x + this.offsetX / 2, this.towerBlockTransform.position.y, this.posZ),
             scale: new Vector3(this.towerBlockTransform.scale.x - Math.abs(this.offsetX), 0.4, Math.abs(this.offsetZ))
         })
-        const fallBlock = new FallingBlock(this.TowerDuel, transform)
+        const fallBlock = new FallingBlock(this.TowerDuel, this.blockMaterial, transform)
         this.TowerDuel.fallingBlocks.push(fallBlock)
     }
     private BuildBlockAngle() {
@@ -46,7 +48,7 @@ export default class FallingBlocks implements ISystem {
             position: new Vector3(this.posX, this.towerBlockTransform.position.y, this.posZ),
             scale: new Vector3(Math.abs(this.offsetX), 0.4, Math.abs(this.offsetZ))
         })
-        const fallBlock = new FallingBlock(this.TowerDuel, transform)
+        const fallBlock = new FallingBlock(this.TowerDuel, this.blockMaterial, transform)
         this.TowerDuel.fallingBlocks.push(fallBlock)
     }
 
