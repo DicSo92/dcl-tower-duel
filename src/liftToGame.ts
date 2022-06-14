@@ -19,18 +19,18 @@ export default class LiftToGame implements ISystem {
     liftMaxHeight: number = 25
     liftMoveDuration: number = 8
     isActive: boolean = false
-    radius: number = 1.5
+    radius: number = 1
     outOfLift: boolean = false
 
     constructor(parent: MainGame) {
         this.parent = parent
         if (this.parent.side === 'left') {
             this.centerPos = new Vector3(24, this.liftMaxHeight, 8)
-            this.startPos = new Vector3(24, 0, 24)
+            this.startPos = new Vector3(24, 0.1, 24)
             this.endPos = new Vector3(30, 3.3, 2)
         } else {
             this.centerPos = new Vector3(8, this.liftMaxHeight, 8)
-            this.startPos = new Vector3(8, 0, 24)
+            this.startPos = new Vector3(8, 0.1, 24)
             this.endPos = new Vector3(2, 3.3, 2)
         }
         this.lift = new Entity()

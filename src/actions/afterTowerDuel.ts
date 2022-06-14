@@ -68,7 +68,6 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
     hasFinished: boolean = false
     parent: MainGame
     counter: number = 5
-    prompt?: ui.OptionPrompt
 
     constructor(parent: MainGame) {
         this.parent = parent
@@ -76,26 +75,42 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
 
     onStart(): void {
         if (this.parent.TowerDuel?.lift?.numericalCounter.text.value) {
-            this.prompt = new ui.OptionPrompt(
-                'E',
-                `Your previous tower high : ${this.parent.TowerDuel?.lift.numericalCounter.text.value}\nDo you want to play again ?`,
-                () => {
+            if (this.parent.parent.prompt) {
+                this.parent.parent.prompt.title.value = "Result"
+                this.parent.parent.prompt.text.value = `Your previous tower high : ${this.parent.TowerDuel?.lift.numericalCounter.text.value}\nDo you want to play again ?`
+                this.parent.parent.prompt.onAccept = () => {
                     this.parent.messageBus.emit('newGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, this.parent.parent.user)
                     this.hasFinished = true
-                },
-                () => {
-                    this.prompt?.hide()
+                }
+                this.parent.parent.prompt.onReject = () => {
+                    this.parent.parent.prompt?.hide()
                     this.hasFinished = true
-                },
-                'Yes',
-                'No',
-                true
-            )
-        }
+                }
+                this.parent.parent.prompt.buttonELabel.value = 'Yes'
+                this.parent.parent.prompt.buttonFLabel.value = 'No'
+                this.parent.parent.prompt.show()
+            } else {
+                this.parent.parent.prompt = new ui.OptionPrompt(
+                    'Result',
+                    `Your previous tower high : ${this.parent.TowerDuel?.lift.numericalCounter.text.value}\nDo you want to play again ?`,
+                    () => {
+                        this.parent.messageBus.emit('newGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, this.parent.parent.user)
+                        this.hasFinished = true
+                    },
+                    () => {
+                        this.parent.parent.prompt?.hide()
+                        this.hasFinished = true
+                    },
+                    'Yes',
+                    'No',
+                    true
+                )
+            }
+}
     }
 
     onFinish(): void {
-        this.prompt?.hide()
+        this.parent.parent.prompt?.hide()
     }
 
     update(dt: number): void {
