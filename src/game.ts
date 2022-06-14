@@ -47,7 +47,7 @@ export default class Game implements ISystem {
         engine.addSystem(this.mainGame1)
 
         this.globalScene.addComponent(this.sceneAssets.soundLooseGame)
-        this.globalScene.addComponent(new GLTFShape('models/globalScene.glb'))
+        this.globalScene.addComponent(this.sceneAssets.globalScene)
         this.globalScene.addComponent(new Transform({
             position: new Vector3(16, 0, 16)
         }))
@@ -55,15 +55,20 @@ export default class Game implements ISystem {
         this.globalScene.addComponent(new Animator())
         const midTableAnimation = new AnimationState("MidTableAction", { layer: 0 })
         const tableDiamondAnimation = new AnimationState("TableDiamondAction", { layer: 1 })
+        const btnPlayTextAnimation = new AnimationState("BtnPlayTextAction", { layer: 2 })
+        const btnQueueTextAnimation = new AnimationState("BtnQueueTextAction", { layer: 3 })
         this.globalScene.getComponent(Animator).addClip(midTableAnimation)
         this.globalScene.getComponent(Animator).addClip(tableDiamondAnimation)
+        this.globalScene.getComponent(Animator).addClip(btnPlayTextAnimation)
+        this.globalScene.getComponent(Animator).addClip(btnQueueTextAnimation)
         midTableAnimation.play()
         tableDiamondAnimation.play()
+        btnPlayTextAnimation.play()
+        btnQueueTextAnimation.play()
         engine.addEntity(this.globalScene)
     }
 
     private SetupWorldConfig() {
-
         this.world.quatNormalizeSkip = 0
         this.world.quatNormalizeFast = false
         this.world.gravity.set(0, -9.82, 0) // m/s²
@@ -78,7 +83,6 @@ export default class Game implements ISystem {
         groundBody.addShape(new CANNON.Plane())
         groundBody.material = this.physicsMaterial
         this.world.addBody(groundBody)
-
     }
 
     private buildScene() {
