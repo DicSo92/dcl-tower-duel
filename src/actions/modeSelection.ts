@@ -15,8 +15,8 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
         log("SelectModeAction.")
         if (this.parent.side === "left") {
             this.prompt = new ui.OptionPrompt(
-                'Select your mode !',
-                'Would you play ?',
+                'Confirmation !',
+                'Would you start to play ?',
                 () => {
                     log(`Yes`)
                     movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8))
@@ -36,8 +36,8 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
             this.prompt?.hide()
         } else if (this.parent.side === "right") {
             this.prompt = new ui.OptionPrompt(
-                'Select your mode !',
-                'Would you play ?',
+                'Confirmation !',
+                'Would you start to play ?',
                 () => {
                     log(`Yes`)
                     movePlayerTo(new Vector3(8, .1, 24), new Vector3(8, 0, 8))

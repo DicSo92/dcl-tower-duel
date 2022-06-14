@@ -101,7 +101,7 @@ export default class LiftToGame implements ISystem {
 
     update(dt: number) {
         if (this.isActive && this.state !== 0) {
-            const userOutOfLiftY = Camera.instance.position.y < this.entity.getComponent(Transform).position.y - 10 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10
+            const userOutOfLiftY = Camera.instance.feetPosition.y < this.entity.getComponent(Transform).position.y - 1.5 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10
             if (userOutOfLiftY) {
                 movePlayerTo(this.state === 1 ? new Vector3(this.endPos.x, this.endPos.y + 3, this.endPos.z) : this.startPos, this.state === 1 ? this.startPos : new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z))
                 if (this.state === 1) {

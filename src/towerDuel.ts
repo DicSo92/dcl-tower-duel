@@ -5,6 +5,8 @@ import { FallingBlock } from "@/fallingBlock";
 import Spawner from "@/spawner";
 import MainGame from "./mainGame";
 import { GameAssets } from "@/assets";
+import * as utils from '@dcl/ecs-scene-utils'
+import * as ui from '@dcl/ui-scene-utils'
 
 export default class TowerDuel implements ISystem {
     physicsMaterial: CANNON.Material
@@ -83,7 +85,13 @@ export default class TowerDuel implements ISystem {
         this.spawner?.Delete()
         if(this.spawner) engine.removeSystem(this.spawner)
         this.mainGame.parent.globalScene.getComponent(AudioSource).playOnce()
-        this.mainGame.afterTowerDuel()
+        const gameOverResult = `GAME OVER
+        Your tower is ${this.lift?.numericalCounter.text.value} blocks high !`
+        ui.displayAnnouncement(gameOverResult, 5, Color4.Red(), 50, true)
+        utils.setTimeout(5000, () => {
+            ui.hideAnnouncements()
+            this.mainGame.afterTowerDuel()
+        })
     }
 
     public CleanEntities() {

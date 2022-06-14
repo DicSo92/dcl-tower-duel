@@ -89,7 +89,6 @@ export default class TowerBlock implements ISystem {
 
             this.TowerDuel.lift?.numericalCounter.setScore(this.TowerDuel.blocks.length)
 
-            // this.messageBus.emit("looseHeart_"+this.TowerDuel.towerDuelId, {})
             this.TowerDuel.lift?.hearts.decremLife()
             this.TowerDuel.lift?.hearts.entity.getComponent(AudioSource).playOnce()
         }
