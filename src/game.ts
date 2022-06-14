@@ -86,7 +86,7 @@ export default class Game implements ISystem {
     }
 
     private buildScene() {
-        this.lobbyScreen = new LobbyScreen(this, new Vector3(16, 1, 17))
+        this.lobbyScreen = new LobbyScreen(this, new Vector3(16, 1.5, 17))
         engine.addSystem(this.lobbyScreen)
 
         this.higherTower = new HigherTower(this)
