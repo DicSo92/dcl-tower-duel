@@ -20,7 +20,7 @@ export class CleanTowerDuelAction implements utils.ActionsSequenceSystem.IAction
         this.parent.TowerDuel?.lift?.Delete()
         if (this.parent.TowerDuel) {
             engine.removeSystem(this.parent.TowerDuel)
-                this.parent.TowerDuel = undefined
+            this.parent.TowerDuel = undefined
         }
         this.hasFinished = true
     }
@@ -48,7 +48,7 @@ export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
         this.liftToGame.lift.getComponent(AudioSource).playing = true
         this.liftToGame.goToPlay()
 
-        utils.setTimeout(100, () => {
+        utils.setTimeout(this.liftToGame.liftMoveDuration * 1000, () => {
             this.liftToGame.lift.getComponent(AudioSource).playing = false
             this.hasFinished = true
         })
