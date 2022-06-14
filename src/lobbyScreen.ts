@@ -168,17 +168,18 @@ export default class LobbyScreen implements ISystem {
             log('usersInGame', this.usersInQueue)
         })
         this.parent.messageBus.on('removeUserInGame_' + this.parent.user.realm, (data) => {
-            if (data) {
+            if (data.user) {
                 if (this.usersInGame.left.public_address === data.user.public_address) {
                     this.usersInGame.left.name = ""
                     this.usersInGame.left.public_address = ""
                     this.usersInGame.left.realm = ""
                 } else if (this.usersInGame.right.public_address === data.user.public_address) {
-                    this.usersInGame.left.name = ""
-                    this.usersInGame.left.public_address = ""
-                    this.usersInGame.left.realm = ""
+                    this.usersInGame.right.name = ""
+                    this.usersInGame.right.public_address = ""
+                    this.usersInGame.right.realm = ""
                 }
             }
+        this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
             log('usersInGame', this.usersInGame)
         })
         // this.parent.messageBus.on('addUsersInQueue', (users: IUser[], lastUpdate: number) => {
@@ -207,7 +208,7 @@ export default class LobbyScreen implements ISystem {
         //
         // -------------------------------------------------------
         // this.parent.messageBus.emit('addUserInQueue_' + this.parent.user.realm, { user: this.parent.user, date: Date.now() })
-        this.parent.messageBus.on('addUserInQueue_' + this.parent.user.realm, (data: { user: IUser }) => {
+        this.parent.messageBus.on('addUserInQueue_' + this.parent.user.realm + "_" + this.parent.user.public_address, (data: { user: IUser }) => {
             log("onAddUserInQueue", data.user)
             this.addUserInQueue(data.user)
             if (this.usersInGame.left.public_address === "" || this.usersInGame.right.public_address === "") {
@@ -234,11 +235,17 @@ export default class LobbyScreen implements ISystem {
                         this.parent.mainGame0?.gameApprovalSolo('gameApprovalSolo')
                         this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
                     })
-                } else if (rightCondition && this.parent.mainGame0?.isActiveSequence) {
+                    this.parent.messageBus.emit('addUserInGame_' + this.parent.user.realm, {
+                        user: this.parent.user, side: this.parent.mainGame0.side, lastUpdate: this.parent.lobbyScreen?.gameLastUpdate
+                    })
+                } else if (rightCondition && this.parent.mainGame1?.isActiveSequence) {
                     log('movePlayer in rightGameLift')
                     movePlayerTo(new Vector3(8, .1, 24), new Vector3(8, 0, 8)).then(() => {
                         this.parent.mainGame1?.gameApprovalSolo('gameApprovalSolo')
                         this.parent.mainGame1?.liftToGame.entity.getComponent(AudioSource).playOnce()
+                    })
+                    this.parent.messageBus.emit('addUserInGame_' + this.parent.user.realm, {
+                        user: this.parent.user, side: this.parent.mainGame1.side, lastUpdate: this.parent.lobbyScreen?.gameLastUpdate
                     })
                 }
             } else {
@@ -247,6 +254,7 @@ export default class LobbyScreen implements ISystem {
                 } else if (data.side === "right") {
                     this.parent.mainGame1?.stopSequence()
                 }
+                this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
             }
         })
         this.parent.messageBus.on('nextGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, () => {
@@ -448,7 +456,7 @@ export default class LobbyScreen implements ISystem {
             this.playBtn.getComponent(AudioSource).playOnce()
             if (this.parent.streamSource) this.parent.streamSource.getComponent(AudioStream).playing = false
             log('addUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
-            this.parent.messageBus.emit('addUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
+            this.parent.messageBus.emit('addUserInQueue_' + this.parent.user.realm + "_" + this.parent.user.public_address, { user: this.parent.user })
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
@@ -488,7 +496,6 @@ export default class LobbyScreen implements ISystem {
             }
         })
         this.updateQueueScreen()
-        // this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
     }
 
     updateQueueScreen() {
