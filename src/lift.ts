@@ -4,6 +4,7 @@ import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
 import * as utils from "@dcl/ecs-scene-utils";
+import { BackToLiftToGamePositionAction } from "./actions/afterTowerDuel";
 
 export default class Lift implements ISystem {
     TowerDuel: TowerDuel
@@ -189,8 +190,11 @@ export default class Lift implements ISystem {
         )
     }
 
-    reset() {
-        this.global.addComponentOrReplace(new MoveTransformComponent(this.global.getComponent(Transform).position, this.startPos, 1, () => { this.state = false }))
+    reset = async (parent: BackToLiftToGamePositionAction) => {
+        return this.global.addComponentOrReplace(new MoveTransformComponent(this.global.getComponent(Transform).position, this.startPos, 1, () => {
+            this.state = false
+            parent.hasFinished = true
+        }))
     }
 
     public Delete() {

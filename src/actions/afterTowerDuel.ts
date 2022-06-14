@@ -1,8 +1,28 @@
+import Lift from '@/lift'
 import LiftToGame from '@/liftToGame'
 import MainGame from '@/mainGame'
 import { publishScore } from '@/serverHandler'
 import * as utils from '@dcl/ecs-scene-utils'
 import * as ui from '@dcl/ui-scene-utils'
+
+export class BackToLiftToGamePositionAction implements utils.ActionsSequenceSystem.IAction {
+    hasFinished: boolean = false
+    lift?: Lift
+
+    constructor(lift?: Lift) {
+        this.lift = lift
+    }
+
+    onStart(): void {
+        log('BackToLiftToGamePosition')
+        this.lift?.reset(this)
+    }
+
+    update(dt: number): void {
+    }
+
+    onFinish(): void { }
+}
 
 export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
@@ -40,15 +60,11 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     onStart(): void {
         log('FinaliseTowerDuelAction')
         this.parent.isActive = false
-        this.parent.TowerDuel?.lift?.reset()
+        this.setScore()
         if (this.parent.parent.user.public_address) {
             this.parent.messageBus.emit('removeUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
         }
-        this.setScore()
-        utils.setTimeout(1000, () => {
-            if (this.parent.parent.streamSource) this.parent.parent.streamSource.getComponent(AudioStream).playing = true
-            this.hasFinished = true
-        })
+        this.parent.TowerDuel?.lift?.reset(this)
     }
 
     async setScore() {
@@ -61,7 +77,9 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
 
     update(dt: number): void { }
 
-    onFinish(): void { }
+    onFinish(): void {
+        if (this.parent.parent.streamSource) this.parent.parent.streamSource.getComponent(AudioStream).playing = true
+    }
 }
 
 export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction {

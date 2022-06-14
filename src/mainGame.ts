@@ -2,7 +2,7 @@ import TowerDuel from "@/towerDuel";
 import * as utils from "@dcl/ecs-scene-utils";
 import { GoToPlayAction, CleanTowerDuelAction } from "@/actions/gameApproval";
 import { LaunchSoloGameAction, StarterTimerAction } from "@/actions/launchGame";
-import { BackToLobbyAction, EndGameResultAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
+import { BackToLiftToGamePositionAction, BackToLobbyAction, EndGameResultAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
 import LiftToGame from "@/liftToGame";
 import { SelectModeAction } from "./actions/modeSelection";
 import Game from "./game";
@@ -113,6 +113,7 @@ export default class MainGame implements ISystem {
             }
             case "AfterTowerDuelSequence": {
                 this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                    .then(new BackToLiftToGamePositionAction(this.TowerDuel?.lift))
                     .then(new BackToLobbyAction(this.liftToGame))
                     .then(new FinaliseTowerDuelAction(this))
                     .then(new EndGameResultAction(this))
