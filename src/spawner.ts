@@ -194,7 +194,9 @@ export default class Spawner implements ISystem {
         let StartPos = new Vector3(startX, posY, startZ)
         let EndPos = new Vector3(endX, posY, endZ)
 
-        return new MoveTransformComponent(StartPos, EndPos, this.spawnSpeed)
+        return new MoveTransformComponent(StartPos, EndPos, this.spawnSpeed, () => {
+            this.TowerDuel.StopBlock()
+        })
     }
 
     private BuildEvents() {
