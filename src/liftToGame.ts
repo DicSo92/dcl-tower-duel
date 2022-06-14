@@ -1,5 +1,6 @@
 import * as utils from "@dcl/ecs-scene-utils";
 import { movePlayerTo } from "@decentraland/RestrictedActions";
+import { GoToPlayAction } from "./actions/gameApproval";
 import MainGame from "./mainGame";
 
 @Component("liftToGame")
@@ -39,7 +40,7 @@ export default class LiftToGame implements ISystem {
             position: new Vector3(0, 0.1, 0),
             scale: new Vector3(this.radius, 1, this.radius)
         }))
-        this.lift.addComponent(this.parent.parent.gameAssets.liftOpen)
+        this.lift.addComponent(this.parent.parent.gameAssets.liftToGame)
 
         this.startPath = [
             this.startPos,
@@ -68,13 +69,13 @@ export default class LiftToGame implements ISystem {
         engine.addEntity(this.entity)
     }
 
-    goToPlay() {
+    goToPlay = async (parent: GoToPlayAction) => {
         engine.addSystem(this)
         this.isActive = true
         this.state = 1
-        this.entity.addComponent(this.parent.parent.gameAssets.liftOpen)
+        this.entity.addComponent(this.parent.parent.gameAssets.liftToGame)
         this.entity.getComponent(GLTFShape).withCollisions = true
-        this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.startPath, this.liftMoveDuration, () => {
+        return this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.startPath, this.liftMoveDuration, () => {
             if (this.lift.getComponent(GLTFShape).visible !== false) {
                 this.lift.getComponent(GLTFShape).visible = false
                 this.entity.getComponent(GLTFShape).visible = false
@@ -82,7 +83,7 @@ export default class LiftToGame implements ISystem {
             this.state = 0
             this.isActive = false
             engine.removeSystem(this)
-            return 
+            parent.hasFinished = true
         }))
     }
 
@@ -100,25 +101,25 @@ export default class LiftToGame implements ISystem {
     }
 
     update(dt: number) {
-        if (this.isActive && this.state !== 0) {
-            const userOutOfLiftY = Camera.instance.feetPosition.y < this.entity.getComponent(Transform).position.y - 1.5 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10
-            if (userOutOfLiftY) {
-                movePlayerTo(this.state === 1 ? new Vector3(this.endPos.x, this.endPos.y + 3, this.endPos.z) : this.startPos, this.state === 1 ? this.startPos : new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z))
-                if (this.state === 1) {
-                    if (this.lift.getComponent(GLTFShape).visible !== false) {
-                        this.lift.getComponent(GLTFShape).visible = false
-                        this.entity.getComponent(GLTFShape).visible = false
-                    }
-                    this.state = 0
-                    this.isActive = false
-                    engine.removeSystem(this)
-                } else if (this.state === -1) {
-                    this.isActive = false
-                    this.state = 0
-                    this.entity.removeComponent(GLTFShape)
-                    engine.removeSystem(this)
-                }
-            }
-        }
+    //     if (this.isActive && this.state !== 0) {
+    //         const userOutOfLiftY = Camera.instance.feetPosition.y < this.entity.getComponent(Transform).position.y - 1.5 || Camera.instance.position.y > this.entity.getComponent(Transform).position.y + 10
+    //         if (userOutOfLiftY) {
+    //             movePlayerTo(this.state === 1 ? new Vector3(this.endPos.x, this.endPos.y + 3, this.endPos.z) : this.startPos, this.state === 1 ? this.startPos : new Vector3(this.endPos.x, this.endPos.y + 1.4, this.endPos.z))
+    //             if (this.state === 1) {
+    //                 if (this.lift.getComponent(GLTFShape).visible !== false) {
+    //                     this.lift.getComponent(GLTFShape).visible = false
+    //                     this.entity.getComponent(GLTFShape).visible = false
+    //                 }
+    //                 this.state = 0
+    //                 this.isActive = false
+    //                 engine.removeSystem(this)
+    //             } else if (this.state === -1) {
+    //                 this.isActive = false
+    //                 this.state = 0
+    //                 this.entity.removeComponent(GLTFShape)
+    //                 engine.removeSystem(this)
+    //             }
+    //         }
+    //     }
     }
 }
