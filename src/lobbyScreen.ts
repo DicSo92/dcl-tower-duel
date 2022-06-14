@@ -1,4 +1,5 @@
 import {
+    InterpolationType,
     MoveTransformComponent,
     ScaleTransformComponent,
     ToggleComponent,
@@ -69,7 +70,7 @@ export default class LobbyScreen implements ISystem {
         this.BuildBorders()
         this.BuildButtons()
         this.BuildToggleEvent()
-        this.setTitleText(this.queueScale, this.queueTitle)
+        this.setTitleText(this.rulesScale, this.rulesTitle)
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -216,7 +217,7 @@ export default class LobbyScreen implements ISystem {
     }
     // -----------------------------------------------------------------------------------------------------------------
     private BuildToggleEvent = () => {
-        this.container.addComponent(new ToggleComponent(ToggleState.On, (value: ToggleState) => {
+        this.container.addComponent(new ToggleComponent(ToggleState.Off, (value: ToggleState) => {
             const newScale = value ? this.queueScale : this.rulesScale
 
             this.title.getComponent(TextShape).opacity = 0
@@ -228,29 +229,32 @@ export default class LobbyScreen implements ISystem {
                 titleText.fontSize = newScale === this.queueScale ? 2 : 1
                 this.title.addComponentOrReplace(titleText)
                 this.title.getComponent(Transform).position = this.titlePosition(newScale)
-            }))
-            this.screen.addComponentOrReplace(new MoveTransformComponent(this.screen.getComponent(Transform).position, new Vector3(0, newScale.y / 2, 0), this.animationDuration))
+            }, InterpolationType.EASEELASTIC))
+            this.screen.addComponentOrReplace(new MoveTransformComponent(this.screen.getComponent(Transform).position, new Vector3(0, newScale.y / 2, 0), this.animationDuration, () => {}, InterpolationType.EASEELASTIC))
 
             this.borderTopLeft?.addComponentOrReplace(new MoveTransformComponent(
                 this.borderTopLeft?.getComponent(Transform).position,
                 this.positionTopLeft(newScale),
-                this.animationDuration
+                this.animationDuration,
+                () => {}, InterpolationType.EASEELASTIC
             ))
             this.borderTopRight?.addComponentOrReplace(new MoveTransformComponent(
                 this.borderTopRight?.getComponent(Transform).position,
                 this.positionTopRight(newScale),
-                this.animationDuration
-
+                this.animationDuration,
+                () => {}, InterpolationType.EASEELASTIC
             ))
             this.borderBotLeft?.addComponentOrReplace(new MoveTransformComponent(
                 this.borderBotLeft?.getComponent(Transform).position,
                 this.positionBotLeft(newScale),
-                this.animationDuration
+                this.animationDuration,
+                () => {}, InterpolationType.EASEELASTIC
             ))
             this.borderBotRight?.addComponentOrReplace(new MoveTransformComponent(
                 this.borderBotRight?.getComponent(Transform).position,
                 this.positionBotRight(newScale),
-                this.animationDuration
+                this.animationDuration,
+                () => {}, InterpolationType.EASEELASTIC
             ))
         }))
     }
@@ -302,8 +306,8 @@ export default class LobbyScreen implements ISystem {
     BuildScreen = () => {
         this.screen.addComponentOrReplace(new BoxShape())
         this.screen.addComponentOrReplace(new Transform({
-            position: new Vector3(0, this.queueScale.y / 2, 0),
-            scale: this.queueScale
+            position: new Vector3(0, this.rulesScale.y / 2, 0),
+            scale: this.rulesScale
         }))
         const screenMaterial = new Material()
         screenMaterial.albedoColor = new Color4(0.65, 0.90, 0.95, 0.4)
@@ -314,13 +318,13 @@ export default class LobbyScreen implements ISystem {
     }
     // -----------------------------------------------------------------------------------------------------------------
     BuildBorders = () => {
-        this.borderTopLeft = new LobbyScreenBorder(this, this.messageBus, this.positionTopLeft(this.queueScale), new Vector3(0, -90, 0))
+        this.borderTopLeft = new LobbyScreenBorder(this, this.messageBus, this.positionTopLeft(this.rulesScale), new Vector3(0, -90, 0))
         // -----------------------------------------
-        this.borderTopRight = new LobbyScreenBorder(this, this.messageBus, this.positionTopRight(this.queueScale), new Vector3(0, 90, 0))
+        this.borderTopRight = new LobbyScreenBorder(this, this.messageBus, this.positionTopRight(this.rulesScale), new Vector3(0, 90, 0))
         // -----------------------------------------
-        this.borderBotLeft = new LobbyScreenBorder(this, this.messageBus, this.positionBotLeft(this.queueScale), new Vector3(0, -90, -180))
+        this.borderBotLeft = new LobbyScreenBorder(this, this.messageBus, this.positionBotLeft(this.rulesScale), new Vector3(0, -90, -180))
         // -----------------------------------------
-        this.borderBotRight = new LobbyScreenBorder(this, this.messageBus, this.positionBotRight(this.queueScale), new Vector3(0, 90, 180))
+        this.borderBotRight = new LobbyScreenBorder(this, this.messageBus, this.positionBotRight(this.rulesScale), new Vector3(0, 90, 180))
     }
     // -----------------------------------------------------------------------------------------------------------------
     BuildButtons = () => {
@@ -330,7 +334,7 @@ export default class LobbyScreen implements ISystem {
         this.queueBtn.addComponent(this.parent.sceneAssets.soundValide)
         this.queueBtn.addComponent(new BoxShape())
         this.queueBtn.addComponent(new Transform({
-            position: new Vector3(-0.6, 0.4, 0.9),
+            position: new Vector3(-0.6, -0.1, 0.9),
             scale: new Vector3(1.1, 0.5, 0.2)
         }))
         this.queueBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(-25, 0, 0)
@@ -355,7 +359,7 @@ export default class LobbyScreen implements ISystem {
 
         this.playBtn.addComponent(new BoxShape())
         this.playBtn.addComponent(new Transform({
-            position: new Vector3(0.6, 0.4, 0.9),
+            position: new Vector3(0.6, -0.1, 0.9),
             scale: new Vector3(1.1, 0.5, 0.2)
         }))
         this.playBtn.getComponent(Transform).rotation.eulerAngles = new Vector3(-25, 0, 0)
