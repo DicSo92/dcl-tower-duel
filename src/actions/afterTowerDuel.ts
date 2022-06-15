@@ -62,6 +62,10 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
         this.setScore().then(() => {
             if (this.parent.parent.user.public_address) {
                 this.parent.parent.messageBus.emit('removeUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
+
+                if (this.parent.parent.lobbyScreen?.usersInQueue.length) {
+                    this.parent.parent.messageBus.emit('nextGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.lobbyScreen?.usersInQueue[0].public_address, {})
+                }
             }
             this.parent.TowerDuel?.lift?.reset(this)
         })
@@ -101,6 +105,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
                 this.prompt.text.value = `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`
                 this.prompt.onAccept = () => {
                     this.parent.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
+                    this.prompt?.hide()
                     this.hasFinished = true
                 }
                 this.prompt.onReject = () => {
@@ -118,6 +123,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
                     `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`,
                     () => {
                         this.parent.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
+                        this.parent.parent.prompt?.hide()
                         this.hasFinished = true
                     },
                     () => {
@@ -135,7 +141,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
     }
 
     onFinish(): void {
-        this.parent.parent.prompt?.hide()
+        // this.prompt?.hide()
     }
 
     update(dt: number): void {

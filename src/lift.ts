@@ -216,7 +216,7 @@ export default class Lift implements ISystem {
     }
 
     public autoMove() {
-        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (this.TowerDuel.currentBlocks.length + 1)
+        const posY = this.minPosY / 3 + this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (this.TowerDuel.currentBlocks.length)
         const currentLiftPosition = this.global.getComponent(Transform).position
         this.global.addComponentOrReplace(new MoveTransformComponent(
             currentLiftPosition,
