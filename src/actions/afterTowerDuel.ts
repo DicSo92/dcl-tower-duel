@@ -59,12 +59,13 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     onStart(): void {
         log('FinaliseTowerDuelAction')
         this.parent.isActive = false
-        this.setScore()
-        if (this.parent.parent.user.public_address) {
-            this.parent.parent.messageBus.emit('removeUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
-            this.parent.parent.messageBus.emit('nextGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.lobbyScreen?.usersInQueue[0].public_address, {})
-        }
-        this.parent.TowerDuel?.lift?.reset(this)
+        this.setScore().then(() => {
+            if (this.parent.parent.user.public_address) {
+                this.parent.parent.messageBus.emit('removeUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
+                this.parent.parent.messageBus.emit('nextGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.lobbyScreen?.usersInQueue[0].public_address, {})
+            }
+            this.parent.TowerDuel?.lift?.reset(this)
+        })
     }
 
     async setScore() {

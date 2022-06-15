@@ -9,7 +9,10 @@ Game made for the Decentraland GamJam 2022.
 Build the biggest tower by staking block in top of each other and try to
 beat the top score in the world.
 
-
+### ⚠️ Multiplayer
+```
+Be aware, multiplayer can be laggy and you can exprerience fatal issue, in case, reload the scene.
+```
 
 ## Demo
 
