@@ -13,7 +13,9 @@
       "@dcl/decentraland-ecs-utils": [
         "node_modules\\decentraland-ecs-utils\\index.d.ts"
       ],
-      "dclconnect": ["node_modules\\dclconnect\\dist\\index.d.ts"],
+      "@dcl/ui-scene-utils": [
+        "node_modules\\@dcl\\ui-scene-utils\\dist\\index.d.ts"
+      ],
       "@/*": [
         "src/*"
       ],
@@ -32,9 +34,11 @@
     "dom.iterable"
   ],
   "include": [
-    "src/**/*.ts",
-    "./node_modules/@dcl/ecs-scene-utils/dist/index.js",
-    "./node_modules/dclconnect/dist/index.js"
+    "src/**/*.ts"
+    // dont put anything here (getUserData issue)
+  ],
+  "files": [
+    "node_modules/cannon/build/cannon.min.js"
   ],
   "extends": "./node_modules/decentraland-ecs/types/tsconfig.json",
   "compileOnSave": false

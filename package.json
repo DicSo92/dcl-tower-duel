@@ -12,17 +12,19 @@
   },
   "devDependencies": {
     "@types/node": "^16.11.14",
-    "decentraland-ecs": "latest",
+    "decentraland-ecs": "^6.11.1",
     "decentraland-ecs-utils": "^1.5.2"
   },
   "dependencies": {
     "@dcl/ecs-scene-utils": "^1.7.5",
+    "@dcl/ui-scene-utils": "^1.8.3",
     "@types/axios": "^0.14.0",
     "axios": "^0.24.0",
+    "cannon": "github:schteppe/cannon.js",
     "socket.io": "^4.4.0"
   },
   "bundledDependencies": [
     "@dcl/ecs-scene-utils",
-    "dclconnect"
+    "@dcl/ui-scene-utils"
   ]
 }

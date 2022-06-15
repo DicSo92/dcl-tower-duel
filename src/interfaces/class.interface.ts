@@ -1,6 +1,5 @@
-export interface ITowerDuel {
-    messageBus: MessageBus
-    blockCount: number
-
-    update?(dt: number): void
+export interface IUser {
+    public_address: string,
+    name: string,
+    realm?: string
 }
