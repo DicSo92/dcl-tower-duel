@@ -419,6 +419,7 @@ export default class LobbyScreen implements ISystem {
         this.queueTitle = `---- QUEUE ----\n${usersNames.join('\n')}`
         log("this.queueTitle", this.queueTitle)
 
+        this.setTitleText(this.queueScale, this.queueTitle)
         if (!this.container.getComponent(ToggleComponent).isOn()) {
             this.container.getComponent(ToggleComponent).toggle()
         }
