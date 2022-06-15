@@ -33,6 +33,8 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
             this.parent.parent.prompt.buttonELabel.value = 'Yes'
             this.parent.parent.prompt.buttonFLabel.value = 'No'
             this.parent.parent.prompt.show()
+            this.parent.parent.prompt.closeIcon.height = 0
+            this.parent.parent.prompt.closeIcon.width = 0
         } else {
             log("New prompt")
             this.parent.parent.prompt = new ui.OptionPrompt(
@@ -54,6 +56,8 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
                 'No',
                 true
             )
+            this.parent.parent.prompt.closeIcon.height = 0
+            this.parent.parent.prompt.closeIcon.width = 0
         }
     }
 
