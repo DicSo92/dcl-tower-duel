@@ -2,10 +2,10 @@ import Lift from '@/lift'
 import LiftToGame from '@/liftToGame'
 import MainGame from '@/mainGame'
 import { publishScore } from '@/serverHandler'
-import * as utils from '@dcl/ecs-scene-utils'
-import * as ui from '@dcl/ui-scene-utils'
+import { ActionsSequenceSystem, setTimeout } from '@dcl/ecs-scene-utils'
+import { OptionPrompt } from '@dcl/ui-scene-utils'
 
-export class BackToLiftToGamePositionAction implements utils.ActionsSequenceSystem.IAction {
+export class BackToLiftToGamePositionAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     lift?: Lift
 
@@ -24,7 +24,7 @@ export class BackToLiftToGamePositionAction implements utils.ActionsSequenceSyst
     onFinish(): void { }
 }
 
-export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
+export class BackToLobbyAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     liftToGame: LiftToGame
 
@@ -37,7 +37,7 @@ export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
         this.hasFinished = false
         this.liftToGame.lift.getComponent(AudioSource).playing = true
 
-        utils.setTimeout(1000, () => {
+        setTimeout(1000, () => {
             this.liftToGame.goToLobby(this)
         })
     }
@@ -48,7 +48,7 @@ export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
     onFinish(): void { }
 }
 
-export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAction {
+export class FinaliseTowerDuelAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
 
@@ -85,11 +85,11 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     }
 }
 
-export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction {
+export class EndGameResultAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
     counter: number = 5
-    prompt?: ui.OptionPrompt
+    prompt?: OptionPrompt
 
     constructor(parent: MainGame) {
         this.parent = parent
@@ -118,7 +118,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
                 this.prompt.closeIcon.width = 0
                 this.prompt.show()
             } else {
-                this.prompt = new ui.OptionPrompt(
+                this.prompt = new OptionPrompt(
                     'Result',
                     `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`,
                     () => {

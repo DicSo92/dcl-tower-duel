@@ -1,11 +1,9 @@
-// import { , ITowerDuel } from '@/interfaces/class.interface'
 import LiftToGame from '@/liftToGame'
 import MainGame from '@/mainGame'
-import * as utils from '@dcl/ecs-scene-utils'
-import { movePlayerTo } from '@decentraland/RestrictedActions'
+import { ActionsSequenceSystem, setTimeout } from '@dcl/ecs-scene-utils'
 
 //Use IAction to define action for movement
-export class CleanTowerDuelAction implements utils.ActionsSequenceSystem.IAction {
+export class CleanTowerDuelAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
 
@@ -34,7 +32,7 @@ export class CleanTowerDuelAction implements utils.ActionsSequenceSystem.IAction
 }
 
 //Use IAction to define action for movement
-export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
+export class GoToPlayAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     liftToGame: LiftToGame
 
@@ -47,18 +45,18 @@ export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
         this.hasFinished = false
         this.liftToGame.lift.getComponent(AudioSource).audioClip.loop = true
         this.liftToGame.lift.getComponent(AudioSource).playing = true
-        utils.setTimeout(1000, () => {
+        setTimeout(1000, () => {
             this.liftToGame.goToPlay(this)
         })
     }
     //Method to run on every frame
     update(dt: number): void { }
     //Method to run at the end
-    onFinish(): void {}
+    onFinish(): void { }
 }
 
 //Use IAction to define action for movement
-export class CleanAvatarsAction implements utils.ActionsSequenceSystem.IAction {
+export class CleanAvatarsAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
 
@@ -82,7 +80,7 @@ export class CleanAvatarsAction implements utils.ActionsSequenceSystem.IAction {
             })
         )
         engine.addEntity(modifierArea)
-        utils.setTimeout(1000, () => {
+        setTimeout(1000, () => {
             this.hasFinished = true
             this.parent.launchGame()
         })

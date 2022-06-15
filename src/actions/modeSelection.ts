@@ -1,14 +1,12 @@
-import Game from '@/game'
 import MainGame from '@/mainGame'
-import * as utils from '@dcl/ecs-scene-utils'
-import * as ui from '@dcl/ui-scene-utils'
-import { movePlayerTo } from '@decentraland/RestrictedActions'
+import { ActionsSequenceSystem } from '@dcl/ecs-scene-utils'
+import { OptionPrompt } from '@dcl/ui-scene-utils'
 
 //Use IAction to define action for movement
-export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
+export class SelectModeAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
-    prompt?: ui.OptionPrompt
+    prompt?: OptionPrompt
 
     constructor(parent: MainGame) {
         this.parent = parent
@@ -39,7 +37,7 @@ export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
             this.prompt.show()
         } else {
             log("New prompt")
-            this.prompt = new ui.OptionPrompt(
+            this.prompt = new OptionPrompt(
                 'Confirmation !',
                 'Would you start to play ?',
                 () => {

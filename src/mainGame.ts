@@ -1,5 +1,5 @@
 import TowerDuel from "@/towerDuel";
-import * as utils from "@dcl/ecs-scene-utils";
+import { ActionsSequenceSystem } from "@dcl/ecs-scene-utils";
 import { GoToPlayAction, CleanTowerDuelAction } from "@/actions/gameApproval";
 import { LaunchSoloGameAction, StarterTimerAction } from "@/actions/launchGame";
 import { BackToLiftToGamePositionAction, BackToLobbyAction, EndGameResultAction, FinaliseTowerDuelAction } from "@/actions/afterTowerDuel";
@@ -18,8 +18,8 @@ export default class MainGame implements ISystem {
     isActiveSequence: boolean = false
     parent: Game;
     side: string
-    gameSequence?: utils.ActionsSequenceSystem.SequenceBuilder;
-    gameSequenceSystem?: utils.ActionsSequenceSystem;
+    gameSequence?: ActionsSequenceSystem.SequenceBuilder;
+    gameSequenceSystem?: ActionsSequenceSystem;
 
     constructor(cannonMaterial: CANNON.Material, world: CANNON.World, parent: Game, side: string) {
         this.physicsMaterial = cannonMaterial
@@ -82,24 +82,24 @@ export default class MainGame implements ISystem {
     private addSequence(type: string) {
         switch (type) {
             case "modeSelection": {
-                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new ActionsSequenceSystem.SequenceBuilder()
                     .then(new SelectModeAction(this))
                 break;
             }
             case "gameApprovalSolo": {
-                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new ActionsSequenceSystem.SequenceBuilder()
                     .then(new GoToPlayAction(this.liftToGame))
                     .then(new CleanTowerDuelAction(this))
                 break;
             }
             case "launchGame": {
-                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new ActionsSequenceSystem.SequenceBuilder()
                     .then(new LaunchSoloGameAction(this, this.physicsMaterial, this.world))
                     .then(new StarterTimerAction(this, this.physicsMaterial, this.world))
                 break;
             }
             case "AfterTowerDuelSequence": {
-                this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
+                this.gameSequence = new ActionsSequenceSystem.SequenceBuilder()
                     .then(new BackToLiftToGamePositionAction(this.TowerDuel?.lift))
                     .then(new BackToLobbyAction(this.liftToGame))
                     .then(new FinaliseTowerDuelAction(this))
@@ -108,7 +108,7 @@ export default class MainGame implements ISystem {
             }
         }
         if (this.gameSequence) {
-            this.gameSequenceSystem = new utils.ActionsSequenceSystem(this.gameSequence)
+            this.gameSequenceSystem = new ActionsSequenceSystem(this.gameSequence)
             engine.addSystem(this.gameSequenceSystem)
         }
     }

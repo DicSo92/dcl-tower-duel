@@ -1,5 +1,5 @@
 import Game from "./game";
-import {map} from "@dcl/ecs-scene-utils";
+import { map } from "@dcl/ecs-scene-utils";
 
 export default class HigherTower implements ISystem {
     parent: Game
