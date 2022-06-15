@@ -3,7 +3,8 @@ import {
     MoveTransformComponent,
     ScaleTransformComponent,
     ToggleComponent,
-    ToggleState
+    ToggleState,
+    setTimeout
 } from "@dcl/ecs-scene-utils";
 import Game from "./game";
 import { getUserData } from "@decentraland/Identity"
@@ -11,7 +12,6 @@ import { movePlayerTo } from "@decentraland/RestrictedActions";
 import { IUser } from "./interfaces/class.interface";
 import LobbyScreenBorder from "@/lobbyScreenBorder";
 import { getCurrentRealm } from "@decentraland/EnvironmentAPI";
-import * as utils from "@dcl/ecs-scene-utils";
 
 export default class LobbyScreen implements ISystem {
     parent: Game
@@ -67,7 +67,7 @@ export default class LobbyScreen implements ISystem {
     // -----------------------------------------------------------------------------------------------------------------
     private BuildEvents() {
         // -------------------------------------------------------
-        utils.setTimeout(500, () => {
+        setTimeout(500, () => {
             this.parent.messageBus.on('setData_' + this.parent.user.public_address, (data: { usersInQueue: IUser[], usersInGame: { left: IUser, right: IUser }, lastUpdate: number }) => {
                 if (!this.gameLastUpdate || this.gameLastUpdate < data.lastUpdate) {
                     this.usersInQueue = data.usersInQueue
