@@ -134,10 +134,10 @@ export default class LobbyScreen implements ISystem {
             const rightCondition = this.usersInGame.right.public_address === ""
             log("rightCondition", rightCondition)
             if (!data.result && !data.side) {
-                if (leftCondition && !this.parent.mainGame0?.isActiveSequence) {
+                if (leftCondition && !this.parent.mainGame0?.isActiveSequence && !this.parent.mainGame0?.isActive) {
                     log('left')
                     this.parent.mainGame0?.modeSelection()
-                } else if (rightCondition && !this.parent.mainGame1?.isActiveSequence) {
+                } else if (rightCondition && !this.parent.mainGame1?.isActiveSequence && !this.parent.mainGame1?.isActive) {
                     log('right')
                     this.parent.mainGame1?.modeSelection()
                 }
