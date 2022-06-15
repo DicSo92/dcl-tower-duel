@@ -10,7 +10,6 @@ import Game from "./game";
 export default class MainGame implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
-    messageBus: MessageBus
 
     TowerDuel?: TowerDuel// TowerDuel
     liftToGame: LiftToGame
@@ -22,15 +21,12 @@ export default class MainGame implements ISystem {
     gameSequence?: utils.ActionsSequenceSystem.SequenceBuilder;
     gameSequenceSystem?: utils.ActionsSequenceSystem;
 
-    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, parent: Game, messageBus: MessageBus, side: string) {
+    constructor(cannonMaterial: CANNON.Material, world: CANNON.World, parent: Game, side: string) {
         this.physicsMaterial = cannonMaterial
         this.world = world
         this.parent = parent
-        this.messageBus = messageBus
         this.side = side
         this.liftToGame = new LiftToGame(this)
-
-        // Actions
 
         this.Init();
     }
@@ -43,34 +39,29 @@ export default class MainGame implements ISystem {
     }
 
     public modeSelection() {
-        log('modeSelection')
         !this.isActiveSequence ? this.isActiveSequence = true : false
         this.addSequence('modeSelection')
     }
 
     public gameApprovalSolo(type: string) {
-        log('gameApproval')
         this.isActive = true
         !this.isActiveSequence ? this.isActiveSequence = true : false
         this.addSequence('gameApprovalSolo')
     }
 
     public gameApprovalMulti() {
-        log('gameApproval')
         !this.isActive ? this.isActive = true :
             !this.isActiveSequence ? this.isActiveSequence = true : false
         this.addSequence('gameApprovalMulti')
     }
 
     public launchGame() {
-        log('launchGame')
         !this.isActive ? this.isActive = true :
             !this.isActiveSequence ? this.isActiveSequence = true : false
         this.addSequence('launchGame')
     }
 
     public afterTowerDuel() {
-        log('afterTowerDuel')
         this.isActive ? this.isActive = false : true
         !this.isActiveSequence ? this.isActiveSequence = true : false
         this.addSequence('AfterTowerDuelSequence')
@@ -79,10 +70,6 @@ export default class MainGame implements ISystem {
     public stopSequence() {
         this.isActiveSequence = false
         this.gameSequenceSystem?.stop()
-        let queue = this.parent.lobbyScreen?.usersInQueue
-        if (queue && queue.filter(item => item.public_address === this.parent.user.public_address)) {
-            this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
-        }
         if (this.gameSequenceSystem) {
             engine.removeSystem(this.gameSequenceSystem)
             this.gameSequenceSystem = undefined
@@ -123,12 +110,9 @@ export default class MainGame implements ISystem {
         }
         if (this.gameSequence) {
             this.gameSequenceSystem = new utils.ActionsSequenceSystem(this.gameSequence)
-            // actionSystem.setOnFinishCallback(() => { })
             engine.addSystem(this.gameSequenceSystem) 
         }
     }
 
-    update(dt: number) {
-        // log("Update", dt)
-    }
+    update(dt: number) { }
 }

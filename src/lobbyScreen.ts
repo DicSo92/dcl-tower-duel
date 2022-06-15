@@ -80,14 +80,8 @@ export default class LobbyScreen implements ISystem {
         })
         // -------------------------------------------------------
         onLeaveSceneObservable.add((player) => {
-            if (player.userId === this.usersInGame.left.public_address) {
-                this.usersInGame.left.public_address === ""
-                this.usersInGame.left.name === ""
-                this.usersInGame.left.realm === ""
-            } else if (player.userId === this.usersInGame.right.public_address) {
-                this.usersInGame.right.public_address === ""
-                this.usersInGame.right.name === ""
-                this.usersInGame.right.realm === ""
+            if (player.userId === (this.usersInGame.left.public_address || this.usersInGame.right.public_address)) {
+                this.parent.messageBus.emit('removeUserInGame_' + this.parent.user.realm, { user: { public_address: player.userId } })
             } else if (this.usersInQueue.filter(item => item.public_address === player.userId)) {
                 this.usersInQueue.splice(this.usersInQueue.indexOf(this.usersInQueue.filter(item => item.public_address === player.userId)[0]), 1)
             }
@@ -110,8 +104,9 @@ export default class LobbyScreen implements ISystem {
             }
         })
         // -------------------------------------------------------
-        this.parent.messageBus.on('removeUserInQueue_' + this.parent.user.realm, (data) => {
-            if (data) {
+        this.parent.messageBus.on('removeUserInQueue_' + this.parent.user.realm, (data: { user: IUser }) => {
+            log("onRemovePlayer")
+            if (data.user) {
                 this.removeUserInQueue(data.user)
             }
         })
@@ -122,10 +117,10 @@ export default class LobbyScreen implements ISystem {
             this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
         })
         // -------------------------------------------------------
-        this.parent.messageBus.on('addUserInQueue_' + this.parent.user.realm + "_" + this.parent.user.public_address, (data: { user: IUser }) => {
+        this.parent.messageBus.on('addUserInQueue_' + this.parent.user.realm, (data: { user: IUser }) => {
             log("onAddUserInQueue", data.user)
             this.addUserInQueue(data.user)
-            if (this.usersInGame.left.public_address === "" || this.usersInGame.right.public_address === "") {
+            if (data.user === this.parent.user && this.usersInGame.left.public_address === "" || this.usersInGame.right.public_address === "") {
                 this.parent.messageBus.emit('confirmationNewGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, {})
             }
         })
@@ -151,6 +146,7 @@ export default class LobbyScreen implements ISystem {
                     this.parent.messageBus.emit('addUserInGame_' + this.parent.user.realm, {
                         user: this.parent.user, side: this.parent.mainGame0.side, lastUpdate: this.parent.lobbyScreen?.gameLastUpdate
                     })
+                    this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
                 } else if (rightCondition && this.parent.mainGame1?.isActiveSequence) {
                     movePlayerTo(new Vector3(8, .1, 24), new Vector3(8, 0, 8)).then(() => {
                         this.parent.mainGame1?.gameApprovalSolo('gameApprovalSolo')
@@ -159,14 +155,18 @@ export default class LobbyScreen implements ISystem {
                     this.parent.messageBus.emit('addUserInGame_' + this.parent.user.realm, {
                         user: this.parent.user, side: this.parent.mainGame1.side, lastUpdate: this.parent.lobbyScreen?.gameLastUpdate
                     })
+                    this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
                 }
             } else {
                 if (data.side === "left") {
                     this.parent.mainGame0?.stopSequence()
+                    this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
                 } else if (data.side === "right") {
                     this.parent.mainGame1?.stopSequence()
+                    this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
                 }
-                this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
+                this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
+                this.usersInQueue.length ? this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {}) : ''
             }
         })
         this.parent.messageBus.on('nextGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, () => {
@@ -355,7 +355,9 @@ export default class LobbyScreen implements ISystem {
             this.parent.globalScene.getComponent(Animator).getClip('BtnPlayBorderAction').play()
             this.playBtn.getComponent(AudioSource).playOnce()
             if (this.parent.streamSource) this.parent.streamSource.getComponent(AudioStream).playing = false
-            this.parent.messageBus.emit('addUserInQueue_' + this.parent.user.realm + "_" + this.parent.user.public_address, { user: this.parent.user })
+            if (this.parent.user !== (this.usersInGame.left || this.usersInGame.right)){
+                this.parent.messageBus.emit('addUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
+            }
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
@@ -393,10 +395,14 @@ export default class LobbyScreen implements ISystem {
     }
 
     removeUserInQueue(user: IUser) {
+        log("removeUserInQueue")
         const condition = (item: IUser) => { return item.public_address === user.public_address && item.name === user.name }
         this.usersInQueue.forEach(element => {
             if (condition(element)) {
+                log("removeUserInQueue", element, user)
+                log("this.usersInQueue before removing user", this.usersInQueue)
                 this.usersInQueue.splice(this.usersInQueue.indexOf(element), 1)
+                log("this.usersInQueue before removing user", this.usersInQueue)
             }
         })
         this.updateQueueScreen()
@@ -407,7 +413,11 @@ export default class LobbyScreen implements ISystem {
         this.usersInQueue.forEach(element => {
             usersNames.push(element.name)
         });
+        log("updateQueueScreen")
+        log("this.usersInQueue", this.usersInQueue)
+        log("usersNames", usersNames)
         this.queueTitle = `---- QUEUE ----\n${usersNames.join('\n')}`
+        log("this.queueTitle", this.queueTitle)
 
         if (!this.container.getComponent(ToggleComponent).isOn()) {
             this.container.getComponent(ToggleComponent).toggle()

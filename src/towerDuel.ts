@@ -12,7 +12,6 @@ export default class TowerDuel implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     mainGame: MainGame
-    messageBus: MessageBus
     gameAssets: GameAssets
 
     towerDuelId: string
@@ -39,7 +38,6 @@ export default class TowerDuel implements ISystem {
         this.physicsMaterial = cannonMaterial
         this.world = cannonWorld
         this.mainGame = mainGame
-        this.messageBus = this.mainGame.messageBus
         this.gameAssets = this.mainGame.parent.gameAssets
 
         this.towerDuelId = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);

@@ -2,7 +2,6 @@ import LobbyScreen from "@/lobbyScreen";
 
 export default class LobbyScreenBorder extends Entity {
     LobbyScreen: LobbyScreen
-    messageBus: MessageBus
 
     borderModel : GLTFShape
     ringsModel : GLTFShape
@@ -12,7 +11,6 @@ export default class LobbyScreenBorder extends Entity {
     constructor(lobbyScreen: LobbyScreen, messageBus: MessageBus, position: Vector3, rotation: Vector3) {
         super()
         this.LobbyScreen = lobbyScreen
-        this.messageBus = messageBus
 
         this.borderModel = new GLTFShape('models/LobbyScreenAngle.glb')
         this.ringsModel = new GLTFShape('models/Rings.glb')

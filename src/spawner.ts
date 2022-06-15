@@ -21,7 +21,7 @@ export default class Spawner implements ISystem {
 
     constructor(towerDuel: TowerDuel) {
         this.TowerDuel = towerDuel
-        this.messageBus = this.TowerDuel.messageBus
+        this.messageBus = this.TowerDuel.mainGame.parent.messageBus
 
         this.plane = new Entity();
         this.plane.addComponent(this.TowerDuel.mainGame.parent.sceneAssets.soundStopBlock)

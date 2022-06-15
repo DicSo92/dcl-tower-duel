@@ -2,7 +2,6 @@ import TowerDuel from "@/towerDuel";
 
 export default class InterEffect implements ISystem {
     TowerDuel: TowerDuel
-    messageBus: MessageBus
 
     blockParent: Entity
     blockTransform: Transform
@@ -12,7 +11,6 @@ export default class InterEffect implements ISystem {
 
     constructor(towerDuel: TowerDuel, blockParent: Entity, transform: Transform, isPerfect: boolean) {
         this.TowerDuel = towerDuel
-        this.messageBus = this.TowerDuel.messageBus
         this.blockParent = blockParent
         this.blockTransform = transform
         this.isPerfect = isPerfect

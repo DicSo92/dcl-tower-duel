@@ -9,7 +9,7 @@ export default class Heart implements ISystem {
 
     constructor(towerDuel: TowerDuel, position: Vector3, isActive: boolean) {
         this.TowerDuel = towerDuel
-        this.messageBus = towerDuel.messageBus
+        this.messageBus = towerDuel.mainGame.parent.messageBus
         this.isActive = isActive
 
         this.entity = new Entity()
