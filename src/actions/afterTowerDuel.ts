@@ -59,11 +59,12 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     onStart(): void {
         log('FinaliseTowerDuelAction')
         this.parent.isActive = false
-        this.setScore()
-        if (this.parent.parent.user.public_address) {
-            this.parent.parent.messageBus.emit('removeUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
-        }
-        this.parent.TowerDuel?.lift?.reset(this)
+        this.setScore().then(() => {
+            if (this.parent.parent.user.public_address) {
+                this.parent.parent.messageBus.emit('removeUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
+            }
+            this.parent.TowerDuel?.lift?.reset(this)
+        })
     }
 
     async setScore() {
@@ -95,6 +96,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
     // lift max height et path
     onStart(): void {
         if (this.parent.TowerDuel?.lift?.numericalCounter.text.value) {
+            log("test eeepppppppppppppppppppepepepeppepepeeeeeeeeeeeee")
             if (this.prompt) {
                 this.prompt.title.value = "Result"
                 this.prompt.text.value = `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`

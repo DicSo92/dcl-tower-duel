@@ -39,35 +39,38 @@ export default class MainGame implements ISystem {
     }
 
     public modeSelection() {
-        !this.isActiveSequence ? this.isActiveSequence = true : false
+        this.isActiveSequence = true
         this.addSequence('modeSelection')
     }
 
     public gameApprovalSolo(type: string) {
         this.isActive = true
-        !this.isActiveSequence ? this.isActiveSequence = true : false
+        this.isActiveSequence = true
         this.addSequence('gameApprovalSolo')
     }
 
     public gameApprovalMulti() {
-        !this.isActive ? this.isActive = true :
-            !this.isActiveSequence ? this.isActiveSequence = true : false
+        this.isActive = true
+        this.isActiveSequence = true
+
         this.addSequence('gameApprovalMulti')
     }
 
     public launchGame() {
-        !this.isActive ? this.isActive = true :
-            !this.isActiveSequence ? this.isActiveSequence = true : false
+        this.isActive = true
+        this.isActiveSequence = true
         this.addSequence('launchGame')
     }
 
     public afterTowerDuel() {
-        this.isActive ? this.isActive = false : true
-        !this.isActiveSequence ? this.isActiveSequence = true : false
+        this.isActive = false
+        this.isActiveSequence = false
+
         this.addSequence('AfterTowerDuelSequence')
     }
 
     public stopSequence() {
+        this.isActive = false // to check
         this.isActiveSequence = false
         this.gameSequenceSystem?.stop()
         if (this.gameSequenceSystem) {
@@ -81,21 +84,18 @@ export default class MainGame implements ISystem {
             case "modeSelection": {
                 this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new SelectModeAction(this))
-                
                 break;
             }
             case "gameApprovalSolo": {
                 this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new GoToPlayAction(this.liftToGame))
                     .then(new CleanTowerDuelAction(this))
-
                 break;
             }
             case "launchGame": {
                 this.gameSequence = new utils.ActionsSequenceSystem.SequenceBuilder()
                     .then(new LaunchSoloGameAction(this, this.physicsMaterial, this.world))
                     .then(new StarterTimerAction(this, this.physicsMaterial, this.world))
-                
                 break;
             }
             case "AfterTowerDuelSequence": {
@@ -104,13 +104,12 @@ export default class MainGame implements ISystem {
                     .then(new BackToLobbyAction(this.liftToGame))
                     .then(new FinaliseTowerDuelAction(this))
                     .then(new EndGameResultAction(this))
-                
                 break;
             }
         }
         if (this.gameSequence) {
             this.gameSequenceSystem = new utils.ActionsSequenceSystem(this.gameSequence)
-            engine.addSystem(this.gameSequenceSystem) 
+            engine.addSystem(this.gameSequenceSystem)
         }
     }
 
