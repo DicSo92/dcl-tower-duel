@@ -5,8 +5,8 @@ import { FallingBlock } from "@/fallingBlock";
 import Spawner from "@/spawner";
 import MainGame from "./mainGame";
 import { GameAssets } from "@/assets";
-import * as utils from '@dcl/ecs-scene-utils'
-import * as ui from '@dcl/ui-scene-utils'
+import { setTimeout } from '@dcl/ecs-scene-utils'
+import { displayAnnouncement, hideAnnouncements} from '@dcl/ui-scene-utils'
 
 export default class TowerDuel implements ISystem {
     physicsMaterial: CANNON.Material
@@ -85,9 +85,9 @@ export default class TowerDuel implements ISystem {
         this.mainGame.parent.globalScene.getComponent(AudioSource).playOnce()
         const gameOverResult = `GAME OVER
         Your tower is ${this.lift?.numericalCounter.text.value} blocks high !`
-        ui.displayAnnouncement(gameOverResult, 5, Color4.Red(), 50, true)
-        utils.setTimeout(5000, () => {
-            ui.hideAnnouncements()
+        displayAnnouncement(gameOverResult, 5, Color4.Red(), 50, true)
+        setTimeout(5000, () => {
+            hideAnnouncements()
         })
         this.mainGame.afterTowerDuel()
     }
@@ -107,7 +107,5 @@ export default class TowerDuel implements ISystem {
         if(this.physicsSystem) engine.removeSystem(this.physicsSystem)
     }
 
-    public update(dt: number) {
-        // log("Update", dt)
-    }
+    public update(dt: number) { }
 }

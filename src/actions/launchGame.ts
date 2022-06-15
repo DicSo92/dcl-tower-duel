@@ -1,10 +1,10 @@
 import MainGame from "@/mainGame"
 import TowerDuel from "@/towerDuel"
-import * as utils from '@dcl/ecs-scene-utils'
-import * as ui from '@dcl/ui-scene-utils'
+import { ActionsSequenceSystem, setTimeout } from '@dcl/ecs-scene-utils'
+import { displayAnnouncement, hideAnnouncements } from '@dcl/ui-scene-utils'
 
 //Use IAction to define action for movement
-export class StarterTimerAction implements utils.ActionsSequenceSystem.IAction {
+export class StarterTimerAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
     physicsMaterial: CANNON.Material
@@ -27,25 +27,25 @@ export class StarterTimerAction implements utils.ActionsSequenceSystem.IAction {
             return
         }
         this.displayCount(this.counter)
-        utils.setTimeout(1100, () => {
+        setTimeout(1100, () => {
             this.counter--
             this.count()
         })
     }
 
     displayCount(val: number) {
-        ui.displayAnnouncement(val.toString(), 1, Color4.Red(), 50, true)
+        displayAnnouncement(val.toString(), 1, Color4.Red(), 50, true)
     }
     update(dt: number): void {
     }
 
     onFinish(): void {
-        ui.hideAnnouncements()
+        hideAnnouncements()
         this.parent.parent.messageBus.emit("StarterButton_" + this.parent.TowerDuel?.towerDuelId, {})
     }
 }
 
-export class LaunchSoloGameAction implements utils.ActionsSequenceSystem.IAction {
+export class LaunchSoloGameAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
     physicsMaterial: CANNON.Material
@@ -72,7 +72,7 @@ export class LaunchSoloGameAction implements utils.ActionsSequenceSystem.IAction
     onFinish(): void {    }
 }
 
-export class LaunchMultGameAction implements utils.ActionsSequenceSystem.IAction {
+export class LaunchMultGameAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
     physicsMaterial: CANNON.Material

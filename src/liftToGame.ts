@@ -1,4 +1,4 @@
-import * as utils from "@dcl/ecs-scene-utils";
+import { FollowPathComponent } from "@dcl/ecs-scene-utils";
 import { movePlayerTo } from "@decentraland/RestrictedActions";
 import { BackToLobbyAction } from "./actions/afterTowerDuel";
 import { GoToPlayAction } from "./actions/gameApproval";
@@ -150,7 +150,7 @@ export default class LiftToGame implements ISystem {
         this.entity.getComponent(GLTFShape).withCollisions = true
 
         const colliderContainer = this.getColliders()
-        return this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.startPath, this.liftMoveDuration, () => {
+        return this.entity.addComponentOrReplace(new FollowPathComponent(this.startPath, this.liftMoveDuration, () => {
             engine.removeEntity(colliderContainer)
 
             if (this.lift.getComponent(GLTFShape).visible !== false) {
@@ -179,7 +179,7 @@ export default class LiftToGame implements ISystem {
         this.parent.TowerDuel?.lift?.lift.getComponent(GLTFShape).withCollisions ? this.parent.TowerDuel.lift.lift.getComponent(GLTFShape).withCollisions = false : ''
 
         const colliderContainer = this.getColliders()
-        return this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.endPath, this.liftMoveDuration, () => {
+        return this.entity.addComponentOrReplace(new FollowPathComponent(this.endPath, this.liftMoveDuration, () => {
             engine.removeEntity(colliderContainer)
 
             this.isActive = false
