@@ -145,7 +145,7 @@ export default class Lift implements ISystem {
         // button Spell 1
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_3, false, (e) => {
             log("Key 1 : Speed down spawn")
-            if (this.staminaBar.staminaCount - this.spell1cost >= 0 && this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive && this.TowerDuel.currentBlocks.length > 4) {
+            if (this.staminaBar.staminaCount - this.spell1cost >= 0 && this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive && this.TowerDuel.currentBlocks.length > 4 && !this.TowerDuel.spawner?.maxCountAnimationActive) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
                 // ----------------------------------------------------------------------------------------------------- 20 - 19
                 const last3 = this.TowerDuel.currentBlocks.slice(-4)
