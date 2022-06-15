@@ -96,13 +96,67 @@ export default class LiftToGame implements ISystem {
         engine.addEntity(this.entity)
     }
 
+    getColliders(): Entity {
+        const colliderContainer = new Entity()
+        colliderContainer.setParent(this.lift)
+        const colliderScale = new Vector3(3, 3, 1)
+
+        const leftCollider = new Entity()
+        leftCollider.addComponent(new PlaneShape())
+        leftCollider.getComponent(PlaneShape).visible = false
+        leftCollider.addComponent(new Transform({
+            position: new Vector3(-1.5, colliderScale.y / 2, 0),
+            scale: colliderScale
+        }))
+        leftCollider.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 90, 0)
+        leftCollider.setParent(colliderContainer)
+        // -----------------------------------------------
+        const rightCollider = new Entity()
+        rightCollider.addComponent(new PlaneShape())
+        rightCollider.getComponent(PlaneShape).visible = false
+        rightCollider.addComponent(new Transform({
+            position: new Vector3(1.5, colliderScale.y / 2, 0),
+            scale: colliderScale
+        }))
+        rightCollider.getComponent(Transform).rotation.eulerAngles = new Vector3(0, -90, 0)
+        rightCollider.setParent(colliderContainer)
+        // -----------------------------------------------
+        const botCollider = new Entity()
+        botCollider.addComponent(new PlaneShape())
+        botCollider.getComponent(PlaneShape).visible = false
+        botCollider.addComponent(new Transform({
+            position: new Vector3(0, colliderScale.y / 2, 1.5),
+            scale: colliderScale
+
+        }))
+        botCollider.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 0, 0)
+        botCollider.setParent(colliderContainer)
+        // -----------------------------------------------
+        const topCollider = new Entity()
+        topCollider.addComponent(new PlaneShape())
+        topCollider.getComponent(PlaneShape).visible = false
+        topCollider.addComponent(new Transform({
+            position: new Vector3(0, colliderScale.y / 2, -1.5),
+            scale: colliderScale
+
+        }))
+        topCollider.getComponent(Transform).rotation.eulerAngles = new Vector3(0, 0, 0)
+        topCollider.setParent(colliderContainer)
+
+        return colliderContainer
+    }
+
     goToPlay = async (parent: GoToPlayAction) => {
         engine.addSystem(this)
         this.isActive = true
         this.state = 1
         this.entity.addComponent(this.parent.parent.gameAssets.liftToGame)
         this.entity.getComponent(GLTFShape).withCollisions = true
+
+        const colliderContainer = this.getColliders()
         return this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.startPath, this.liftMoveDuration, () => {
+            engine.removeEntity(colliderContainer)
+
             if (this.lift.getComponent(GLTFShape).visible !== false) {
                 this.lift.getComponent(GLTFShape).visible = false
                 this.entity.getComponent(GLTFShape).visible = false
@@ -127,7 +181,11 @@ export default class LiftToGame implements ISystem {
         this.state = -1
         this.lift.getComponent(GLTFShape).visible = true
         this.parent.TowerDuel?.lift?.lift.getComponent(GLTFShape).withCollisions ? this.parent.TowerDuel.lift.lift.getComponent(GLTFShape).withCollisions = false : ''
+
+        const colliderContainer = this.getColliders()
         return this.entity.addComponentOrReplace(new utils.FollowPathComponent(this.endPath, this.liftMoveDuration, () => {
+            engine.removeEntity(colliderContainer)
+
             this.isActive = false
             this.state = 0
             this.entity.removeComponent(GLTFShape)

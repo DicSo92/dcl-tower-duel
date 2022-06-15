@@ -18,6 +18,7 @@ export default class Spawner implements ISystem {
     spawningBlock?: TowerBlock
     spawnSpeed: number = 3
     moveDuration: number = 10
+    maxCountAnimationActive: boolean = false
 
     constructor(towerDuel: TowerDuel) {
         this.TowerDuel = towerDuel
@@ -110,6 +111,7 @@ export default class Spawner implements ISystem {
         const offsetRescale = 7
         const remainingBlocks = this.TowerDuel.currentBlocks.slice(-slice)
         const blocksToRemove = this.TowerDuel.currentBlocks.slice(0, -slice)
+        this.maxCountAnimationActive = true
 
         remainingBlocks.forEach((block, index) => {
             const startPos = block.entity.getComponent(Transform).position
@@ -145,6 +147,8 @@ export default class Spawner implements ISystem {
                     // Relaunch Spawn Blocks
                     this.TowerDuel.currentBlocks = remainingBlocks
                     this.spawnBlock()
+
+                    this.maxCountAnimationActive = false
                 })
             )
         }
