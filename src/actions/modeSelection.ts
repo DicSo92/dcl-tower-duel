@@ -1,5 +1,5 @@
 import MainGame from '@/mainGame'
-import { ActionsSequenceSystem } from '@dcl/ecs-scene-utils'
+import {ActionsSequenceSystem, ToggleComponent} from '@dcl/ecs-scene-utils'
 import { OptionPrompt } from '@dcl/ui-scene-utils'
 
 //Use IAction to define action for movement
@@ -63,5 +63,9 @@ export class SelectModeAction implements ActionsSequenceSystem.IAction {
 
     update(dt: number): void { }
 
-    onFinish(): void { }
+    onFinish(): void {
+        if (this.parent.parent.lobbyScreen?.container.getComponent(ToggleComponent).isOn()) {
+            this.parent.parent.lobbyScreen?.container.getComponent(ToggleComponent).toggle()
+        }
+    }
 }
