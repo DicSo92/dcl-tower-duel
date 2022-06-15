@@ -37,7 +37,7 @@ export class BackToLobbyAction implements utils.ActionsSequenceSystem.IAction {
         log('BackToLobbyAction')
         this.hasFinished = false
         this.liftToGame.lift.getComponent(AudioSource).playing = true
-        
+
         utils.setTimeout(1000, () => {
             this.liftToGame.goToLobby(this)
         })
@@ -97,7 +97,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
         if (this.parent.TowerDuel?.lift?.numericalCounter.text.value) {
             if (this.parent.parent.prompt) {
                 this.parent.parent.prompt.title.value = "Result"
-                this.parent.parent.prompt.text.value = `Your previous tower high : ${this.parent.TowerDuel?.lift.numericalCounter.text.value}\nDo you want to play again ?`
+                this.parent.parent.prompt.text.value = `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`
                 this.parent.parent.prompt.onAccept = () => {
                     this.parent.messageBus.emit('newGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, this.parent.parent.user)
                     this.hasFinished = true
@@ -112,7 +112,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
             } else {
                 this.parent.parent.prompt = new ui.OptionPrompt(
                     'Result',
-                    `Your previous tower high : ${this.parent.TowerDuel?.lift.numericalCounter.text.value}\nDo you want to play again ?`,
+                    `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`,
                     () => {
                         this.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
                         this.hasFinished = true
