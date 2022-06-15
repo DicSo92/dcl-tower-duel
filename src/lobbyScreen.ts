@@ -375,7 +375,7 @@ export default class LobbyScreen implements ISystem {
             this.updateQueueScreen()
         } else {
             log('Already in Queue !')
-            this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
+            // this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
         }
     }
 
@@ -385,7 +385,7 @@ export default class LobbyScreen implements ISystem {
             this.updateQueueScreen()
         } else {
             log('Already in Queue !')
-            this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
+            // this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
         }
     }
 

@@ -21,7 +21,7 @@ export default class Lift implements ISystem {
     state: boolean = false
     startPos: Vector3
     rotation: Vector3
-    minPosY: number = 3.4
+    minPosY: number = 3.5
 
     hearts: LifeHearts
     staminaBar: StaminaBar
@@ -216,7 +216,7 @@ export default class Lift implements ISystem {
     }
 
     public autoMove() {
-        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (this.TowerDuel.currentBlocks.length + 1)
+        const posY = this.minPosY / 3 + this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (this.TowerDuel.currentBlocks.length)
         const currentLiftPosition = this.global.getComponent(Transform).position
         this.global.addComponentOrReplace(new MoveTransformComponent(
             currentLiftPosition,
