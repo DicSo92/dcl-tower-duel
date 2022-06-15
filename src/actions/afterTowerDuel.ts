@@ -4,7 +4,6 @@ import MainGame from '@/mainGame'
 import { publishScore } from '@/serverHandler'
 import * as utils from '@dcl/ecs-scene-utils'
 import * as ui from '@dcl/ui-scene-utils'
-import { movePlayerTo } from '@decentraland/RestrictedActions'
 
 export class BackToLiftToGamePositionAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
@@ -62,7 +61,7 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
         this.parent.isActive = false
         this.setScore()
         if (this.parent.parent.user.public_address) {
-            this.parent.messageBus.emit('removeUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
+            this.parent.parent.messageBus.emit('removeUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
         }
         this.parent.TowerDuel?.lift?.reset(this)
     }
@@ -70,7 +69,6 @@ export class FinaliseTowerDuelAction implements utils.ActionsSequenceSystem.IAct
     async setScore() {
         if (this.parent.TowerDuel?.lift) {
             const result = await publishScore(this.parent.parent.user, parseInt(this.parent.TowerDuel?.lift.numericalCounter.text.value))
-            log('setScore OK', result)
             this.parent.parent.leaderBoard?.updateBoard(result)
         }
     }
@@ -99,7 +97,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
                 this.parent.parent.prompt.title.value = "Result"
                 this.parent.parent.prompt.text.value = `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`
                 this.parent.parent.prompt.onAccept = () => {
-                    this.parent.messageBus.emit('newGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, this.parent.parent.user)
+                    this.parent.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
                     this.hasFinished = true
                 }
                 this.parent.parent.prompt.onReject = () => {
@@ -114,7 +112,7 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
                     'Result',
                     `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`,
                     () => {
-                        this.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
+                        this.parent.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
                         this.hasFinished = true
                     },
                     () => {

@@ -60,11 +60,9 @@ export class GoToPlayAction implements utils.ActionsSequenceSystem.IAction {
 //Use IAction to define action for movement
 export class CleanAvatarsAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
-    messageBus: MessageBus
     parent: MainGame
 
-    constructor(parent: MainGame, messageBus: MessageBus) {
-        this.messageBus = messageBus
+    constructor(parent: MainGame) {
         this.parent = parent
     }
 

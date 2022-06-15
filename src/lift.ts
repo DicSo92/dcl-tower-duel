@@ -166,7 +166,7 @@ export default class Lift implements ISystem {
                     this.TowerDuel.spawner?.spawnBlock()
                 })
                 // -----------------------------------------------------------------------------------------------------
-                this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell1cost })
+                this.TowerDuel.mainGame.parent.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell1cost })
             } else {
                 // sound cannot use spell
             }
@@ -183,7 +183,7 @@ export default class Lift implements ISystem {
                 this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(this.spell2EffectDuration, () => {
                     if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed = oldSpeed
                 }))
-                this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell2cost })
+                this.TowerDuel.mainGame.parent.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell2cost })
             } else {
                 // sound cannot use spell
             }
@@ -200,7 +200,7 @@ export default class Lift implements ISystem {
                 this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(this.spell3EffectDuration, () => {
                     if (this.TowerDuel.spawner?.spawningBlock) { this.TowerDuel.spawner.spawningBlock.marginError = oldMargin }
                 }))
-                this.TowerDuel.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell3cost })
+                this.TowerDuel.mainGame.parent.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell3cost })
             } else {
                 // sound cannot use spell
             }

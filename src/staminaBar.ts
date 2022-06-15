@@ -16,7 +16,7 @@ export default class StaminaBar implements ISystem {
 
     constructor(towerDuel: TowerDuel, lift: Lift) {
         this.TowerDuel = towerDuel
-        this.messageBus = towerDuel.messageBus
+        this.messageBus = towerDuel.mainGame.parent.messageBus
 
         this.entity = new Entity()
         this.entity.addComponent(this.TowerDuel.mainGame.parent.sceneAssets.soundSpell)

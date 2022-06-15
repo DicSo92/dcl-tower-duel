@@ -43,9 +43,9 @@ export default class Game implements ISystem {
         this.buildScene()
         this.BuildEvents()
 
-        this.mainGame0 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'left')
+        this.mainGame0 = new MainGame(this.physicsMaterial, this.world, this, 'left')
+        this.mainGame1 = new MainGame(this.physicsMaterial, this.world, this, 'right')
         engine.addSystem(this.mainGame0)
-        this.mainGame1 = new MainGame(this.physicsMaterial, this.world, this, this.messageBus, 'right')
         engine.addSystem(this.mainGame1)
 
         this.globalScene.addComponent(this.sceneAssets.soundLooseGame)

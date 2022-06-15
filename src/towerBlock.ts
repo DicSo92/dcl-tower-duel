@@ -18,7 +18,7 @@ export default class TowerBlock implements ISystem {
 
     constructor(towerDuel: TowerDuel, animation?: MoveTransformComponent, isBase?: boolean) {
         this.TowerDuel = towerDuel
-        this.messageBus = this.TowerDuel.messageBus
+        this.messageBus = this.TowerDuel.mainGame.parent.messageBus
 
         this.isBase = !!isBase
         this.animation = animation
