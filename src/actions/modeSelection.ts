@@ -42,6 +42,7 @@ export class SelectModeAction implements ActionsSequenceSystem.IAction {
                 'Would you start to play ?',
                 () => {
                     log(`Yes`)
+                    this.parent.isActive = true
                     this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: true, side: this.parent.side })
                     this.prompt?.hide()
                     this.hasFinished = true
