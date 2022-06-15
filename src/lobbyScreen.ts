@@ -119,8 +119,9 @@ export default class LobbyScreen implements ISystem {
         // -------------------------------------------------------
         this.parent.messageBus.on('addUserInQueue_' + this.parent.user.realm, (data: { user: IUser }) => {
             log("onAddUserInQueue", data.user)
+            log("onAddUserInQueue", this.parent.user)
             this.addUserInQueue(data.user)
-            if (data.user === this.parent.user && this.usersInGame.left.public_address === "" || this.usersInGame.right.public_address === "") {
+            if (data.user.public_address === this.parent.user.public_address && (this.usersInGame.left.public_address === "" || this.usersInGame.right.public_address === "")) {
                 this.parent.messageBus.emit('confirmationNewGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, {})
             }
         })
