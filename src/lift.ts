@@ -21,7 +21,7 @@ export default class Lift implements ISystem {
     state: boolean = false
     startPos: Vector3
     rotation: Vector3
-    minPosY: number = 3.4
+    minPosY: number = 3.5
 
     hearts: LifeHearts
     staminaBar: StaminaBar
@@ -145,7 +145,7 @@ export default class Lift implements ISystem {
         // button Spell 1
         this.playerInputs.subscribe("BUTTON_DOWN", ActionButton.ACTION_3, false, (e) => {
             log("Key 1 : Speed down spawn")
-            if (this.staminaBar.staminaCount - this.spell1cost >= 0 && this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive && this.TowerDuel.currentBlocks.length > 4) {
+            if (this.staminaBar.staminaCount - this.spell1cost >= 0 && this.TowerDuel.mainGame.isActive && this.TowerDuel.isActive && this.TowerDuel.currentBlocks.length > 4 && !this.TowerDuel.spawner?.maxCountAnimationActive) {
                 this.TowerDuel.lift?.staminaBar.entity.getComponent(AudioSource).playOnce()
                 // ----------------------------------------------------------------------------------------------------- 20 - 19
                 const last3 = this.TowerDuel.currentBlocks.slice(-4)
@@ -216,7 +216,7 @@ export default class Lift implements ISystem {
     }
 
     public autoMove() {
-        const posY = this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (this.TowerDuel.currentBlocks.length + 1)
+        const posY = this.minPosY / 3 + this.TowerDuel.offsetY + this.TowerDuel.blockScaleY * (this.TowerDuel.currentBlocks.length)
         const currentLiftPosition = this.global.getComponent(Transform).position
         this.global.addComponentOrReplace(new MoveTransformComponent(
             currentLiftPosition,

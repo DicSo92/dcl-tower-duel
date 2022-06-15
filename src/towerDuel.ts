@@ -22,7 +22,7 @@ export default class TowerDuel implements ISystem {
     physicsSystem?: PhysicsSystem
     isActive: Boolean = true
 
-    maxCount: number = 20
+    maxCount: number = 60
     blockScaleY: number = 0.4
     offsetY: number = 1.75
     lastScale: Vector3 = new Vector3(4, this.blockScaleY, 4)

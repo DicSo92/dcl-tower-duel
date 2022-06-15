@@ -8,52 +8,58 @@ import { movePlayerTo } from '@decentraland/RestrictedActions'
 export class SelectModeAction implements utils.ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
+    prompt?: ui.OptionPrompt
 
     constructor(parent: MainGame) {
         this.parent = parent
+        this.prompt = this.parent.parent.prompt
     }
 
     //Method when action starts
     onStart(): void {
         log("startSelectModeAction")
-        if (this.parent.parent.prompt) {
+        if (this.prompt) {
             log("Prompt exist")
-            this.parent.parent.prompt.title.value = 'Confirmation !'
-            this.parent.parent.prompt.text.value = 'Would you start to play ?'
-            this.parent.parent.prompt.onAccept = () => {
+            this.prompt.title.value = 'Confirmation !'
+            this.prompt.text.value = 'Would you start to play ?'
+            this.prompt.onAccept = () => {
                 this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: true, side: this.parent.side })
-                this.parent.parent.prompt?.hide()
+                this.prompt?.hide()
                 this.hasFinished = true
             }
-            this.parent.parent.prompt.onReject = () => {
+            this.prompt.onReject = () => {
                 this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: false, side: this.parent.side })
-                this.parent.parent.prompt?.hide()
+                this.prompt?.hide()
                 this.hasFinished = true
             }
-            this.parent.parent.prompt.buttonELabel.value = 'Yes'
-            this.parent.parent.prompt.buttonFLabel.value = 'No'
-            this.parent.parent.prompt.show()
+            this.prompt.buttonELabel.value = 'Yes'
+            this.prompt.buttonFLabel.value = 'No'
+            this.prompt.closeIcon.height = 0
+            this.prompt.closeIcon.width = 0
+            this.prompt.show()
         } else {
             log("New prompt")
-            this.parent.parent.prompt = new ui.OptionPrompt(
+            this.prompt = new ui.OptionPrompt(
                 'Confirmation !',
                 'Would you start to play ?',
                 () => {
                     log(`Yes`)
                     this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: true, side: this.parent.side })
-                    this.parent.parent.prompt?.hide()
+                    this.prompt?.hide()
                     this.hasFinished = true
                 },
                 () => {
                     log(`No`)
                     this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: false, side: this.parent.side })
-                    this.parent.parent.prompt?.hide()
+                    this.prompt?.hide()
                     this.hasFinished = true
                 },
                 'Yes',
                 'No',
                 true
             )
+            this.prompt.closeIcon.height = 0
+            this.prompt.closeIcon.width = 0
         }
     }
 

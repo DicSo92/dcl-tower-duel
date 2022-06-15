@@ -62,6 +62,7 @@ export class SceneAssets {
     soundLooseLife: AudioSource
     soundLooseGame: AudioSource
     soundSpell: AudioSource
+    transparentMaterial: Material
 
     constructor() {
         this.gameStarter = new GLTFShape('models/liftToGameBase.glb')
@@ -83,6 +84,9 @@ export class SceneAssets {
         this.soundLooseLife = new AudioSource(new AudioClip("sounds/looseLife.wav"))
         this.soundLooseGame = new AudioSource(new AudioClip("sounds/looseGame.wav"))
         this.soundSpell = new AudioSource(new AudioClip("sounds/spell.wav"))
+
+        this.transparentMaterial = new Material()
+        this.transparentMaterial.albedoColor = new Color4(0, 0, 0, 0)
     }
 }
 
