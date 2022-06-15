@@ -83,12 +83,8 @@ export default class TowerDuel implements ISystem {
         this.spawner?.Delete()
         if(this.spawner) engine.removeSystem(this.spawner)
         this.mainGame.parent.globalScene.getComponent(AudioSource).playOnce()
-        const gameOverResult = `GAME OVER
-        Your tower is ${this.lift?.numericalCounter.text.value} blocks high !`
-        displayAnnouncement(gameOverResult, 5, Color4.Red(), 50, true)
-        setTimeout(5000, () => {
-            hideAnnouncements()
-        })
+        const text = this.mainGame.parent.gameOverResult(this)
+        displayAnnouncement(text, 5, Color4.Red(), 50, true)
         this.mainGame.afterTowerDuel()
     }
 
