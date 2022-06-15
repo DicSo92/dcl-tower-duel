@@ -21,7 +21,7 @@ export default class Lift implements ISystem {
     state: boolean = false
     startPos: Vector3
     rotation: Vector3
-    minPosY: number = 3.4
+    minPosY: number = 3.5
 
     hearts: LifeHearts
     staminaBar: StaminaBar
