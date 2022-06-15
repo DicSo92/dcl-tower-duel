@@ -84,33 +84,35 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
     hasFinished: boolean = false
     parent: MainGame
     counter: number = 5
+    prompt?: ui.OptionPrompt
 
     constructor(parent: MainGame) {
         this.parent = parent
+        this.prompt = this.parent.parent.prompt
     }
     // game over
     // ui autohide out of lift
     // lift max height et path
     onStart(): void {
         if (this.parent.TowerDuel?.lift?.numericalCounter.text.value) {
-            if (this.parent.parent.prompt) {
-                this.parent.parent.prompt.title.value = "Result"
-                this.parent.parent.prompt.text.value = `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`
-                this.parent.parent.prompt.onAccept = () => {
+            if (this.prompt) {
+                this.prompt.title.value = "Result"
+                this.prompt.text.value = `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`
+                this.prompt.onAccept = () => {
                     this.parent.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
                     this.hasFinished = true
                 }
-                this.parent.parent.prompt.onReject = () => {
-                    this.parent.parent.prompt?.hide()
+                this.prompt.onReject = () => {
+                    this.prompt?.hide()
                     this.hasFinished = true
                 }
-                this.parent.parent.prompt.buttonELabel.value = 'Yes'
-                this.parent.parent.prompt.buttonFLabel.value = 'No'
-                this.parent.parent.prompt.show()
-                this.parent.parent.prompt.closeIcon.height = 0
-                this.parent.parent.prompt.closeIcon.width = 0
+                this.prompt.buttonELabel.value = 'Yes'
+                this.prompt.buttonFLabel.value = 'No'
+                this.prompt.closeIcon.height = 0
+                this.prompt.closeIcon.width = 0
+                this.prompt.show()
             } else {
-                this.parent.parent.prompt = new ui.OptionPrompt(
+                this.prompt = new ui.OptionPrompt(
                     'Result',
                     `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`,
                     () => {
@@ -125,8 +127,8 @@ export class EndGameResultAction implements utils.ActionsSequenceSystem.IAction 
                     'No',
                     true
                 )
-                this.parent.parent.prompt.closeIcon.height = 0
-                this.parent.parent.prompt.closeIcon.width = 0
+                this.prompt.closeIcon.height = 0
+                this.prompt.closeIcon.width = 0
             }
         }
     }
