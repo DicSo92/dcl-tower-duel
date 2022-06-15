@@ -1,9 +1,8 @@
-import { MoveTransformComponent, setTimeout } from "@dcl/ecs-scene-utils";
+import { MoveTransformComponent, setTimeout, Delay } from "@dcl/ecs-scene-utils";
 import TowerDuel from "@/towerDuel";
 import LifeHearts from "./lifeHearts";
 import StaminaBar from "@/staminaBar";
 import NumericalCounter from "./numericalCounter";
-import * as utils from "@dcl/ecs-scene-utils";
 import { BackToLiftToGamePositionAction } from "./actions/afterTowerDuel";
 import { movePlayerTo } from "@decentraland/RestrictedActions";
 
@@ -180,7 +179,7 @@ export default class Lift implements ISystem {
                 const oldSpeed = this.TowerDuel.spawner?.spawnSpeed ? this.TowerDuel.spawner?.spawnSpeed : 3
                 if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed += 1
 
-                this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(this.spell2EffectDuration, () => {
+                this.TowerDuel.spawner?.entity.addComponentOrReplace(new Delay(this.spell2EffectDuration, () => {
                     if (this.TowerDuel.spawner) this.TowerDuel.spawner.spawnSpeed = oldSpeed
                 }))
                 this.TowerDuel.mainGame.parent.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell2cost })
@@ -197,7 +196,7 @@ export default class Lift implements ISystem {
                 const oldMargin = this.TowerDuel.spawner?.spawningBlock?.marginError ? this.TowerDuel.spawner?.spawningBlock?.marginError : .15
                 if (this.TowerDuel.spawner?.spawningBlock) { this.TowerDuel.spawner.spawningBlock.marginError += .25 }
 
-                this.TowerDuel.spawner?.entity.addComponentOrReplace(new utils.Delay(this.spell3EffectDuration, () => {
+                this.TowerDuel.spawner?.entity.addComponentOrReplace(new Delay(this.spell3EffectDuration, () => {
                     if (this.TowerDuel.spawner?.spawningBlock) { this.TowerDuel.spawner.spawningBlock.marginError = oldMargin }
                 }))
                 this.TowerDuel.mainGame.parent.messageBus.emit("removeStamina_" + this.TowerDuel.towerDuelId, { cost: this.spell3cost })

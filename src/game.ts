@@ -1,12 +1,11 @@
 import { loadColliders } from "@/colliderSetup";
 import { IUser } from "@/interfaces/class.interface";
+import { OptionPrompt } from '@dcl/ui-scene-utils'
 import MainGame from "@/mainGame";
 import { GameAssets, SceneAssets } from "@/assets";
-import * as utils from "@dcl/ecs-scene-utils";
 import LobbyScreen from "@/lobbyScreen";
 import HigherTower from "./higherTower";
 import { LeaderBoard } from "./LeaderBoard";
-import * as ui from '@dcl/ui-scene-utils'
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -30,7 +29,7 @@ export default class Game implements ISystem {
     streamSource?: Entity;
     leaderBoard?: LeaderBoard;
     lobbyScreen?: LobbyScreen;
-    prompt?: ui.OptionPrompt
+    prompt?: OptionPrompt
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
