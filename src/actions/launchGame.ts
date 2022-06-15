@@ -69,7 +69,7 @@ export class LaunchSoloGameAction implements ActionsSequenceSystem.IAction {
 
     update(dt: number): void { }
 
-    onFinish(): void {    }
+    onFinish(): void { }
 }
 
 export class LaunchMultGameAction implements ActionsSequenceSystem.IAction {
@@ -86,9 +86,7 @@ export class LaunchMultGameAction implements ActionsSequenceSystem.IAction {
 
     onStart(): void {
         this.parent.TowerDuel?.CleanEntities()
-        this.parent.parent.messageBus.emit('addUserInGame_' + this.parent.parent.user.realm, {
-            user: this.parent.parent.user.public_address
-        })
+        this.parent.parent.messageBus.emit('addUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user, side: this.parent.side, lastDate: this.parent.parent.lobbyScreen?.gameLastUpdate })
         this.parent.TowerDuel = new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0))
         this.hasFinished = true
     }

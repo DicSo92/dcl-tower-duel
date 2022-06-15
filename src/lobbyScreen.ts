@@ -100,9 +100,9 @@ export default class LobbyScreen implements ISystem {
         this.parent.messageBus.on('addUserInGame_' + this.parent.user.realm, (data: { user: IUser, side: string, lastUpdate: number }) => {
             if (data) {
                 if (data.side === 'left') {
-                    this.usersInGame.left = data.user
+                    if (!this.gameLastUpdate || data.lastUpdate > this.gameLastUpdate) this.usersInGame.left = data.user
                 } else if (data.side === 'right') {
-                    this.usersInGame.right = data.user
+                    if (!this.gameLastUpdate || data.lastUpdate > this.gameLastUpdate) this.usersInGame.right = data.user
                 }
             }
         })
@@ -148,9 +148,7 @@ export default class LobbyScreen implements ISystem {
                         this.parent.mainGame0?.gameApprovalSolo('gameApprovalSolo')
                         this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
                     })
-                    this.parent.messageBus.emit('addUserInGame_' + this.parent.user.realm, {
-                        user: this.parent.user, side: this.parent.mainGame0.side, lastUpdate: this.parent.lobbyScreen?.gameLastUpdate
-                    })
+                    this.parent.messageBus.emit('addUserInGame_' + this.parent.user.realm, {user: this.parent.user, side: this.parent.mainGame0.side, lastUpdate: this.parent.lobbyScreen?.gameLastUpdate})
                     this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
                 } else if (rightCondition && this.parent.mainGame1?.isActiveSequence) {
                     movePlayerTo(new Vector3(8, .1, 24), new Vector3(8, 0, 8)).then(() => {
