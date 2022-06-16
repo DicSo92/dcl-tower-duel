@@ -6,6 +6,7 @@ import { GameAssets, SceneAssets } from "@/assets";
 import LobbyScreen from "@/lobbyScreen";
 import HigherTower from "./higherTower";
 import { LeaderBoard } from "./LeaderBoard";
+import TowerDuel from "./towerDuel";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -30,6 +31,10 @@ export default class Game implements ISystem {
     leaderBoard?: LeaderBoard;
     lobbyScreen?: LobbyScreen;
     prompt?: OptionPrompt
+    gameOverResult: Function = (towerDuel: TowerDuel) => {
+        return `GAME OVER
+        Your tower is ${towerDuel.lift?.numericalCounter.text.value} blocks high !`
+    };
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
@@ -37,7 +42,6 @@ export default class Game implements ISystem {
         this.messageBus = new MessageBus()
         this.gameAssets = new GameAssets()
         this.sceneAssets = new SceneAssets()
-
         this.SetupWorldConfig()
         this.buildScene()
         this.BuildEvents()
