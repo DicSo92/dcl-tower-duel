@@ -97,15 +97,6 @@ export default class LobbyScreen implements ISystem {
                 this.usersInQueue.splice(this.usersInQueue.indexOf(this.usersInQueue.filter(item => item.public_address === player.userId)[0]), 1)
             }
         })
-        this.parent.messageBus.on('addUserInGame_' + this.parent.user.realm, (data: { user: IUser, side: string, lastUpdate: number }) => {
-            if (data) {
-                if (data.side === 'left') {
-                    if (!this.gameLastUpdate || data.lastUpdate > this.gameLastUpdate) this.usersInGame.left = data.user
-                } else if (data.side === 'right') {
-                    if (!this.gameLastUpdate || data.lastUpdate > this.gameLastUpdate) this.usersInGame.right = data.user
-                }
-            }
-        })
         // -------------------------------------------------------
         this.parent.messageBus.on('removeUserInQueue_' + this.parent.user.realm, (data: { user: IUser }) => {
             log("onRemovePlayer")
@@ -125,6 +116,15 @@ export default class LobbyScreen implements ISystem {
             this.addUserInQueue(data.user)
             if (data.user.public_address === this.parent.user.public_address && (this.usersInGame.left.public_address === "" || this.usersInGame.right.public_address === "")) {
                 this.parent.messageBus.emit('confirmationNewGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, {})
+            }
+        })
+        this.parent.messageBus.on('addUserInGame_' + this.parent.user.realm, (data: { user: IUser, side: string, lastUpdate: number }) => {
+            if (data) {
+                if (data.side === 'left') {
+                    if (!this.gameLastUpdate || data.lastUpdate > this.gameLastUpdate) this.usersInGame.left = data.user
+                } else if (data.side === 'right') {
+                    if (!this.gameLastUpdate || data.lastUpdate > this.gameLastUpdate) this.usersInGame.right = data.user
+                }
             }
         })
         this.parent.messageBus.on('confirmationNewGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, (data: { result?: boolean, side?: string }) => {
@@ -174,20 +174,7 @@ export default class LobbyScreen implements ISystem {
         })
         this.parent.messageBus.on('nextGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, () => {
             this.parent.messageBus.emit('confirmationNewGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
-        })
-        // -------------------------------------------------------
-        this.parent.messageBus.on('newGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, (user) => {
-            if (user) {
-                if (this.usersInGame.left.public_address === "") {
-                    this.parent.mainGame0?.modeSelection()
-                    this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
-                } else if (this.usersInGame.right.public_address === "") {
-                    this.parent.mainGame1?.modeSelection()
-                    this.parent.mainGame1?.liftToGame.entity.getComponent(AudioSource).playOnce()
-                }
-            }
-        })
-    }
+        })    }
     // -----------------------------------------------------------------------------------------------------------------
     private BuildToggleEvent = () => {
         this.container.addComponent(new ToggleComponent(ToggleState.Off, (value: ToggleState) => {
