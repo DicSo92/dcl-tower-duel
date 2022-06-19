@@ -7,6 +7,7 @@ import LobbyScreen from "@/lobbyScreen";
 import HigherTower from "./higherTower";
 import { LeaderBoard } from "./LeaderBoard";
 import TowerDuel from "./towerDuel";
+import { UserConnection } from "./userConnection";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -18,6 +19,7 @@ export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
+    // socket: WebSocket = new WebSocket("ws://localhost:8080")
     gameAssets: GameAssets
     sceneAssets: SceneAssets
     mainGame0?: MainGame
@@ -27,7 +29,6 @@ export default class Game implements ISystem {
     playBtn: Entity = new Entity()
     globalScene: Entity = new Entity()
     higherTower?: HigherTower;
-    streamSource?: Entity;
     leaderBoard?: LeaderBoard;
     lobbyScreen?: LobbyScreen;
     prompt?: OptionPrompt
@@ -35,6 +36,7 @@ export default class Game implements ISystem {
         return `GAME OVER
         Your tower is ${towerDuel.lift?.numericalCounter.text.value} blocks high !`
     };
+    userConnection?: UserConnection
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")

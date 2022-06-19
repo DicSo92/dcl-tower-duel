@@ -43,7 +43,7 @@ export default class MainGame implements ISystem {
         this.addSequence('modeSelection')
     }
 
-    public gameApprovalSolo(type: string) {
+    public gameApprovalSolo() {
         this.isActive = true
         this.isActiveSequence = true
         this.addSequence('gameApprovalSolo')

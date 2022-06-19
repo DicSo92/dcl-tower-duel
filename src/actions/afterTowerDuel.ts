@@ -37,9 +37,9 @@ export class BackToLobbyAction implements ActionsSequenceSystem.IAction {
         this.hasFinished = false
         this.liftToGame.lift.getComponent(AudioSource).playing = true
 
-        setTimeout(1000, () => {
+        // setTimeout(1000, () => {
             this.liftToGame.goToLobby(this)
-        })
+        // })
     }
 
     update(dt: number): void {
@@ -60,29 +60,29 @@ export class FinaliseTowerDuelAction implements ActionsSequenceSystem.IAction {
         log('FinaliseTowerDuelAction')
         this.parent.isActive = false
         this.setScore().then(() => {
-            if (this.parent.parent.user.public_address) {
-                this.parent.parent.messageBus.emit('removeUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
-
-                if (this.parent.parent.lobbyScreen?.usersInQueue.length) {
-                    this.parent.parent.messageBus.emit('nextGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.lobbyScreen?.usersInQueue[0].public_address, {})
-                }
+            log('After setScore')
+            if (this.parent.parent.userConnection?.userData.public_address) {
+                log('After endGame websocket event',)
+                this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'endGame', user: this.parent.parent.userConnection.getUserData() }))
             }
+            log('After endGame websocket event')
             this.parent.TowerDuel?.lift?.reset(this)
+            this.hasFinished = true
         })
     }
 
     async setScore() {
         if (this.parent.TowerDuel?.lift) {
-            const result = await publishScore(this.parent.parent.user, parseInt(this.parent.TowerDuel?.lift.numericalCounter.text.value))
-            this.parent.parent.leaderBoard?.updateBoard(result)
+            if (this.parent.parent.userConnection) {
+                const result = await publishScore(this.parent.parent.userConnection?.getUserData(), parseInt(this.parent.TowerDuel?.lift.numericalCounter.text.value))
+                this.parent.parent.leaderBoard?.updateBoard(result)
+            }
         }
     }
 
     update(dt: number): void { }
 
-    onFinish(): void {
-        if (this.parent.parent.streamSource) this.parent.parent.streamSource.getComponent(AudioStream).playing = true
-    }
+    onFinish(): void {}
 }
 
 export class EndGameResultAction implements ActionsSequenceSystem.IAction {
@@ -122,7 +122,7 @@ export class EndGameResultAction implements ActionsSequenceSystem.IAction {
                     'Result',
                     `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`,
                     () => {
-                        this.parent.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
+                        this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userClickToPlay', user: this.parent.parent.userConnection.getUserData() }))
                         this.parent.parent.prompt?.hide()
                         this.hasFinished = true
                     },

@@ -11,7 +11,7 @@
     "ecs:install-next": "npm install --save-dev decentraland-ecs@next"
   },
   "devDependencies": {
-    "@types/node": "^16.11.14",
+    "@types/node": "^16.11.41",
     "decentraland-ecs": "^6.11.1",
     "decentraland-ecs-utils": "^1.5.2"
   },
@@ -20,8 +20,7 @@
     "@dcl/ui-scene-utils": "^1.8.3",
     "@types/axios": "^0.14.0",
     "axios": "^0.24.0",
-    "cannon": "github:schteppe/cannon.js",
-    "socket.io": "^4.4.0"
+    "cannon": "github:schteppe/cannon.js"
   },
   "bundledDependencies": [
     "@dcl/ecs-scene-utils",

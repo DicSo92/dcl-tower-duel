@@ -1,5 +1,5 @@
 import MainGame from '@/mainGame'
-import {ActionsSequenceSystem, ToggleComponent} from '@dcl/ecs-scene-utils'
+import { ActionsSequenceSystem, ToggleComponent } from '@dcl/ecs-scene-utils'
 import { OptionPrompt } from '@dcl/ui-scene-utils'
 
 //Use IAction to define action for movement
@@ -21,12 +21,12 @@ export class SelectModeAction implements ActionsSequenceSystem.IAction {
             this.prompt.title.value = 'Confirmation !'
             this.prompt.text.value = 'Would you start to play ?'
             this.prompt.onAccept = () => {
-                this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: true, side: this.parent.side })
+                this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', user: this.parent.parent.userConnection?.userData, result: true, side: this.parent.side }))
                 this.prompt?.hide()
                 this.hasFinished = true
             }
             this.prompt.onReject = () => {
-                this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: false, side: this.parent.side })
+                this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', user: this.parent.parent.userConnection?.userData, result: true, side: this.parent.side }))
                 this.prompt?.hide()
                 this.hasFinished = true
             }
@@ -43,13 +43,13 @@ export class SelectModeAction implements ActionsSequenceSystem.IAction {
                 () => {
                     log(`Yes`)
                     this.parent.isActive = true
-                    this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: true, side: this.parent.side })
+                    this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', user: this.parent.parent.userConnection?.userData, result: true, side: this.parent.side }))
                     this.prompt?.hide()
                     this.hasFinished = true
                 },
                 () => {
                     log(`No`)
-                    this.parent.parent.messageBus.emit('confirmationNewGame_' + this.parent.parent.user.realm + '_' + this.parent.parent.user.public_address, { result: false, side: this.parent.side })
+                    this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', user: this.parent.parent.userConnection?.userData, result: false, side: this.parent.side }))
                     this.prompt?.hide()
                     this.hasFinished = true
                 },

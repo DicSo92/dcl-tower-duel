@@ -52,7 +52,7 @@ export class GoToPlayAction implements ActionsSequenceSystem.IAction {
     //Method to run on every frame
     update(dt: number): void { }
     //Method to run at the end
-    onFinish(): void { }
+    onFinish(): void {  }
 }
 
 //Use IAction to define action for movement
