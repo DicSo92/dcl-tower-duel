@@ -1,5 +1,4 @@
 import { loadColliders } from "@/colliderSetup";
-import { IUser } from "@/interfaces/class.interface";
 import { OptionPrompt } from '@dcl/ui-scene-utils'
 import MainGame from "@/mainGame";
 import { GameAssets, SceneAssets } from "@/assets";
@@ -21,7 +20,6 @@ export default class Game implements ISystem {
     physicsMaterial: CANNON.Material
     world: CANNON.World
     messageBus: MessageBus
-    // socket: WebSocket = new WebSocket("ws://localhost:8080")
     gameAssets: GameAssets
     sceneAssets: SceneAssets
     mainGame0?: MainGame

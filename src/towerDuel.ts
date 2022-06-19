@@ -5,7 +5,6 @@ import { FallingBlock } from "@/fallingBlock";
 import Spawner from "@/spawner";
 import MainGame from "./mainGame";
 import { GameAssets } from "@/assets";
-import { setTimeout } from '@dcl/ecs-scene-utils'
 import { displayAnnouncement, hideAnnouncements} from '@dcl/ui-scene-utils'
 
 export default class TowerDuel implements ISystem {

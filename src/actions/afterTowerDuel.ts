@@ -14,7 +14,6 @@ export class BackToLiftToGamePositionAction implements ActionsSequenceSystem.IAc
     }
 
     onStart(): void {
-        log('BackToLiftToGamePosition')
         this.lift?.reset(this)
     }
 
@@ -33,13 +32,10 @@ export class BackToLobbyAction implements ActionsSequenceSystem.IAction {
     }
 
     onStart(): void {
-        log('BackToLobbyAction')
         this.hasFinished = false
         this.liftToGame.lift.getComponent(AudioSource).playing = true
 
-        // setTimeout(1000, () => {
-            this.liftToGame.goToLobby(this)
-        // })
+        this.liftToGame.goToLobby(this)
     }
 
     update(dt: number): void {
@@ -57,16 +53,12 @@ export class FinaliseTowerDuelAction implements ActionsSequenceSystem.IAction {
     }
 
     onStart(): void {
-        log('FinaliseTowerDuelAction')
         this.parent.isActive = false
         this.setScore().then(() => {
-            log('After setScore')
             if (this.parent.parent.userConnection?.userData.public_address) {
-                log('After endGame websocket event',)
                 const data = { user: this.parent.parent.userConnection.getUserData() }
                 this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'endGame', data: data }))
             }
-            log('After endGame websocket event')
             this.parent.TowerDuel?.lift?.reset(this)
             this.hasFinished = true
         })
@@ -83,7 +75,7 @@ export class FinaliseTowerDuelAction implements ActionsSequenceSystem.IAction {
 
     update(dt: number): void { }
 
-    onFinish(): void {}
+    onFinish(): void { }
 }
 
 export class EndGameResultAction implements ActionsSequenceSystem.IAction {
@@ -96,9 +88,7 @@ export class EndGameResultAction implements ActionsSequenceSystem.IAction {
         this.parent = parent
         this.prompt = this.parent.parent.prompt
     }
-    // game over
-    // ui autohide out of lift
-    // lift max height et path
+
     onStart(): void {
         if (this.parent.TowerDuel?.lift?.numericalCounter.text.value) {
             if (this.prompt) {
@@ -142,9 +132,7 @@ export class EndGameResultAction implements ActionsSequenceSystem.IAction {
         }
     }
 
-    onFinish(): void {
-        // this.prompt?.hide()
-    }
+    onFinish(): void { }
 
     update(dt: number): void {
     }

@@ -4,11 +4,9 @@ import {
     ScaleTransformComponent,
     ToggleComponent,
     ToggleState,
-    setTimeout
 } from "@dcl/ecs-scene-utils";
 import Game from "./game";
 import { getUserData } from "@decentraland/Identity"
-import { movePlayerTo } from "@decentraland/RestrictedActions";
 import { IUser } from "./interfaces/class.interface";
 import LobbyScreenBorder from "@/lobbyScreenBorder";
 import { getCurrentRealm } from "@decentraland/EnvironmentAPI";
@@ -55,9 +53,6 @@ export default class LobbyScreen implements ISystem {
         this.Init()
     }
     Init = async () => {
-        // await this.getUser()
-        // await this.getRealm()
-        this.parent.userConnection = new UserConnection(this)
         this.BuildEvents()
         this.BuildScreen()
         this.BuildBorders()
@@ -68,115 +63,7 @@ export default class LobbyScreen implements ISystem {
 
     // -----------------------------------------------------------------------------------------------------------------
     private BuildEvents() {
-        // -------------------------------------------------------
-        // setTimeout(500, () => {
-        //     this.parent.messageBus.on('setData_' + this.parent.user.public_address, (data: { usersInQueue: IUser[], usersInGame: { left: IUser, right: IUser }, lastUpdate: number }) => {
-        //         if (!this.gameLastUpdate || this.gameLastUpdate < data.lastUpdate) {
-        //             this.usersInQueue = data.usersInQueue
-        //             this.usersInGame = data.usersInGame
-        //             this.gameLastUpdate = data.lastUpdate
-        //             this.queueLastUpdate = data.lastUpdate
-        //         }
-        //     })
-        //     this.parent.messageBus.emit('getData_' + this.parent.user.realm, { user: this.parent.user })
-        //     this.parent.messageBus.on('getData_' + this.parent.user.realm, (data: { user: IUser }) => {
-        //         this.parent.messageBus.emit('setData_' + data.user.public_address, { usersInQueue: this.usersInQueue, usersInGame: this.usersInGame, lastUpdate: this.queueLastUpdate })
-        //     })
-        // })
-        // -------------------------------------------------------
-        onLeaveSceneObservable.add((player) => {
-            // if (player.userId === (this.usersInGame.left.public_address || this.usersInGame.right.public_address)) {
-            //     this.parent.messageBus.emit('removeUserInGame_' + this.parent.user.realm, { user: { public_address: player.userId } })
-            // } else if (this.usersInQueue.filter(item => item.public_address === player.userId)) {
-            //     this.usersInQueue.splice(this.usersInQueue.indexOf(this.usersInQueue.filter(item => item.public_address === player.userId)[0]), 1)
-            // }
-        })
-        // Event when player disconnects
-        onPlayerDisconnectedObservable.add((player) => {
-            // if (player.userId === (this.usersInGame.left.public_address || this.usersInGame.right.public_address)) {
-            //     this.parent.messageBus.emit('removeUserInGame_' + this.parent.user.realm, { user: { public_address: player.userId } })
-            // } else if (this.usersInQueue.filter(item => item.public_address === player.userId)) {
-            //     this.usersInQueue.splice(this.usersInQueue.indexOf(this.usersInQueue.filter(item => item.public_address === player.userId)[0]), 1)
-            // }
-        })
-        // -------------------------------------------------------
-        // this.parent.messageBus.on('removeUserInQueue_' + this.parent.user.realm, (data: { user: IUser }) => {
-        //     log("onRemovePlayer")
-        //     if (data.user) {
-        //         this.removeUserInQueue(data.user)
-        //     }
-        // })
-        // this.parent.messageBus.on('removeUserInGame_' + this.parent.user.realm, (data) => {
-        //     if (data.user) {
-        //         this.removeUserInGame(data.user)
-        //     }
-        // })
-        // -------------------------------------------------------
-        // this.parent.messageBus.on('addUserInQueue_' + this.parent.user.realm, (data: { user: IUser }) => {
-        //     log("onAddUserInQueue", data.user)
-        //     log("onAddUserInQueue", this.parent.user)
-        //     this.addUserInQueue(data.user)
-        //     if (data.user.public_address === this.parent.user.public_address && (this.usersInGame.left.public_address === "" || this.usersInGame.right.public_address === "")) {
-        //         this.parent.messageBus.emit('confirmationNewGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, {})
-        //     }
-        // })
-        // this.parent.messageBus.on('addUserInGame_' + this.parent.user.realm, (data: { user: IUser, side: string, lastUpdate: number }) => {
-        //     if (data) {
-        //         if (data.side === 'left') {
-        //             if (!this.gameLastUpdate || data.lastUpdate > this.gameLastUpdate) this.usersInGame.left = data.user
-        //         } else if (data.side === 'right') {
-        //             if (!this.gameLastUpdate || data.lastUpdate > this.gameLastUpdate) this.usersInGame.right = data.user
-        //         }
-        //     }
-        // })
-        // this.parent.messageBus.on('confirmationNewGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, (data: { result?: boolean, side?: string }) => {
-        //     log("confirmationNewGame_", data)
-        //     const leftCondition = this.usersInGame.left.public_address === ""
-        //     log("leftCondition", leftCondition)
-        //     const rightCondition = this.usersInGame.right.public_address === ""
-        //     log("rightCondition", rightCondition)
-        //     if (!data.result && !data.side) {
-        //         if (leftCondition && !this.parent.mainGame0?.isActiveSequence && !this.parent.mainGame0?.isActive) {
-        //             log('left')
-        //             this.parent.mainGame0?.modeSelection()
-        //         } else if (rightCondition && !this.parent.mainGame1?.isActiveSequence && !this.parent.mainGame1?.isActive) {
-        //             log('right')
-        //             this.parent.mainGame1?.modeSelection()
-        //         }
-        //     } else if (data.result) {
-        //         log("confirmed player")
-        //         if (leftCondition && this.parent.mainGame0?.isActiveSequence) {
-        //             movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8)).then(() => {
-        //                 this.parent.mainGame0?.gameApprovalSolo('gameApprovalSolo')
-        //                 this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
-        //             })
-        //             this.parent.messageBus.emit('addUserInGame_' + this.parent.user.realm, { user: this.parent.user, side: this.parent.mainGame0.side, lastUpdate: this.parent.lobbyScreen?.gameLastUpdate })
-        //             this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
-        //         } else if (rightCondition && this.parent.mainGame1?.isActiveSequence) {
-        //             movePlayerTo(new Vector3(8, .1, 24), new Vector3(8, 0, 8)).then(() => {
-        //                 this.parent.mainGame1?.gameApprovalSolo('gameApprovalSolo')
-        //                 this.parent.mainGame1?.liftToGame.entity.getComponent(AudioSource).playOnce()
-        //             })
-        //             this.parent.messageBus.emit('addUserInGame_' + this.parent.user.realm, {
-        //                 user: this.parent.user, side: this.parent.mainGame1.side, lastUpdate: this.parent.lobbyScreen?.gameLastUpdate
-        //             })
-        //             this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
-        //         }
-        //     } else {
-        //         if (data.side === "left") {
-        //             this.parent.mainGame0?.stopSequence()
-        //             this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
-        //         } else if (data.side === "right") {
-        //             this.parent.mainGame1?.stopSequence()
-        //             this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
-        //         }
-        //         this.parent.messageBus.emit('removeUserInQueue_' + this.parent.user.realm, { user: this.parent.user })
-        //         this.usersInQueue.length ? this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {}) : ''
-        //     }
-        // })
-        // this.parent.messageBus.on('nextGame_' + this.parent.user.realm + '_' + this.parent.user.public_address, () => {
-        //     this.parent.messageBus.emit('confirmationNewGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
-        // })
+        this.parent.userConnection = new UserConnection(this)
     }
     // -----------------------------------------------------------------------------------------------------------------
     private BuildToggleEvent = () => {
@@ -361,17 +248,15 @@ export default class LobbyScreen implements ISystem {
             this.updateQueueScreen()
         } else {
             log('Already in Queue !')
-            // this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
         }
     }
 
-    addUsersInQueue(users: IUser[]) {
+    updateQueue(users: IUser[]) {
         if (users.length !== 0) {
             this.usersInQueue = users
             this.updateQueueScreen()
         } else {
             log('Already in Queue !')
-            // this.parent.messageBus.emit('nextGame_' + this.parent.user.realm + '_' + this.usersInQueue[0].public_address, {})
         }
     }
 

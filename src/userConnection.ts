@@ -44,22 +44,19 @@ export class UserConnection {
     async BuildSocket() {
         this.socket = new WebSocket("ws://localhost:8080")
         this.socket.onmessage = async (event) => {
-            log("socket.onmessage", event)
             const msg = JSON.parse(event.data)
-            log('socket message:', msg)
+            // -----------------------------------------------------------------------------------------------
             if (msg.event === 'setData_' + this.userData.public_address) {
-                log('setData in user ', this.userData.public_address)
-                log('msg ', msg)
-                log('msg.data ', msg.data)
-                log('msg.data.user ', msg.data.user)
                 this.userData = msg.data.user
                 this.parent.usersInGame = msg.data.usersInGame
                 this.parent.usersInQueue = msg.data.usersInQueue
-                log('user in setData', msg.data.user)
-            } else if (msg.event === 'userConfirmGame_' + this.userData.public_address) {
-                log('userConfirmGame_ ', this.userData.public_address)
+            }
+            // -----------------------------------------------------------------------------------------------
+            else if (msg.event === 'userConfirmGame_' + this.userData.public_address) {
                 this.parent.parent.modeSelection()
-            } else if (msg.event === 'newGame_' + this.userData.public_address) {
+            }
+            // -----------------------------------------------------------------------------------------------
+            else if (msg.event === 'newGame_' + this.userData.public_address) {
                 if (msg.data.side === 'left') {
                     movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8)).then(() => {
                         this.parent.parent.mainGame0?.gameApprovalSolo()
@@ -72,10 +69,12 @@ export class UserConnection {
                     })
                 }
             }
+            // -----------------------------------------------------------------------------------------------
+            else if (msg.event === 'updateQueue') {
+                this.parent.updateQueue(msg.data.queue)
+             }
         }
         this.socket.onopen = async () => {
-            log('BuildSocket.onopen')
-            // this.socket?.send(JSON.stringify({ event: 'join', data: { public_address: this.userData.public_address, name: this.userData.name, realm: this.userData.realm, room: 'global' } }))
             const data = { user: this.userData }
             this.socket?.send(JSON.stringify({ event: 'join', data: data }))
         }

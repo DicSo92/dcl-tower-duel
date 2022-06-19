@@ -1,9 +1,7 @@
 import Game from '@/game'
-import MainGame from '@/mainGame'
 import { ActionsSequenceSystem, ToggleComponent } from '@dcl/ecs-scene-utils'
 import { OptionPrompt } from '@dcl/ui-scene-utils'
 
-//Use IAction to define action for movement
 export class SelectModeAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: Game
@@ -14,7 +12,6 @@ export class SelectModeAction implements ActionsSequenceSystem.IAction {
         this.prompt = this.parent.prompt
     }
 
-    //Method when action starts
     onStart(): void {
         log("startSelectModeAction")
         if (this.prompt) {

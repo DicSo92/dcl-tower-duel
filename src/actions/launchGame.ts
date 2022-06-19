@@ -3,7 +3,6 @@ import TowerDuel from "@/towerDuel"
 import { ActionsSequenceSystem, setTimeout } from '@dcl/ecs-scene-utils'
 import { displayAnnouncement, hideAnnouncements } from '@dcl/ui-scene-utils'
 
-//Use IAction to define action for movement
 export class StarterTimerAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
     parent: MainGame
@@ -58,7 +57,6 @@ export class LaunchSoloGameAction implements ActionsSequenceSystem.IAction {
     }
 
     onStart(): void {
-        log("launchGame.onStart", this.parent.side)
         if (this.parent.side === 'left') {
             this.parent.TowerDuel = new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0))
         } else {
