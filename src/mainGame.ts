@@ -38,14 +38,7 @@ export default class MainGame implements ISystem {
     private BuildEvents() {
     }
 
-    public modeSelection() {
-        this.isActiveSequence = true
-        this.addSequence('modeSelection')
-    }
-
     public gameApprovalSolo() {
-        this.isActive = true
-        this.isActiveSequence = true
         this.addSequence('gameApprovalSolo')
     }
 
@@ -81,11 +74,6 @@ export default class MainGame implements ISystem {
 
     private addSequence(type: string) {
         switch (type) {
-            case "modeSelection": {
-                this.gameSequence = new ActionsSequenceSystem.SequenceBuilder()
-                    .then(new SelectModeAction(this))
-                break;
-            }
             case "gameApprovalSolo": {
                 this.gameSequence = new ActionsSequenceSystem.SequenceBuilder()
                     .then(new GoToPlayAction(this.liftToGame))

@@ -86,7 +86,7 @@ export class LaunchMultGameAction implements ActionsSequenceSystem.IAction {
 
     onStart(): void {
         this.parent.TowerDuel?.CleanEntities()
-        this.parent.parent.messageBus.emit('addUserInGame_' + this.parent.parent.user.realm, { user: this.parent.parent.user, side: this.parent.side, lastDate: this.parent.parent.lobbyScreen?.gameLastUpdate })
+        this.parent.parent.messageBus.emit('addUserInGame_' + this.parent.parent.userConnection?.userData.realm, { user: this.parent.parent.userConnection?.userData, side: this.parent.side, lastDate: this.parent.parent.lobbyScreen?.gameLastUpdate })
         this.parent.TowerDuel = new TowerDuel(this.physicsMaterial, this.world, this.parent, new Vector3(16, 0, 0))
         this.hasFinished = true
     }

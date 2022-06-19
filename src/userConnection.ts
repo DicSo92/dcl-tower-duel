@@ -5,7 +5,7 @@ import LobbyScreen from './lobbyScreen'
 import { movePlayerTo } from '@decentraland/RestrictedActions'
 
 export class UserConnection {
-    userData: IUser = { name: "", public_address: "", realm: "" }
+    userData: IUser = { public_address: "", name: "", realm: "", ws_id: "", room: "" }
     socket?: WebSocket
     parent: LobbyScreen
 
@@ -49,24 +49,23 @@ export class UserConnection {
             log('socket message:', msg)
             if (msg.event === 'setData_' + this.userData.public_address) {
                 log('setData in user ', this.userData.public_address)
-                this.parent.usersInGame = msg.usersInGame
-                this.parent.usersInQueue = msg.usersInQueue
+                log('msg ', msg)
+                log('msg.data ', msg.data)
+                log('msg.data.user ', msg.data.user)
+                this.userData = msg.data.user
+                this.parent.usersInGame = msg.data.usersInGame
+                this.parent.usersInQueue = msg.data.usersInQueue
+                log('user in setData', msg.data.user)
             } else if (msg.event === 'userConfirmGame_' + this.userData.public_address) {
-                log('userConfirmGame_ ', this.userData.public_address, 'side: ', msg.side)
-                if (msg.side === 'left' && !this.parent.parent.mainGame0?.isActiveSequence && !this.parent.parent.mainGame0?.isActive) {
-                    log('left')
-                    this.parent.parent.mainGame0?.modeSelection()
-                } else if (msg.side === 'right' && !this.parent.parent.mainGame1?.isActiveSequence && !this.parent.parent.mainGame1?.isActive) {
-                    log('right')
-                    this.parent.parent.mainGame1?.modeSelection()
-                }
+                log('userConfirmGame_ ', this.userData.public_address)
+                this.parent.parent.modeSelection()
             } else if (msg.event === 'newGame_' + this.userData.public_address) {
-                if (msg.side === 'left') {
+                if (msg.data.side === 'left') {
                     movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8)).then(() => {
                         this.parent.parent.mainGame0?.gameApprovalSolo()
                         this.parent.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
                     })
-                } else if (msg.side === 'right' && this.parent.parent.mainGame1?.isActiveSequence) {
+                } else if (msg.data.side === 'right') {
                     movePlayerTo(new Vector3(8, .1, 24), new Vector3(8, 0, 8)).then(() => {
                         this.parent.parent.mainGame1?.gameApprovalSolo()
                         this.parent.parent.mainGame1?.liftToGame.entity.getComponent(AudioSource).playOnce()
@@ -77,7 +76,8 @@ export class UserConnection {
         this.socket.onopen = async () => {
             log('BuildSocket.onopen')
             // this.socket?.send(JSON.stringify({ event: 'join', data: { public_address: this.userData.public_address, name: this.userData.name, realm: this.userData.realm, room: 'global' } }))
-            this.socket?.send(JSON.stringify({ event: 'join', user: this.userData }))
+            const data = { user: this.userData }
+            this.socket?.send(JSON.stringify({ event: 'join', data: data }))
         }
     }
 

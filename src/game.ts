@@ -8,6 +8,8 @@ import HigherTower from "./higherTower";
 import { LeaderBoard } from "./LeaderBoard";
 import TowerDuel from "./towerDuel";
 import { UserConnection } from "./userConnection";
+import { ActionsSequenceSystem } from "@dcl/ecs-scene-utils";
+import { SelectModeAction } from "./actions/modeSelection";
 
 onSceneReadyObservable.add(() => {
     log("SCENE LOADED");
@@ -24,7 +26,6 @@ export default class Game implements ISystem {
     sceneAssets: SceneAssets
     mainGame0?: MainGame
     mainGame1?: MainGame
-    user: IUser = { public_address: "", name: "", realm: "" }
     rulesBtn: Entity = new Entity()
     playBtn: Entity = new Entity()
     globalScene: Entity = new Entity()
@@ -37,6 +38,8 @@ export default class Game implements ISystem {
         Your tower is ${towerDuel.lift?.numericalCounter.text.value} blocks high !`
     };
     userConnection?: UserConnection
+    selectionSequence?: ActionsSequenceSystem.SequenceBuilder;
+    selectionSequenceSystem?: ActionsSequenceSystem;
 
     constructor() {
         this.physicsMaterial = new CANNON.Material("groundMaterial")
@@ -100,6 +103,13 @@ export default class Game implements ISystem {
         engine.addSystem(this.higherTower)
 
         this.leaderBoard = new LeaderBoard(this)
+    }
+
+    public modeSelection() {
+        this.selectionSequence = new ActionsSequenceSystem.SequenceBuilder()
+            .then(new SelectModeAction(this))
+        this.selectionSequenceSystem = new ActionsSequenceSystem(this.selectionSequence)
+        engine.addSystem(this.selectionSequenceSystem)
     }
 
     private BuildEvents() {

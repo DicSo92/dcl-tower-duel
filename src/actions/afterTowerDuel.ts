@@ -63,7 +63,8 @@ export class FinaliseTowerDuelAction implements ActionsSequenceSystem.IAction {
             log('After setScore')
             if (this.parent.parent.userConnection?.userData.public_address) {
                 log('After endGame websocket event',)
-                this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'endGame', user: this.parent.parent.userConnection.getUserData() }))
+                const data = { user: this.parent.parent.userConnection.getUserData() }
+                this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'endGame', data: data }))
             }
             log('After endGame websocket event')
             this.parent.TowerDuel?.lift?.reset(this)
@@ -104,7 +105,7 @@ export class EndGameResultAction implements ActionsSequenceSystem.IAction {
                 this.prompt.title.value = "Result"
                 this.prompt.text.value = `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`
                 this.prompt.onAccept = () => {
-                    this.parent.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.user.realm, { user: this.parent.parent.user })
+                    this.parent.parent.messageBus.emit('addUserInQueue_' + this.parent.parent.userConnection?.userData.realm, { user: this.parent.parent.userConnection?.userData })
                     this.prompt?.hide()
                     this.hasFinished = true
                 }
@@ -122,7 +123,8 @@ export class EndGameResultAction implements ActionsSequenceSystem.IAction {
                     'Result',
                     `Your score : ${this.parent.TowerDuel?.lift.numericalCounter.text.value} blocks\nDo you want to play again ?`,
                     () => {
-                        this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userClickToPlay', user: this.parent.parent.userConnection.getUserData() }))
+                        const data = { user: this.parent.parent.userConnection?.getUserData() }
+                        this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userClickToPlay', data: data }))
                         this.parent.parent.prompt?.hide()
                         this.hasFinished = true
                     },

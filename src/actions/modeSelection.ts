@@ -1,3 +1,4 @@
+import Game from '@/game'
 import MainGame from '@/mainGame'
 import { ActionsSequenceSystem, ToggleComponent } from '@dcl/ecs-scene-utils'
 import { OptionPrompt } from '@dcl/ui-scene-utils'
@@ -5,12 +6,12 @@ import { OptionPrompt } from '@dcl/ui-scene-utils'
 //Use IAction to define action for movement
 export class SelectModeAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
-    parent: MainGame
+    parent: Game
     prompt?: OptionPrompt
 
-    constructor(parent: MainGame) {
+    constructor(parent: Game) {
         this.parent = parent
-        this.prompt = this.parent.parent.prompt
+        this.prompt = this.parent.prompt
     }
 
     //Method when action starts
@@ -21,12 +22,14 @@ export class SelectModeAction implements ActionsSequenceSystem.IAction {
             this.prompt.title.value = 'Confirmation !'
             this.prompt.text.value = 'Would you start to play ?'
             this.prompt.onAccept = () => {
-                this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', user: this.parent.parent.userConnection?.userData, result: true, side: this.parent.side }))
+                const data = { user: this.parent.userConnection?.userData, result: true }
+                this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', data: data }))
                 this.prompt?.hide()
                 this.hasFinished = true
             }
             this.prompt.onReject = () => {
-                this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', user: this.parent.parent.userConnection?.userData, result: true, side: this.parent.side }))
+                const data = { user: this.parent.userConnection?.userData, result: true }
+                this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', data: data }))
                 this.prompt?.hide()
                 this.hasFinished = true
             }
@@ -42,14 +45,15 @@ export class SelectModeAction implements ActionsSequenceSystem.IAction {
                 'Would you start to play ?',
                 () => {
                     log(`Yes`)
-                    this.parent.isActive = true
-                    this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', user: this.parent.parent.userConnection?.userData, result: true, side: this.parent.side }))
+                    const data = { user: this.parent.userConnection?.userData, result: true }
+                    this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', data: data }))
                     this.prompt?.hide()
                     this.hasFinished = true
                 },
                 () => {
                     log(`No`)
-                    this.parent.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', user: this.parent.parent.userConnection?.userData, result: false, side: this.parent.side }))
+                    const data = { user: this.parent.userConnection?.userData, result: false }
+                    this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', data: data }))
                     this.prompt?.hide()
                     this.hasFinished = true
                 },
@@ -65,8 +69,12 @@ export class SelectModeAction implements ActionsSequenceSystem.IAction {
     update(dt: number): void { }
 
     onFinish(): void {
-        if (this.parent.parent.lobbyScreen?.container.getComponent(ToggleComponent).isOn()) {
-            this.parent.parent.lobbyScreen?.container.getComponent(ToggleComponent).toggle()
+        if (this.parent.selectionSequenceSystem) {
+            engine.removeSystem(this.parent.selectionSequenceSystem)
+            this.parent.selectionSequenceSystem = undefined
+        }
+        if (this.parent.lobbyScreen?.container.getComponent(ToggleComponent).isOn()) {
+            this.parent.lobbyScreen?.container.getComponent(ToggleComponent).toggle()
         }
     }
 }

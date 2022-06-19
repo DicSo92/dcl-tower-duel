@@ -230,7 +230,7 @@ export default class LobbyScreen implements ISystem {
     async getUser() {
         try {
             let data = await getUserData()
-            if (data) this.parent.user = { public_address: data.userId, name: data.displayName }
+            if (data && this.parent.userConnection?.userData) this.parent.userConnection.userData = { public_address: data.userId, name: data.displayName }
         } catch {
             log("Failed to get user")
         }
@@ -238,7 +238,7 @@ export default class LobbyScreen implements ISystem {
     async getRealm() {
         try {
             let realm = await getCurrentRealm()
-            if (realm) this.parent.user.realm = realm.domain
+            if (realm && this.parent.userConnection?.userData) this.parent.userConnection.userData.realm = realm.domain
         } catch {
             log("Failed to get user")
         }
@@ -344,14 +344,8 @@ export default class LobbyScreen implements ISystem {
             this.parent.globalScene.getComponent(Animator).getClip('BtnPlayBorderAction').looping = false
             this.parent.globalScene.getComponent(Animator).getClip('BtnPlayBorderAction').play()
             this.playBtn.getComponent(AudioSource).playOnce()
-            
-            this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userClickToPlay', user: this.parent.userConnection.getUserData() }))
-            // if ((this.parent.user.public_address !== this.usersInGame.left.public_address)) {
-            //     if (!this.parent.mainGame1?.isActive && !this.parent.mainGame1?.isActiveSequence) this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userClickToPlay', user: this.parent.userConnection.getUserData() })) // + this.parent.user.realm)//, { user: this.parent.user })
-            //     // if (!this.parent.mainGame0?.isActive && !this.parent.mainGame0?.isActiveSequence) this.parent.userConnection?.socket?.send('addUserInQueue')// + this.parent.user.realm)//, { user: this.parent.user })
-            // } else if (this.parent.user.public_address !== this.usersInGame.right.public_address) {
-            //     if (!this.parent.mainGame1?.isActive && !this.parent.mainGame1?.isActiveSequence) this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userClickToPlay', user: this.parent.userConnection.getUserData() })) // + this.parent.user.realm)//, { user: this.parent.user })
-            // }
+            const data = { user: this.parent.userConnection?.getUserData() }
+            this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userClickToPlay', data: data }))
         }, {
             button: ActionButton.POINTER,
             showFeedback: true,
