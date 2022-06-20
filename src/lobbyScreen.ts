@@ -63,7 +63,6 @@ export default class LobbyScreen implements ISystem {
 
     // -----------------------------------------------------------------------------------------------------------------
     private BuildEvents() {
-        this.parent.userConnection = new UserConnection(this)
     }
     // -----------------------------------------------------------------------------------------------------------------
     private BuildToggleEvent = () => {
@@ -113,22 +112,6 @@ export default class LobbyScreen implements ISystem {
                 () => { }, InterpolationType.EASEELASTIC
             ))
         }))
-    }
-    async getUser() {
-        try {
-            let data = await getUserData()
-            if (data && this.parent.userConnection?.userData) this.parent.userConnection.userData = { public_address: data.userId, name: data.displayName }
-        } catch {
-            log("Failed to get user")
-        }
-    }
-    async getRealm() {
-        try {
-            let realm = await getCurrentRealm()
-            if (realm && this.parent.userConnection?.userData) this.parent.userConnection.userData.realm = realm.domain
-        } catch {
-            log("Failed to get user")
-        }
     }
     // -----------------------------------------------------------------------------------------------------------------
     private positionTopLeft(screenScale: Vector3): Vector3 {

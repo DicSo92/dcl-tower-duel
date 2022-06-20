@@ -11,6 +11,7 @@ export class LeaderBoard {
     parent: Game
     fontSize: Vector3 = new Vector3(1.2, 1.2, 1.2)
     headerFontSize: Vector3 = new Vector3(1, 1, 1)
+    scoreData: [] = []
 
     constructor(parent: Game) {
         this.parent = parent
@@ -21,20 +22,40 @@ export class LeaderBoard {
                 scale: new Vector3(2, 2, 2)
             })
         )
-        this.updateBoard()
+        // this.updateBoard()
         engine.addEntity(this.global)
     }
 
     async updateBoard(newDatas?: any) {
-        let scoreData: any = []
         if (newDatas) { // updateBoard with newData
-            scoreData = newDatas
+            this.scoreData = newDatas
+            log("scoreData.withData", this.scoreData)
         }
         else { // updateBoard without newData
-            scoreData = await getScoreBoard() // data.scoreBoard
+            await this.getScores() // data.scoreBoard
+            log("scoreData.withoutData", this.scoreData)
         }
-        this.buildLeaderBoard(scoreData, this.global, 9).catch((error) => log(error))
-        this.parent.higherTower?.updateTower(scoreData[0].score)
+    }
+
+    async getScores() {
+        const connect = this.parent.userConnection
+        if (connect) {
+            log('emitGetScore.user', this.parent.userConnection?.getUserData())
+            // () => {
+                if (this.parent.userConnection?.getUserData().public_address !== '') {
+                    log('public_address!== ""')
+                    // this.parent.userConnection?.Init().then(() => {
+                        log('userConnection?.getUser().then', this.parent.userConnection?.getUserData())
+                        const data = { user: this.parent.userConnection?.getUserData().public_address }
+                        log('data', data)
+                        log('connect.socket', connect.socket)
+                        connect.socket?.send(JSON.stringify({ event: 'getScores', data: data }))
+                    // })
+                } else {
+                    log("public_address:", this.parent.userConnection?.getUserData())
+                }
+            // }
+        }
     }
 
     async buildLeaderBoard(scoreData: any[], parent: Entity, length: number) {

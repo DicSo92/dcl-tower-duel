@@ -1,4 +1,5 @@
 import { IUser } from "./interfaces/class.interface"
+import LobbyScreen from "./lobbyScreen"
 
 // external servers being used by the project - Please change these to your own if working on something else!
 export const fireBaseServer = 'https://dcl-tower-duel-server.herokuapp.com/'
@@ -6,6 +7,7 @@ export const fireBaseServer = 'https://dcl-tower-duel-server.herokuapp.com/'
     export const fireBaseBucketScore = "scores/"
 
 // get latest scoreboard data from server
+
 export async function getScoreBoard() {
     try {
         const url = fireBaseServer + fireBaseBucketScore + 'get-scores'

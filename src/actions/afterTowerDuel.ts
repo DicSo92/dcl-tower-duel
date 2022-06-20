@@ -4,6 +4,7 @@ import MainGame from '@/mainGame'
 import { publishScore } from '@/serverHandler'
 import { ActionsSequenceSystem, setTimeout } from '@dcl/ecs-scene-utils'
 import { OptionPrompt } from '@dcl/ui-scene-utils'
+import { ConvexPolyhedron } from 'cannon'
 
 export class BackToLiftToGamePositionAction implements ActionsSequenceSystem.IAction {
     hasFinished: boolean = false
@@ -66,8 +67,14 @@ export class FinaliseTowerDuelAction implements ActionsSequenceSystem.IAction {
 
     async setScore() {
         if (this.parent.TowerDuel?.lift) {
-            if (this.parent.parent.userConnection) {
-                const result = await publishScore(this.parent.parent.userConnection?.getUserData(), parseInt(this.parent.TowerDuel?.lift.numericalCounter.text.value))
+            const connect = this.parent.parent.userConnection
+            if (connect) {
+                // const result = await publishScore(connect?.getUserData(), parseInt(this.parent.TowerDuel?.lift.numericalCounter.text.value))
+                const score = parseInt(this.parent.TowerDuel?.lift.numericalCounter.text.value)
+                const user = connect.getUserData()
+                const data = { score, user }
+                const result = connect.socket?.send(JSON.stringify({ event: 'setScore', data: data }))
+                log('setScore result:',result)
                 this.parent.parent.leaderBoard?.updateBoard(result)
             }
         }

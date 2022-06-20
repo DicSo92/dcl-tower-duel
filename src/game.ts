@@ -101,6 +101,7 @@ export default class Game implements ISystem {
         engine.addSystem(this.higherTower)
 
         this.leaderBoard = new LeaderBoard(this)
+        this.userConnection = new UserConnection(this)
     }
 
     public modeSelection() {

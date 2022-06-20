@@ -3,13 +3,14 @@ import { getCurrentRealm } from '@decentraland/EnvironmentAPI'
 import { IUser } from './interfaces/class.interface'
 import LobbyScreen from './lobbyScreen'
 import { movePlayerTo } from '@decentraland/RestrictedActions'
+import Game from './game'
 
 export class UserConnection {
     userData: IUser = { public_address: "", name: "", realm: "", ws_id: "", room: "" }
     socket?: WebSocket
-    parent: LobbyScreen
+    parent: Game
 
-    constructor(parent: LobbyScreen) {
+    constructor(parent: Game) {
         this.parent = parent
         this.Init()
     }
@@ -18,6 +19,8 @@ export class UserConnection {
         await this.getUser()
         await this.getRealm()
         await this.BuildSocket()
+
+        this.parent.leaderBoard?.updateBoard()
     }
 
     async getUser() {
@@ -48,31 +51,43 @@ export class UserConnection {
             // -----------------------------------------------------------------------------------------------
             if (msg.event === 'setData_' + this.userData.public_address) {
                 this.userData = msg.data.user
-                this.parent.usersInGame = msg.data.usersInGame
-                this.parent.usersInQueue = msg.data.usersInQueue
+                if (this.parent.lobbyScreen) {
+                    this.parent.lobbyScreen.usersInGame = msg.data.usersInGame
+                    this.parent.lobbyScreen.usersInQueue = msg.data.usersInQueue
+                }
             }
             // -----------------------------------------------------------------------------------------------
             else if (msg.event === 'userConfirmGame_' + this.userData.public_address) {
-                this.parent.parent.modeSelection()
+                this.parent.modeSelection()
             }
             // -----------------------------------------------------------------------------------------------
             else if (msg.event === 'newGame_' + this.userData.public_address) {
                 if (msg.data.side === 'left') {
                     movePlayerTo(new Vector3(24, .1, 24), new Vector3(24, 0, 8)).then(() => {
-                        this.parent.parent.mainGame0?.gameApprovalSolo()
-                        this.parent.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
+                        this.parent.mainGame0?.gameApprovalSolo()
+                        this.parent.mainGame0?.liftToGame.entity.getComponent(AudioSource).playOnce()
                     })
                 } else if (msg.data.side === 'right') {
                     movePlayerTo(new Vector3(8, .1, 24), new Vector3(8, 0, 8)).then(() => {
-                        this.parent.parent.mainGame1?.gameApprovalSolo()
-                        this.parent.parent.mainGame1?.liftToGame.entity.getComponent(AudioSource).playOnce()
+                        this.parent.mainGame1?.gameApprovalSolo()
+                        this.parent.mainGame1?.liftToGame.entity.getComponent(AudioSource).playOnce()
                     })
                 }
             }
             // -----------------------------------------------------------------------------------------------
             else if (msg.event === 'updateQueue') {
-                this.parent.updateQueue(msg.data.queue)
-             }
+                this.parent.lobbyScreen?.updateQueue(msg.data.queue)
+            }
+            // -----------------------------------------------------------------------------------------------
+            else if (msg.event === 'getScores_' + this.getUserData().public_address) {
+                let scores = msg.data.scores
+                log('onGetScores', scores)
+                if (this.parent.leaderBoard) {
+                    this.parent.leaderBoard.scoreData = msg.data.scores
+                }
+                this.parent.leaderBoard?.buildLeaderBoard(scores, this.parent.leaderBoard?.global, 9).catch((error: any) => log(error))
+                this.parent.higherTower?.updateTower(scores[0].score)
+            }
         }
         this.socket.onopen = async () => {
             const data = { user: this.userData }
