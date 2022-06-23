@@ -4,6 +4,7 @@ import { IUser } from './interfaces/class.interface'
 import LobbyScreen from './lobbyScreen'
 import { movePlayerTo } from '@decentraland/RestrictedActions'
 import Game from './game'
+import { setTimeout } from '@dcl/ecs-scene-utils'
 
 export class UserConnection {
     userData: IUser = { public_address: "", name: "", realm: "", ws_id: "", room: "" }
@@ -12,15 +13,44 @@ export class UserConnection {
 
     constructor(parent: Game) {
         this.parent = parent
+        // this.socket = new WebSocket("ws://dcl-tower-duel-server-ws.herokuapp.com/")
+
         this.Init()
     }
 
     Init = async () => {
         await this.getUser()
         await this.getRealm()
-        await this.BuildSocket()
-
-        this.parent.leaderBoard?.updateBoard()
+        this.socket = new WebSocket("ws://localhost:8080/")
+        this.socket.onopen = () => {
+            log("this.socket.onopen")
+            if (this.socket?.readyState === 1) {
+                log("this.socket.isOpen")
+                const data = { user: this.userData }
+                this.socket.send(JSON.stringify({ event: 'join', data: data }))
+            }
+            else {
+                log("this.socket.!isOpen")
+                setTimeout(1000, () => {
+                    const data = { user: this.userData }
+                    this.socket?.send(JSON.stringify({ event: 'join', data: data }))
+                })
+            }
+        }
+        await this.BuildSocket().then(async () => {
+            // if(this.socket.CONNECTING)
+            log("userConnection.socket.CONNECTING", this.socket?.readyState)
+            if (this.socket?.readyState === 1) {
+                // log("this.socket.isOpen")
+                await this.parent.leaderBoard?.updateBoard()
+            }
+            else {
+                // log("this.socket.!isOpen")
+                setTimeout(1000, async () => {
+                    await this.parent.leaderBoard?.updateBoard()
+                })
+            }
+        })
     }
 
     async getUser() {
@@ -45,11 +75,11 @@ export class UserConnection {
     }
 
     async BuildSocket() {
-        this.socket = new WebSocket("ws://localhost:8080")
-        this.socket.onmessage = async (event) => {
+        if (this.socket) this.socket.onmessage = async (event) => {
             const msg = JSON.parse(event.data)
             // -----------------------------------------------------------------------------------------------
             if (msg.event === 'setData_' + this.userData.public_address) {
+                log('setData.msg.data.user', msg.data.user)
                 this.userData = msg.data.user
                 if (this.parent.lobbyScreen) {
                     this.parent.lobbyScreen.usersInGame = msg.data.usersInGame
@@ -88,10 +118,6 @@ export class UserConnection {
                 this.parent.leaderBoard?.buildLeaderBoard(scores, this.parent.leaderBoard?.global, 9).catch((error: any) => log(error))
                 this.parent.higherTower?.updateTower(scores[0].score)
             }
-        }
-        this.socket.onopen = async () => {
-            const data = { user: this.userData }
-            this.socket?.send(JSON.stringify({ event: 'join', data: data }))
         }
     }
 

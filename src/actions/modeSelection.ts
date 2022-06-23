@@ -19,13 +19,13 @@ export class SelectModeAction implements ActionsSequenceSystem.IAction {
             this.prompt.title.value = 'Confirmation !'
             this.prompt.text.value = 'Would you start to play ?'
             this.prompt.onAccept = () => {
-                const data = { user: this.parent.userConnection?.userData, result: true }
+                const data = { user: this.parent.userConnection?.getUserData(), result: true }
                 this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', data: data }))
                 this.prompt?.hide()
                 this.hasFinished = true
             }
             this.prompt.onReject = () => {
-                const data = { user: this.parent.userConnection?.userData, result: true }
+                const data = { user: this.parent.userConnection?.getUserData(), result: true }
                 this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', data: data }))
                 this.prompt?.hide()
                 this.hasFinished = true
@@ -42,14 +42,14 @@ export class SelectModeAction implements ActionsSequenceSystem.IAction {
                 'Would you start to play ?',
                 () => {
                     log(`Yes`)
-                    const data = { user: this.parent.userConnection?.userData, result: true }
+                    const data = { user: this.parent.userConnection?.getUserData(), result: true }
                     this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', data: data }))
                     this.prompt?.hide()
                     this.hasFinished = true
                 },
                 () => {
                     log(`No`)
-                    const data = { user: this.parent.userConnection?.userData, result: false }
+                    const data = { user: this.parent.userConnection?.getUserData(), result: false }
                     this.parent.userConnection?.socket?.send(JSON.stringify({ event: 'userConfirmGame', data: data }))
                     this.prompt?.hide()
                     this.hasFinished = true
